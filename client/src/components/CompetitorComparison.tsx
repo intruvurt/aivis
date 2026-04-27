@@ -1,311 +1,103 @@
-import React, { useState, useEffect } from 'react';
-import Spinner from './Spinner';
+import React, { useEffect, useState } from 'react';
 import {
-  Target,
-  TrendingUp,
-  TrendingDown,
-  ChevronDown,
-  ChevronUp,
   AlertCircle,
-  Zap,
-  CheckCircle2,
-  Users,
-  BarChart3,
   ArrowRight,
   ExternalLink,
-  RefreshCw,
+  Sparkles,
+  Target,
+  TriangleAlert,
+  Wand2,
 } from 'lucide-react';
-import type { CompetitorComparison as ComparisonType } from '@shared/types';
-
+import type { CompetitorComparison as ComparisonType, CompetitorFixPayload } from '@shared/types';
+import Spinner from './Spinner';
 import { API_URL } from '../config';
 import apiFetch from '../utils/api';
 import { toSafeHref } from '../utils/safeHref';
 
-// ─── Grade Styling ──────────────────────────────────────────────────────────
-
-function getScoreColor(score: number): string {
-  if (score >= 80) return 'text-emerald-400';
-  if (score >= 60) return 'text-sky-400';
-  if (score >= 40) return 'text-amber-400';
-  return 'text-red-400';
-}
-
-function getScoreBg(score: number): string {
-  if (score >= 80) return 'bg-emerald-500/70';
-  if (score >= 60) return 'bg-sky-500/60';
-  if (score >= 40) return 'bg-amber-500/60';
-  return 'bg-red-500/50';
-}
-
-// ─── Competitor Score Card ──────────────────────────────────────────────────
-
-interface CompetitorCardProps {
-  nickname: string;
-  url: string;
-  score: number;
-  gap: number;
-  isYou?: boolean;
-}
-
-function CompetitorCard({ nickname, url, score, gap, isYou }: CompetitorCardProps) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div
-      className={`rounded-xl border transition-all ${
-        isYou ? 'border-white/12/30 bg-charcoal/5' : 'border-white/10 bg-charcoal-deep'
-      }`}
-    >
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between p-4"
-      >
-        <div className="flex items-center gap-3">
-          {isYou && (
-            <div className="px-2 py-0.5 rounded-full bg-charcoal/20 border border-white/12/30 text-[10px] text-white/85 font-bold uppercase">
-              You
-            </div>
-          )}
-          <div className="text-left">
-            <p className="text-sm font-semibold text-white">{nickname}</p>
-            <p className="text-xs text-white/55 truncate max-w-[200px]">{url}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className={`text-2xl font-bold ${getScoreColor(score)}`}>{score}</p>
-            {!isYou && gap !== 0 && (
-              <div
-                className={`flex items-center gap-1 text-xs ${gap > 0 ? 'text-red-400' : 'text-emerald-400'}`}
-              >
-                {gap > 0 ? (
-                  <TrendingUp className="w-3 h-3" />
-                ) : (
-                  <TrendingDown className="w-3 h-3" />
-                )}
-                {Math.abs(gap)} pts
-              </div>
-            )}
-          </div>
-          {expanded ? (
-            <ChevronUp className="w-4 h-4 text-white/60" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-white/60" />
-          )}
-        </div>
-      </button>
-
-      {expanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-white/10">
-          <a
-            href={toSafeHref(url) || undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-white/85 hover:text-white/85"
-          >
-            Visit Site <ExternalLink className="w-3 h-3" />
-          </a>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Category Comparison Chart ──────────────────────────────────────────────
-
-interface CategoryBarProps {
-  category: string;
-  yourScore: number;
-  competitorScores: Record<string, number>;
-}
-
-function CategoryBar({ category, yourScore, competitorScores }: CategoryBarProps) {
-  const allScores = [yourScore, ...Object.values(competitorScores)];
-  const maxScore = Math.max(...allScores, 100);
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div className="rounded-xl border border-white/10 bg-charcoal overflow-hidden">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between p-4 hover:bg-charcoal transition-colors"
-      >
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white text-left truncate">{category}</p>
-        </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <span className={`text-sm font-bold ${getScoreColor(yourScore)}`}>{yourScore}</span>
-          {expanded ? (
-            <ChevronUp className="w-4 h-4 text-white/60" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-white/60" />
-          )}
-        </div>
-      </button>
-
-      {expanded && (
-        <div className="px-4 pb-4 space-y-2">
-          {/* Your score */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-white/55 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-white/85" />
-                You
-              </span>
-              <span className="text-xs text-white/55">{yourScore}</span>
-            </div>
-            <div className="h-2 bg-charcoal-light rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${getScoreBg(yourScore)}`}
-                style={{ width: `${(yourScore / maxScore) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Competitor scores */}
-          {Object.entries(competitorScores).map(([nickname, score]) => (
-            <div key={nickname}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-white/55 truncate max-w-[150px]">{nickname}</span>
-                <span className="text-xs text-white/55">{score}</span>
-              </div>
-              <div className="h-2 bg-charcoal-light rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${getScoreBg(score)}`}
-                  style={{ width: `${(score / maxScore) * 100}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Opportunity Card ───────────────────────────────────────────────────────
-
-interface OpportunityCardProps {
-  title: string;
-  description: string;
-  impact: string;
-  competitor_doing_it: string[];
-}
-
-function OpportunityCard({
-  title,
-  description,
-  impact,
-  competitor_doing_it,
-}: OpportunityCardProps) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-charcoal p-4">
-      <div className="flex items-start gap-3">
-        <div className="p-2 rounded-lg bg-charcoal">
-          <Zap className="w-4 h-4 text-white/80" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-semibold text-white mb-1">{title}</h4>
-          <p className="text-xs text-white/55 mb-2">{description}</p>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] text-white/80 font-medium">{impact}</span>
-            {competitor_doing_it.length > 0 && (
-              <span className="text-[10px] text-white/60">
-                • {competitor_doing_it.join(', ')} doing this
-              </span>
-            )}
-          </div>
-        </div>
-        <ArrowRight className="w-4 h-4 text-white/80 flex-shrink-0 mt-1" />
-      </div>
-    </div>
-  );
-}
-
-// ─── Advantage Card ─────────────────────────────────────────────────────────
-
-interface AdvantageCardProps {
-  title: string;
-  description: string;
-  lead_amount: string;
-}
-
-function AdvantageCard({ title, description, lead_amount }: AdvantageCardProps) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-charcoal p-4">
-      <div className="flex items-start gap-3">
-        <div className="p-2 rounded-lg bg-charcoal">
-          <CheckCircle2 className="w-4 h-4 text-white/80" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-semibold text-white mb-1">{title}</h4>
-          <p className="text-xs text-white/55 mb-2">{description}</p>
-          <span className="text-[10px] text-white/80 font-medium">{lead_amount}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Component ─────────────────────────────────────────────────────────
-
 interface CompetitorComparisonProps {
   yourUrl: string;
   token?: string;
+  userTier?: string;
+}
+
+function humanizeGap(value: string): string {
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
 }
 
 export default function CompetitorComparison({ yourUrl, token }: CompetitorComparisonProps) {
   const [comparison, setComparison] = useState<ComparisonType | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
+  const [fixes, setFixes] = useState<CompetitorFixPayload | null>(null);
+  const [fixesLoading, setFixesLoading] = useState(false);
+  const [fixesError, setFixesError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!yourUrl || !token) return;
     const controller = new AbortController();
-    fetchComparison(controller.signal);
+    void fetchComparison(controller.signal);
     return () => controller.abort();
   }, [yourUrl, token]);
 
   async function fetchComparison(signal?: AbortSignal) {
-    if (!yourUrl || !token) {
-      setLoading(false);
-      return;
-    }
+    if (!yourUrl || !token) return;
 
     try {
       setLoading(true);
       setError(null);
-
       const response = await apiFetch(
         `${API_URL}/api/competitors/comparison?url=${encodeURIComponent(yourUrl)}`,
         { signal }
       );
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error((errorData as any).error || 'Failed to fetch comparison');
       }
-
       const data = await response.json();
-      setComparison(data.comparison);
+      setComparison(data.comparison as ComparisonType);
+      setFixes(null);
+      setFixesError(null);
     } catch (err: any) {
       if (err?.name === 'AbortError') return;
-      console.error('Comparison error:', err);
-      setError(err.message);
+      setError(String(err?.message || 'Failed to fetch comparison'));
     } finally {
       setLoading(false);
     }
   }
 
-  async function refreshComparison() {
-    if (refreshing) return;
-    setRefreshing(true);
+  async function generateFixes() {
+    if (!comparison || fixesLoading) return;
+    if (!comparison.feature_gate.can_generate_fixes) {
+      setFixesError('Upgrade to Signal to unlock automated fix generation.');
+      return;
+    }
+
     try {
-      await fetchComparison();
+      setFixesLoading(true);
+      setFixesError(null);
+      const response = await apiFetch(`${API_URL}/api/competitors/generate-fix`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: comparison.your_url,
+          gaps: comparison.competitor_insights.gaps.missing,
+          competitor_format: comparison.competitor_insights.ai_behavior.competitor_format,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error((errorData as any).error || 'Failed to generate fixes');
+      }
+
+      const data = await response.json();
+      setFixes(data.fixes as CompetitorFixPayload);
+    } catch (err: any) {
+      setFixesError(String(err?.message || 'Failed to generate fixes'));
     } finally {
-      setRefreshing(false);
+      setFixesLoading(false);
     }
   }
 
@@ -313,37 +105,21 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
     return (
       <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-8 text-center">
         <Spinner className="inline-block h-8 w-8" />
-        <p className="mt-4 text-sm text-white/55">Loading comparison...</p>
+        <p className="mt-4 text-sm text-white/60">Loading competitor advantage insights...</p>
       </div>
     );
   }
 
   if (error) {
-    const isNoAudit = error.includes('No audit found') || error.includes('Run an audit');
     return (
       <div className="rounded-2xl border border-white/10 bg-charcoal p-6">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-white/80 flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-white/80 mb-1">
-              {isNoAudit ? 'No audit found for this URL' : 'Failed to load comparison'}
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-white/75" />
+          <div>
+            <p className="text-sm font-semibold text-white">
+              Unable to load competitor intelligence
             </p>
-            <p className="text-xs text-white/55">
-              {isNoAudit
-                ? 'Run an audit on your site first, then return here to compare competitors.'
-                : error}
-            </p>
-            {!isNoAudit && (
-              <button
-                type="button"
-                onClick={refreshComparison}
-                disabled={refreshing}
-                className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-charcoal px-3 py-1.5 text-xs text-white/80 disabled:opacity-50"
-              >
-                <RefreshCw className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} />
-                Retry
-              </button>
-            )}
+            <p className="mt-1 text-xs text-white/60">{error}</p>
           </div>
         </div>
       </div>
@@ -353,225 +129,200 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
   if (!comparison || comparison.competitors.length === 0) {
     return (
       <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-8 text-center">
-        <Users className="w-12 h-12 text-white/70 mx-auto mb-3" />
-        <p className="text-sm text-white/55">No competitors to compare yet.</p>
-        <p className="text-xs text-white/60 mt-1">Add competitors to see how you stack up!</p>
+        <p className="text-sm text-white/70">
+          Add at least one competitor to see why they are being cited and what to fix next.
+        </p>
       </div>
     );
   }
 
-  const rankedCompetitors = [...comparison.competitors].sort((a, b) => b.score - a.score);
-  const bestCompetitor = rankedCompetitors[0];
-  const yourLead = bestCompetitor ? comparison.your_score - bestCompetitor.score : 0;
-  const gapClosurePlan = (comparison.category_comparison || [])
-    .map((category) => {
-      const competitorTop = Math.max(...Object.values(category.competitor_scores || {}), 0);
-      const gap = Math.max(0, competitorTop - category.your_score);
-      return {
-        category: category.category,
-        gap,
-        action: /content/i.test(category.category)
-          ? 'Expand answer blocks and depth on this topic cluster.'
-          : /schema/i.test(category.category)
-            ? 'Add or fix JSON-LD entities and validate structured data.'
-            : /meta/i.test(category.category)
-              ? 'Improve title/meta for specificity and AI answer relevance.'
-              : /heading/i.test(category.category)
-                ? 'Tighten H1/H2 hierarchy and explicit section labeling.'
-                : /technical/i.test(category.category)
-                  ? 'Resolve technical crawlability and canonical signal issues.'
-                  : 'Implement the top competitor pattern from this category.',
-      };
-    })
-    .filter((item) => item.gap > 0)
-    .sort((a, b) => b.gap - a.gap)
-    .slice(0, 4);
-
-  const weeklyExecutionPlan = [
-    {
-      step: 'Day 1',
-      title: 'Choose 1 category gap',
-      detail: gapClosurePlan[0]
-        ? `Start with ${gapClosurePlan[0].category} (${gapClosurePlan[0].gap} point gap).`
-        : 'Start with the largest scoring category gap.',
-    },
-    {
-      step: 'Day 2-3',
-      title: 'Ship focused improvements',
-      detail:
-        gapClosurePlan[0]?.action ||
-        'Implement competitor pattern improvements for the chosen category.',
-    },
-    {
-      step: 'Day 4',
-      title: 'Apply one quick win',
-      detail: comparison.opportunities?.[0]?.title
-        ? `Apply: ${comparison.opportunities[0].title}.`
-        : 'Apply one high-impact quick win from this comparison.',
-    },
-    {
-      step: 'Day 5',
-      title: 'Re-run comparison',
-      detail: 'Refresh this view and confirm gap reduction before moving to the next category.',
-    },
-  ];
+  const insights = comparison.competitor_insights;
+  const topCompetitors = insights.top_competitors.slice(0, 3);
+  const missingList = [...insights.gaps.missing, ...insights.gaps.weak];
 
   return (
     <div className="space-y-6">
-      {/* Overall Comparison */}
-      <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-white/28/20 to-white/14/20">
-            <BarChart3 className="w-5 h-5 text-white/85" />
-          </div>
-          <h3 className="text-lg font-semibold text-white">Overall Scores</h3>
-          <button
-            onClick={refreshComparison}
-            disabled={refreshing}
-            className="ml-auto inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-charcoal text-xs text-white/80 disabled:opacity-50"
-            type="button"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
-        </div>
+      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 via-charcoal to-charcoal p-6">
+        <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-3 py-1 text-[11px] uppercase tracking-wide text-white/70">
+          <Sparkles className="h-3.5 w-3.5" />
+          Competitor AI Advantage
+        </p>
+        <h3 className="mt-3 text-2xl font-semibold text-white">
+          These pages are being cited by AI. Here is why they win.
+        </h3>
+      </section>
 
-        <div className="rounded-xl border border-white/10 bg-charcoal p-4 mb-4">
-          <p className="text-xs text-white/60 uppercase tracking-wide">Benchmark</p>
-          <p className="text-sm text-white mt-1">
-            {yourLead >= 0
-              ? `You lead your top tracked competitor by ${yourLead} points.`
-              : `Top competitor currently leads you by ${Math.abs(yourLead)} points.`}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <CompetitorCard
-            nickname="Your Site"
-            url={comparison.your_url}
-            score={comparison.your_score}
-            gap={0}
-            isYou={true}
-          />
-          {rankedCompetitors.map((comp) => (
-            <CompetitorCard
-              key={comp.url}
-              nickname={comp.nickname}
-              url={comp.url}
-              score={comp.score}
-              gap={comp.gap}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Category Breakdown */}
-      <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-white/22/20 to-white/14/20">
-            <Target className="w-5 h-5 text-white/80" />
-          </div>
-          <h3 className="text-lg font-semibold text-white">Category Breakdown</h3>
-        </div>
-
-        <div className="space-y-3">
-          {(comparison.category_comparison || []).map((cat) => (
-            <CategoryBar
-              key={cat.category}
-              category={cat.category}
-              yourScore={cat.your_score}
-              competitorScores={cat.competitor_scores}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Opportunities */}
-      {gapClosurePlan.length > 0 && (
-        <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-white/22/20 to-white/14/20">
-              <Target className="w-5 h-5 text-white/80" />
-            </div>
-            <h3 className="text-lg font-semibold text-white">Gap Closure Plan</h3>
-          </div>
-          <div className="space-y-3">
-            {gapClosurePlan.map((item) => (
-              <div
-                key={`gap-${item.category}`}
-                className="rounded-xl border border-white/10 bg-charcoal p-4"
-              >
-                <div className="flex items-center justify-between gap-3 mb-1">
-                  <p className="text-sm font-semibold text-white">{item.category}</p>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-charcoal border border-white/10 text-white/80">
-                    Gap {item.gap} pts
-                  </span>
-                </div>
-                <p className="text-xs text-white/65">{item.action}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Opportunities */}
-      {(comparison.opportunities || []).length > 0 && (
-        <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-white/30/20 to-white/18/20">
-              <Zap className="w-5 h-5 text-white/80" />
-            </div>
-            <h3 className="text-lg font-semibold text-white">Quick Wins</h3>
-            <span className="ml-auto text-xs text-white/60 bg-charcoal px-3 py-1 rounded-full">
-              {(comparison.opportunities || []).length} opportunities
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {(comparison.opportunities || []).map((opp, i) => (
-              <OpportunityCard key={i} {...opp} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-white/22/20 to-white/14/20">
-            <Target className="w-5 h-5 text-white/80" />
-          </div>
-          <h3 className="text-lg font-semibold text-white">Weekly Execution Workflow</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {weeklyExecutionPlan.map((item) => (
-            <div
-              key={`${item.step}-${item.title}`}
-              className="rounded-xl border border-white/10 bg-charcoal p-4"
+      <section className="space-y-3">
+        <h4 className="text-lg font-semibold text-white">Top competitor wins</h4>
+        <div className="grid gap-4 md:grid-cols-3">
+          {topCompetitors.map((competitor) => (
+            <article
+              key={competitor.domain}
+              className="rounded-2xl border border-white/10 bg-charcoal p-4"
             >
-              <p className="text-[11px] uppercase tracking-wide text-white/55">{item.step}</p>
-              <p className="text-sm font-semibold text-white mt-1">{item.title}</p>
-              <p className="text-xs text-white/65 mt-1">{item.detail}</p>
-            </div>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-white">{competitor.domain}</p>
+                  <p className="mt-1 text-xs text-white/60">
+                    Being cited for: {competitor.cited_for[0] || 'informational queries'}
+                  </p>
+                </div>
+                <a
+                  href={toSafeHref(`https://${competitor.domain}`) || undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/60 hover:text-white"
+                  aria-label={`Open ${competitor.domain}`}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
+
+              <div className="mt-4 space-y-2">
+                {competitor.strengths.slice(0, 3).map((strength) => (
+                  <p key={strength} className="text-xs text-emerald-200/90">
+                    - {strength}
+                  </p>
+                ))}
+              </div>
+
+              <div className="mt-4 rounded-xl border border-red-400/20 bg-red-500/10 p-3">
+                <p className="text-[11px] uppercase tracking-wide text-red-200/85">
+                  What you are missing
+                </p>
+                <ul className="mt-2 space-y-1 text-xs text-red-100/85">
+                  {insights.gaps.missing.slice(0, 2).map((gap) => (
+                    <li key={`${competitor.domain}-${gap}`}>- {humanizeGap(gap)}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Your Advantages */}
-      {(comparison.your_advantages || []).length > 0 && (
-        <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-white/25/20 to-white/15/20">
-              <CheckCircle2 className="w-5 h-5 text-white/80" />
-            </div>
-            <h3 className="text-lg font-semibold text-white">Your Advantages</h3>
+      <section className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-6">
+        <h4 className="text-lg font-semibold text-amber-100">You are losing citations because:</h4>
+        <ol className="mt-3 space-y-2 text-sm text-amber-50/90">
+          {missingList.slice(0, 3).map((item) => (
+            <li key={item}>{humanizeGap(item)}</li>
+          ))}
+        </ol>
+
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={generateFixes}
+            disabled={fixesLoading}
+            className="inline-flex items-center gap-2 rounded-full bg-white/90 px-5 py-2.5 text-sm font-semibold text-charcoal transition hover:bg-white disabled:opacity-60"
+          >
+            {fixesLoading ? 'Generating Fixes...' : 'Fix My Page to Match Competitors'}
+            <ArrowRight className="h-4 w-4" />
+          </button>
+          {comparison.feature_gate.preview_limited && (
+            <p className="mt-2 text-xs text-amber-100/80">
+              Signal unlocks full action list and automated fix generation.
+            </p>
+          )}
+          {fixesError && <p className="mt-2 text-xs text-red-100">{fixesError}</p>}
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-charcoal p-6">
+        <h4 className="text-lg font-semibold text-white">Simple comparison</h4>
+        <div className="mt-4 overflow-hidden rounded-xl border border-white/10">
+          <table className="min-w-full divide-y divide-white/10 text-sm">
+            <thead className="bg-charcoal-deep text-white/70">
+              <tr>
+                <th className="px-4 py-2 text-left font-medium">Signal</th>
+                <th className="px-4 py-2 text-left font-medium">You</th>
+                <th className="px-4 py-2 text-left font-medium">Competitor</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/10 bg-charcoal">
+              {insights.comparison.map((row) => (
+                <tr key={row.label}>
+                  <td className="px-4 py-2 text-white">{row.label}</td>
+                  <td className="px-4 py-2 text-white/80">{row.you ? 'Yes' : 'No'}</td>
+                  <td className="px-4 py-2 text-white/80">{row.competitor ? 'Yes' : 'No'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-charcoal p-6">
+        <div className="flex items-center gap-2">
+          <Target className="h-4 w-4 text-white/75" />
+          <h4 className="text-lg font-semibold text-white">AI behavior insight</h4>
+        </div>
+        <p className="mt-3 text-sm text-white/80">{insights.ai_behavior.summary}</p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-xs text-white/75">
+            <p className="text-[11px] uppercase tracking-wide text-white/50">Competitor format</p>
+            <p className="mt-1 text-sm text-white">{insights.ai_behavior.competitor_format}</p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {(comparison.your_advantages || []).map((adv, i) => (
-              <AdvantageCard key={i} {...adv} />
-            ))}
+          <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-xs text-white/75">
+            <p className="text-[11px] uppercase tracking-wide text-white/50">Your format</p>
+            <p className="mt-1 text-sm text-white">{insights.ai_behavior.your_format}</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 text-xs text-white/75">
+            <p className="text-[11px] uppercase tracking-wide text-white/50">Fix</p>
+            <p className="mt-1 text-sm text-white">{insights.ai_behavior.fix}</p>
           </div>
         </div>
+      </section>
+
+      {fixes && (
+        <section className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-6">
+          <div className="flex items-center gap-2 text-emerald-100">
+            <Wand2 className="h-4 w-4" />
+            <h4 className="text-lg font-semibold">Generated fixes</h4>
+          </div>
+
+          <div className="mt-4 space-y-4 text-sm text-emerald-50/95">
+            <div className="rounded-xl border border-emerald-300/20 bg-black/20 p-4">
+              <p className="text-[11px] uppercase tracking-wide text-emerald-100/70">
+                Definition block
+              </p>
+              <p className="mt-2">{fixes.definition_block}</p>
+            </div>
+
+            <div className="rounded-xl border border-emerald-300/20 bg-black/20 p-4">
+              <p className="text-[11px] uppercase tracking-wide text-emerald-100/70">FAQ section</p>
+              <ul className="mt-2 space-y-2">
+                {fixes.faq_section.map((item) => (
+                  <li key={item.question}>
+                    <p className="font-semibold">{item.question}</p>
+                    <p className="text-emerald-50/85">{item.answer}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="rounded-xl border border-emerald-300/20 bg-black/20 p-4">
+              <p className="text-[11px] uppercase tracking-wide text-emerald-100/70">
+                JSON-LD schema
+              </p>
+              <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-words text-xs text-emerald-50/90">
+                {JSON.stringify(fixes.schema, null, 2)}
+              </pre>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {comparison.feature_gate.preview_limited && (
+        <section className="rounded-2xl border border-white/10 bg-charcoal p-4 text-xs text-white/65">
+          <div className="flex items-start gap-2">
+            <TriangleAlert className="mt-0.5 h-4 w-4 text-white/70" />
+            <p>
+              Alignment includes competitor advantage diagnostics. Signal unlocks complete action
+              depth and one-click fix generation.
+            </p>
+          </div>
+        </section>
       )}
     </div>
   );

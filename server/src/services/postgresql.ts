@@ -830,6 +830,7 @@ export async function runMigrations(): Promise<void> {
             )`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS audit_id UUID`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS family VARCHAR(20)`,
+            `ALTER TABLE audit_evidence ALTER COLUMN family TYPE TEXT`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS evidence_key TEXT`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS value JSONB DEFAULT '{}'`,
             `ALTER TABLE audit_evidence ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'scraper'`,
@@ -855,6 +856,7 @@ export async function runMigrations(): Promise<void> {
             )`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS audit_id UUID`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS family VARCHAR(20)`,
+            `ALTER TABLE audit_rule_results ALTER COLUMN family TYPE TEXT`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS is_hard_blocker BOOLEAN NOT NULL DEFAULT FALSE`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS evidence_ids UUID[]`,
             `ALTER TABLE audit_rule_results ADD COLUMN IF NOT EXISTS score_cap INTEGER`,
@@ -4720,6 +4722,34 @@ export async function runMigrations(): Promise<void> {
       );
       _q(
         `CREATE INDEX IF NOT EXISTS idx_bulk_fix_jobs_status ON bulk_fix_jobs(status, created_at DESC)`,
+      );
+
+      // ── AI Answer Simulation Engine (temporal drift / AVP tracking) ─────────
+      _q(`
+      CREATE TABLE IF NOT EXISTS simulation_runs (
+        id              UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id         UUID             NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        workspace_id    UUID             REFERENCES workspaces(id) ON DELETE SET NULL,
+        url             TEXT             NOT NULL,
+        primary_entity  TEXT             NOT NULL,
+        scan_id         UUID,
+        run_at          TIMESTAMPTZ      NOT NULL DEFAULT NOW(),
+        aggregate_avp   DOUBLE PRECISION NOT NULL DEFAULT 0,
+        average_overlap DOUBLE PRECISION NOT NULL DEFAULT 0,
+        avp_delta       DOUBLE PRECISION,
+        models_used     TEXT[]           NOT NULL DEFAULT '{}',
+        query_count     INTEGER          NOT NULL DEFAULT 0,
+        created_at      TIMESTAMPTZ      NOT NULL DEFAULT NOW()
+      )
+    `);
+      _q(
+        `CREATE UNIQUE INDEX IF NOT EXISTS simulation_runs_user_url_minute ON simulation_runs (user_id, LOWER(url), date_trunc('minute', run_at))`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS simulation_runs_user_url_idx ON simulation_runs (user_id, LOWER(url), run_at DESC)`,
+      );
+      _q(
+        `CREATE INDEX IF NOT EXISTS simulation_runs_workspace_idx ON simulation_runs (workspace_id, run_at DESC) WHERE workspace_id IS NOT NULL`,
       );
 
       // ── V1 Infrastructure Tables (projects, issues, evidence, fixes, PRs) ──

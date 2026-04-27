@@ -1279,6 +1279,45 @@ export interface CompetitorTracking {
   updated_at: string;
 }
 
+export interface CompetitorInsightTopCompetitor {
+  domain: string;
+  cited_for: string[];
+  strengths: string[];
+  format: string;
+  schema: string[];
+}
+
+export interface CompetitorInsightComparisonRow {
+  label: string;
+  you: boolean;
+  competitor: boolean;
+}
+
+export interface CompetitorInsights {
+  top_competitors: CompetitorInsightTopCompetitor[];
+  gaps: {
+    missing: string[];
+    weak: string[];
+  };
+  recommended_actions: string[];
+  comparison: CompetitorInsightComparisonRow[];
+  ai_behavior: {
+    summary: string;
+    competitor_format: string;
+    your_format: string;
+    fix: string;
+  };
+}
+
+export interface CompetitorFixPayload {
+  definition_block: string;
+  faq_section: Array<{
+    question: string;
+    answer: string;
+  }>;
+  schema: Record<string, unknown>;
+}
+
 export interface CompetitorComparison {
   your_url: string;
   your_score: number;
@@ -1313,6 +1352,12 @@ export interface CompetitorComparison {
     /** e.g. "+12 points ahead" */
     lead_amount: string;
   }>;
+  competitor_insights: CompetitorInsights;
+  feature_gate: {
+    can_generate_fixes: boolean;
+    required_tier_for_fixes: CanonicalTier;
+    preview_limited: boolean;
+  };
 }
 
 /* ========================= AI Citation tracking ========================= */

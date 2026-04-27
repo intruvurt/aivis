@@ -1,7 +1,20 @@
 import type { Request, Response } from 'express';
 import { getPool } from '../services/postgresql.js';
-import type { CompetitorTracking, CompetitorComparison, AnalysisResponse } from '../../../shared/types.js';
-import { TIER_LIMITS, uiTierFromCanonical, type CanonicalTier, type LegacyTier } from '../../../shared/types.js';
+import { callAIProvider, PROVIDERS } from '../services/aiProviders.js';
+import type {
+  CompetitorTracking,
+  CompetitorComparison,
+  AnalysisResponse,
+  CompetitorInsights,
+  CompetitorFixPayload,
+} from '../../../shared/types.js';
+import {
+  TIER_LIMITS,
+  meetsMinimumTier,
+  uiTierFromCanonical,
+  type CanonicalTier,
+  type LegacyTier,
+} from '../../../shared/types.js';
 import { normalizePublicHttpUrl } from '../lib/urlSafety.js';
 import { gateToolAction } from '../services/toolCreditGate.js';
 import { checkCompetitorMilestones } from '../services/milestoneService.js';
@@ -15,6 +28,257 @@ type CompetitorSuggestion = {
   nickname: string;
   url: string;
 };
+
+type CompetitorDatum = {
+  url: string;
+  nickname: string;
+  score: number;
+  analysis: AnalysisResponse | null;
+  gap: number;
+};
+
+function normalizeDomain(rawUrl: string): string {
+  try {
+    return new URL(rawUrl).hostname.replace(/^www\./, '').toLowerCase();
+  } catch {
+    return rawUrl.replace(/^https?:\/\//i, '').replace(/^www\./, '').split('/')[0]?.toLowerCase() || rawUrl;
+  }
+}
+
+function toStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((v) => String(v || '').trim()).filter(Boolean);
+}
+
+function buildTemplateFixes(url: string, gaps: string[], competitorFormat: string): CompetitorFixPayload {
+  const domain = normalizeDomain(url);
+  const needsDefinition = gaps.includes('definition_block');
+  const needsFaq = gaps.includes('faq_section') || gaps.includes('structured_answers');
+  const needsSchema = gaps.includes('structured_schema');
+
+  const definition = needsDefinition
+    ? `${domain} is an evidence-backed AI visibility platform that measures whether your pages are actually cited in AI-generated answers, explains why citations are missing, and provides exact remediation actions to improve citation probability.`
+    : `${domain} provides evidence-backed AI visibility diagnostics and citation-focused remediation for answer engine discoverability.`;
+
+  const faq = needsFaq
+    ? [
+      {
+        question: 'Why are competitors cited in AI answers more often?',
+        answer: 'AI systems prefer pages with explicit definitions, extractable answer blocks, and schema-backed structure that reduces ambiguity.',
+      },
+      {
+        question: 'What should I add first to increase citation probability?',
+        answer: 'Add a concise definition block near the top, then include FAQ-style answers to high-intent questions and validate schema alignment.',
+      },
+      {
+        question: 'How quickly can citation performance improve after updates?',
+        answer: 'Most pages show measurable movement after re-crawl cycles when structure, schema, and entity clarity are improved together.',
+      },
+    ]
+    : [
+      {
+        question: 'How does this page improve AI visibility?',
+        answer: 'It prioritizes explicit answer formatting, entity clarity, and machine-readable structure to improve AI extraction quality.',
+      },
+    ];
+
+  const schema = needsSchema
+    ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    }
+    : {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: `${domain} AI visibility playbook`,
+      description: `Action-first guidance mapped to competitor citation behavior (${competitorFormat || 'answer blocks + schema'}).`,
+    };
+
+  return {
+    definition_block: definition,
+    faq_section: faq,
+    schema,
+  };
+}
+
+function validateFixPayload(raw: unknown): CompetitorFixPayload | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const candidate = raw as Record<string, unknown>;
+  const definitionBlock = String(candidate.definition_block || '').trim();
+  const faqRaw = Array.isArray(candidate.faq_section) ? candidate.faq_section : [];
+  const faq = faqRaw
+    .map((row) => {
+      const item = row as Record<string, unknown>;
+      const question = String(item.question || '').trim();
+      const answer = String(item.answer || '').trim();
+      return question && answer ? { question, answer } : null;
+    })
+    .filter((row): row is { question: string; answer: string } => Boolean(row));
+  const schema = candidate.schema && typeof candidate.schema === 'object'
+    ? (candidate.schema as Record<string, unknown>)
+    : null;
+
+  if (!definitionBlock || !schema) return null;
+
+  return {
+    definition_block: definitionBlock,
+    faq_section: faq,
+    schema,
+  };
+}
+
+async function generateFixesWithAI(url: string, gaps: string[], competitorFormat: string): Promise<CompetitorFixPayload | null> {
+  const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || '';
+  if (!apiKey) return null;
+
+  const provider = PROVIDERS.find((p) => p.provider === 'openrouter') || PROVIDERS[0];
+  const prompt = [
+    'You are an AI visibility optimizer.',
+    `Target URL: ${url}`,
+    `Missing gaps: ${gaps.join(', ') || 'none'}`,
+    `Competitor winning format: ${competitorFormat || 'definition + faq + schema'}`,
+    'Generate JSON only with this exact shape:',
+    '{"definition_block":"...","faq_section":[{"question":"...","answer":"..."}],"schema":{...}}',
+    'Rules:',
+    '- definition_block must be 2-3 sentences and action-oriented.',
+    '- faq_section should contain 3-5 items.',
+    '- schema must be valid JSON-LD and align to faq_section.',
+    '- No markdown, no code fences, JSON only.',
+  ].join('\n');
+
+  try {
+    const raw = await callAIProvider({
+      provider: provider.provider,
+      model: provider.model,
+      endpoint: provider.endpoint,
+      apiKey,
+      prompt,
+      opts: {
+        responseFormat: 'json_object',
+        max_tokens: 1400,
+        temperature: 0.2,
+        timeoutMs: 30_000,
+      },
+    });
+    const parsed = JSON.parse(raw);
+    return validateFixPayload(parsed);
+  } catch {
+    return null;
+  }
+}
+
+function buildCompetitorInsights(yourAnalysis: AnalysisResponse, competitors: CompetitorDatum[]): CompetitorInsights {
+  const yourWordCount = Number(yourAnalysis?.content_analysis?.word_count || 0);
+  const yourFaqCount = Number(yourAnalysis?.content_analysis?.faq_count || 0);
+  const yourH2Count = Number(yourAnalysis?.content_analysis?.headings?.h2 || 0);
+  const yourSchemaTypes = new Set(
+    (yourAnalysis?.schema_markup?.schema_types || []).map((s: string) => String(s || '').toLowerCase()),
+  );
+
+  const sorted = competitors
+    .filter((c) => Boolean(c.analysis))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  const topCompetitors = sorted.map((c) => {
+    const ca = c.analysis as AnalysisResponse;
+    const cFaq = Number(ca?.content_analysis?.faq_count || 0);
+    const cWordCount = Number(ca?.content_analysis?.word_count || 0);
+    const cSchema = toStringArray(ca?.schema_markup?.schema_types || []);
+    const strengths: string[] = [];
+
+    if (cWordCount >= Math.max(600, yourWordCount + 120)) {
+      strengths.push('Has definition in first 100 words');
+    }
+    if (cFaq >= Math.max(2, yourFaqCount)) {
+      strengths.push('Uses FAQ schema and extractable Q&A blocks');
+    }
+    if (cSchema.some((s) => ['organization', 'service', 'article', 'faqpage'].includes(String(s).toLowerCase()))) {
+      strengths.push('Clear entity and schema signals');
+    }
+    if (strengths.length === 0) {
+      strengths.push('Uses clearer answer formatting for AI extraction');
+    }
+
+    const citedFor = toStringArray((ca as any)?.topical_keywords || []).slice(0, 2);
+
+    return {
+      domain: normalizeDomain(c.url),
+      cited_for: citedFor.length > 0 ? citedFor : ['high-intent informational queries'],
+      strengths,
+      format: cFaq >= 2 ? 'definition + FAQ' : 'structured answer blocks',
+      schema: cSchema.length > 0 ? cSchema : ['Article'],
+    };
+  });
+
+  const missing: string[] = [];
+  const weak: string[] = [];
+  if (yourWordCount < 450) missing.push('definition_block');
+  if (yourFaqCount < 2) missing.push('faq_section');
+  if (!yourSchemaTypes.has('faqpage') && !yourSchemaTypes.has('article')) missing.push('structured_schema');
+  if (yourH2Count < 3) missing.push('structured_answers');
+  if (!yourSchemaTypes.has('organization') && !yourSchemaTypes.has('service')) weak.push('entity_clarity');
+  if (Number(yourAnalysis?.technical_signals?.response_time_ms || 0) > 2500) weak.push('extraction_speed');
+
+  const actionMap: Record<string, string> = {
+    definition_block: 'Add a definition block at the top in 2-3 sentences.',
+    faq_section: 'Add a FAQ section with 3-5 direct question-answer pairs.',
+    structured_schema: 'Implement FAQPage or Article JSON-LD aligned to visible content.',
+    structured_answers: 'Convert long paragraphs into step-by-step answer blocks.',
+    entity_clarity: 'Strengthen entity definition with Organization/Service schema and explicit who/what statement.',
+    extraction_speed: 'Improve page speed and rendering reliability for AI crawlers.',
+  };
+
+  const recommendedActions = [...missing, ...weak]
+    .map((key) => actionMap[key])
+    .filter(Boolean)
+    .slice(0, 6);
+
+  const comparison = [
+    {
+      label: 'Definition Block',
+      you: !missing.includes('definition_block'),
+      competitor: topCompetitors.length > 0,
+    },
+    {
+      label: 'FAQ Section',
+      you: !missing.includes('faq_section'),
+      competitor: topCompetitors.some((c) => c.format.toLowerCase().includes('faq')),
+    },
+    {
+      label: 'Schema Coverage',
+      you: !missing.includes('structured_schema'),
+      competitor: topCompetitors.some((c) => c.schema.length > 0),
+    },
+  ];
+
+  const competitorFormat = topCompetitors[0]?.format || 'definition + FAQ';
+  const yourFormat = yourFaqCount >= 2 || yourH2Count >= 3 ? 'mixed answers' : 'long paragraphs';
+
+  return {
+    top_competitors: topCompetitors,
+    gaps: {
+      missing,
+      weak,
+    },
+    recommended_actions: recommendedActions,
+    comparison,
+    ai_behavior: {
+      summary: 'AI is citing competitors because their content is easier to extract into direct answers.',
+      competitor_format: competitorFormat,
+      your_format: yourFormat,
+      fix: yourFormat === 'long paragraphs' ? 'Convert one core section into steps and add matching FAQ answers.' : 'Increase explicit Q&A density and schema alignment.',
+    },
+  };
+}
 
 /**
  * Fire-and-forget: submit competitor URL to urlscan.io, wait for screenshot,
@@ -740,6 +1004,17 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       return numB - numA;
     });
 
+    const userTier = (((req as any).user?.tier || 'observer') as CanonicalTier | LegacyTier);
+    const canGenerateFixes = meetsMinimumTier(userTier, 'signal');
+    const insights = buildCompetitorInsights(yourAnalysis, competitorData);
+    const tierAdjustedInsights: CompetitorInsights = canGenerateFixes
+      ? insights
+      : {
+        ...insights,
+        top_competitors: insights.top_competitors.slice(0, 1),
+        recommended_actions: insights.recommended_actions.slice(0, 2),
+      };
+
     const comparison: CompetitorComparison = {
       your_url: normalized.url,
       your_score: yourAnalysis.visibility_score,
@@ -748,12 +1023,70 @@ export async function getCompetitorComparison(req: Request, res: Response) {
       category_comparison: categoryComparison,
       opportunities: opportunities.slice(0, 10),
       your_advantages: yourAdv.slice(0, 8),
+      competitor_insights: tierAdjustedInsights,
+      feature_gate: {
+        can_generate_fixes: canGenerateFixes,
+        required_tier_for_fixes: 'signal',
+        preview_limited: !canGenerateFixes,
+      },
     };
 
     return res.json({ success: true, comparison });
   } catch (err: any) {
     console.error('[Competitors] Comparison error:', err);
     return res.status(500).json({ error: 'Failed to generate comparison' });
+  }
+}
+
+// POST /api/competitors/generate-fix - Generate actionable page fixes from competitor deltas
+export async function generateCompetitorFixes(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user?.id;
+    const userTier = (((req as any).user?.tier || 'observer') as CanonicalTier | LegacyTier);
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    if (!meetsMinimumTier(userTier, 'signal')) {
+      return res.status(403).json({
+        error: 'Competitor fix generation requires Signal tier or higher.',
+        code: 'TIER_INSUFFICIENT',
+        requiredTier: 'signal',
+      });
+    }
+
+    const rawUrl = String(req.body?.url || '').trim();
+    const rawGaps = req.body?.gaps;
+    const competitorFormat = String(req.body?.competitor_format || '').trim();
+    if (!rawUrl) return res.status(400).json({ error: 'url is required' });
+
+    const normalized = normalizePublicHttpUrl(rawUrl);
+    if (!normalized.ok) {
+      return res.status(400).json({ error: normalized.error, code: 'INVALID_URL' });
+    }
+
+    const pool = getPool();
+    const ownership = await pool.query(
+      `SELECT id FROM audits WHERE user_id = $1 AND (
+         url = $2
+         OR lower(regexp_replace(url, '/+$', '')) = lower(regexp_replace($2, '/+$', ''))
+       ) ORDER BY created_at DESC LIMIT 1`,
+      [userId, normalized.url],
+    );
+    if (!ownership.rows.length) {
+      return res.status(404).json({ error: 'No audit found for this URL. Run an audit first.', code: 'NO_AUDIT_FOUND' });
+    }
+
+    const gaps = toStringArray(rawGaps).slice(0, 12);
+    const aiFixes = await generateFixesWithAI(normalized.url, gaps, competitorFormat);
+    const fixes = aiFixes || buildTemplateFixes(normalized.url, gaps, competitorFormat);
+
+    return res.json({
+      success: true,
+      source: aiFixes ? 'ai' : 'template',
+      fixes,
+    });
+  } catch (err: any) {
+    console.error('[Competitors] Generate fix error:', err);
+    return res.status(500).json({ error: 'Failed to generate fixes' });
   }
 }
 

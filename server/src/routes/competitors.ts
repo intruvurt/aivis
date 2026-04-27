@@ -10,6 +10,7 @@ import {
   createCompetitor,
   deleteCompetitor,
   getCompetitorComparison,
+  generateCompetitorFixes,
   scanCompetitor,
   updateCompetitorMonitoring,
   autoDiscoverCompetitors,
@@ -52,6 +53,9 @@ router.delete('/:id', deleteCompetitor);
 
 // Get comparison analysis
 router.get('/comparison', getCompetitorComparison);
+
+// Generate competitor-driven page fixes
+router.post('/generate-fix', generateCompetitorFixes);
 
 // Trigger scan for a specific competitor
 router.patch('/:id/scan', scanCompetitor);

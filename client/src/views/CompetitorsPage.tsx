@@ -1,122 +1,19 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../stores/authStore";
-import { useAnalysisStore } from "../stores/analysisStore";
-import CompetitorManager from "../components/CompetitorManager";
-import CompetitorComparison from "../components/CompetitorComparison";
-import UpgradeWall from "../components/UpgradeWall";
-import { meetsMinimumTier } from "@shared/types";
-import {
-  ArrowLeft,
-  TrendingUp,
-  CheckCircle2,
-  ArrowRight,
-  Layers3,
-  Sparkles,
-  Globe,
-  ChevronDown,
-} from "lucide-react";
-import { CompetitorRadarIcon, TrustGraphIcon, AuditEngineIcon, ScoreFixIcon } from "../components/icons";
-import { usePageMeta } from "../hooks/usePageMeta";
-import { API_URL } from "../config";
-import apiFetch from "../utils/api";
-import PlatformProofLoopCard from "../components/PlatformProofLoopCard";
-import PageQASection from "../components/PageQASection";
-import { buildFaqSchema, buildWebPageSchema } from "../lib/seoSchema";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { useAnalysisStore } from '../stores/analysisStore';
+import CompetitorManager from '../components/CompetitorManager';
+import CompetitorComparison from '../components/CompetitorComparison';
+import UpgradeWall from '../components/UpgradeWall';
+import { meetsMinimumTier } from '@shared/types';
+import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
+import { CompetitorRadarIcon } from '../components/icons';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { API_URL } from '../config';
+import apiFetch from '../utils/api';
+import { buildWebPageSchema } from '../lib/seoSchema';
 
-const COMPETITOR_TARGET_URL_KEY = "aivis-competitor-target-url";
-
-const COMPETITORS_FAQ = [
-  {
-    question: "How does competitor AI visibility comparison work?",
-    answer: "AiVIS.biz audits each competitor URL through the same multi-signal analysis pipeline used for your own site: entity clarity, structure, evidence depth, schema alignment, and answer-block quality. The comparison surfaces which structural factors give a competitor an advantage in AI-generated answers and identifies gaps where your content is weaker or missing entirely. This is not a simulated metric — it is an evidence-based comparison of machine-readable signals from both sites.",
-  },
-  {
-    question: "What signals give competitors an advantage in AI answers over my site?",
-    answer: "The most common competitive edges observed in AI citation analysis are: cleaner entity framing (the competitor's site resolves unambiguously to a specific service category), denser answer blocks (direct Q&A sections close to the top of key pages), stronger schema coverage (FAQPage, Service, Organization schema aligned to visible content), a richer internal link graph supporting the main entities, and more verifiable evidence such as case data, methodology notes, and concrete outcome examples.",
-  },
-  {
-    question: "Can I track multiple competitors at once?",
-    answer: "Yes. On Alignment and Signal tiers you can add multiple competitor URLs to your tracker. Each one is audited against the same criteria as your own site, and the comparison view shows side-by-side scores for all tracked competitors. Opportunity detection highlights specific categories where your score is below the median of tracked competitors, giving you a ranked priority list for improvement.",
-  },
-  {
-    question: "What does a visibility gap tell me?",
-    answer: "A visibility gap is the difference between your AI visibility score and a competitor's score on a specific dimension such as entity clarity, evidence depth, or schema alignment. A gap on entity clarity tells you that AI systems can resolve the competitor's core service offering more reliably than yours. A gap on evidence depth means the competitor's pages carry more verifiable facts and proof that answer engines can use as cited specifics. Each gap maps to concrete remediation steps.",
-  },
-  {
-    question: "How often does competitor data update?",
-    answer: "Competitor audits use the same live crawl pipeline as standard audits. Each time you run or schedule a competitor check, the system fetches fresh page content and recomputes all signals. Scores reflect the current live state of the competitor's pages and are not cached from prior runs beyond the standard 24-hour cache window.",
-  },
-  {
-    question: "Can a competitor block AiVIS.biz from auditing their site?",
-    answer: "If a competitor explicitly disallows AI crawlers or the AiVIS.biz scraper in their robots.txt, or deploys aggressive bot detection that blocks the headless browser, that audit will return limited signal data. This itself is a signal: pages that actively block AI crawlers cannot be cited by AI answer engines and will score low on the extraction and trust dimensions regardless.",
-  },
-];
-
-const VALUE_CARDS = [
-  {
-    icon: CompetitorRadarIcon,
-    label: "See who owns the answer space",
-    detail:
-      "Compare your visibility against competitors instead of judging your score in isolation.",
-  },
-  {
-    icon: AuditEngineIcon,
-    label: "Find where you disappear",
-    detail:
-      "Spot the gaps where competitor pages are being understood, cited, or surfaced while yours is skipped.",
-  },
-  {
-    icon: TrustGraphIcon,
-    label: "Pressure-test your authority",
-    detail:
-      "See whether stronger trust, structure, or evidence layers are giving rivals the edge.",
-  },
-  {
-    icon: ScoreFixIcon,
-    label: "Track movement after fixes",
-    detail:
-      "Revisit the same competitor set after changes to see whether your visibility position improves.",
-  },
-] as const;
-
-const USE_CASES = [
-  {
-    title: "Weekly position tracking",
-    detail:
-      "Audit your tracked set each week and compare score deltas instead of relying on hunches.",
-  },
-  {
-    title: "Gap-focused backlog",
-    detail:
-      "Use comparison gaps to prioritize your next visibility sprint instead of fixing random surface issues.",
-  },
-  {
-    title: "Competitor pressure watch",
-    detail:
-      "Track the same set over time to see whether your changes narrow or widen the spread.",
-  },
-] as const;
-
-const TIER_PATH = [
-  {
-    tier: "Alignment",
-    title: "Competitor intelligence unlocked",
-    detail: "Start adding most relevant competitors and comparing visibility side by side.",
-  },
-  {
-    tier: "Signal",
-    title: "Stronger strategic workflows",
-    detail:
-      "Use evidence-driven citable comparison insights with richer downstream tools and cross-feature pre-filled workflows.",
-  },
-  {
-    tier: "Score Fix via bRAG",
-    title: "Turn gaps into evidence, turn evidence into real fixes",
-    detail:
-      "Use the comparison data to guide what gets frequently monitored or 'update-fixed' implemented first and why it matters",
-  },
-] as const;
+const COMPETITOR_TARGET_URL_KEY = 'aivis-competitor-target-url';
 
 type AuditListResponse = {
   audits?: Array<{
@@ -126,16 +23,16 @@ type AuditListResponse = {
 
 function normalizeUrlInput(raw: string): string {
   const value = raw.trim();
-  if (!value) return "";
+  if (!value) return '';
   const candidate = /^https?:\/\//i.test(value) ? value : `https://${value}`;
   const parsed = new URL(candidate);
 
   if (
-    parsed.hostname === "localhost" ||
-    parsed.hostname === "127.0.0.1" ||
-    parsed.hostname === "0.0.0.0"
+    parsed.hostname === 'localhost' ||
+    parsed.hostname === '127.0.0.1' ||
+    parsed.hostname === '0.0.0.0'
   ) {
-    throw new Error("Invalid host");
+    throw new Error('Invalid host');
   }
 
   return parsed.href;
@@ -144,43 +41,41 @@ function normalizeUrlInput(raw: string): string {
 export default function CompetitorsPage() {
   const navigate = useNavigate();
   const { token, isAuthenticated, user } = useAuthStore();
-  const hasAccess = meetsMinimumTier(user?.tier || "observer", "alignment");
+  const hasAccess = meetsMinimumTier(user?.tier || 'observer', 'alignment');
   const latestResult = useAnalysisStore((s) => s.result);
 
   usePageMeta({
-    title: "Competitors",
+    title: 'Competitors',
     description:
-      "Track competitors and compare search answer-style visibility side by side to see who owns that answer space.",
-    path: "/competitors",
+      'Track competitors and compare search answer-style visibility side by side to see who owns that answer space.',
+    path: '/competitors',
     structuredData: [
       buildWebPageSchema({
-        path: "/competitors",
-        name: "Competitor AI Visibility Comparison | AiVIS.biz",
-        description: "Compare your AI visibility scores against competitors. Identify structural gaps, evidence deficits, and schema mismatches that explain why competitors appear in AI answers where you do not.",
+        path: '/competitors',
+        name: 'Competitor AI Visibility Comparison | AiVIS.biz',
+        description:
+          'Compare your AI visibility scores against competitors. Identify structural gaps, evidence deficits, and schema mismatches that explain why competitors appear in AI answers where you do not.',
       }),
-      buildFaqSchema(COMPETITORS_FAQ, { path: "/competitors" }),
     ],
   });
 
   const [refreshKey, setRefreshKey] = useState(0);
-  const [comparisonUrl, setComparisonUrl] = useState("");
-  const [comparisonUrlInput, setComparisonUrlInput] = useState("");
-  const [comparisonUrlError, setComparisonUrlError] = useState<string | null>(
-    null
-  );
+  const [comparisonUrl, setComparisonUrl] = useState('');
+  const [comparisonUrlInput, setComparisonUrlInput] = useState('');
+  const [comparisonUrlError, setComparisonUrlError] = useState<string | null>(null);
   const [recentAuditUrls, setRecentAuditUrls] = useState<string[]>([]);
   const [recentAuditLoading, setRecentAuditLoading] = useState(false);
 
   React.useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/auth?mode=signin");
+      navigate('/auth?mode=signin');
     }
   }, [isAuthenticated, navigate]);
 
   React.useEffect(() => {
     if (!isAuthenticated) return;
 
-    const stored = window.localStorage.getItem(COMPETITOR_TARGET_URL_KEY) || "";
+    const stored = window.localStorage.getItem(COMPETITOR_TARGET_URL_KEY) || '';
 
     if (stored) {
       setComparisonUrl(stored);
@@ -207,9 +102,7 @@ export default function CompetitorsPage() {
         const data = (await response.json().catch(() => ({}))) as AuditListResponse;
 
         const urls = Array.isArray(data?.audits)
-          ? data.audits
-              .map((audit) => String(audit?.url || "").trim())
-              .filter(Boolean)
+          ? data.audits.map((audit) => String(audit?.url || '').trim()).filter(Boolean)
           : [];
 
         const seen = new Set<string>();
@@ -260,13 +153,13 @@ export default function CompetitorsPage() {
       window.localStorage.setItem(COMPETITOR_TARGET_URL_KEY, normalized);
       setRefreshKey((k) => k + 1);
     } catch {
-      setComparisonUrl("");
-      setComparisonUrlError("Enter a valid URL, e.g. https://example.com");
+      setComparisonUrl('');
+      setComparisonUrlError('Enter a valid URL, e.g. https://example.com');
     }
   }
 
   function useLatestAuditUrl() {
-    const url = latestResult?.url || "";
+    const url = latestResult?.url || '';
     if (!url) return;
 
     setComparisonUrl(url);
@@ -295,299 +188,111 @@ export default function CompetitorsPage() {
     setRefreshKey((k) => k + 1);
   }
 
-  const userTier = user?.tier || "observer";
+  const userTier = user?.tier || 'observer';
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="flex items-center gap-2 text-xl font-semibold text-white">
-          <CompetitorRadarIcon className="h-5 w-5 text-slate-400" />
-          Competitor Intelligence
-        </h1>
-        <p className="mt-1 text-sm text-slate-400">
-          Track competitors and compare your AI visibility side by side.
+      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 via-charcoal to-charcoal p-6">
+        <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-3 py-1 text-[11px] uppercase tracking-wide text-white/70">
+          <Sparkles className="h-3.5 w-3.5" />
+          Competitor AI Advantage
         </p>
-      </div>
+        <h1 className="mt-3 flex items-center gap-2 text-2xl font-semibold text-white">
+          <CompetitorRadarIcon className="h-6 w-6 text-slate-300" />
+          Competitor AI Advantage
+        </h1>
+        <p className="mt-2 text-sm text-white/70">
+          These pages are being cited by AI. Here is why they win and exactly what to fix.
+        </p>
+      </section>
 
       <div className="space-y-6">
         {!hasAccess ? (
           <UpgradeWall
             feature="Competitor Intelligence"
-            description="Track competitors and compare AI visibility side by side to see who is winning the answer space."
+            description="See who is winning AI citations and get action-first remediation plans."
             requiredTier="alignment"
             icon={<CompetitorRadarIcon className="h-12 w-12 text-white/80" />}
             featurePreview={[
-              "Side-by-side AI visibility scores vs. named competitors",
-              "See which competitor content structures AI models prefer",
-              "Track how your gap closes (or opens) across re-audits",
+              'Why competitors are cited and you are not',
+              'Top missing structure and schema gaps',
+              'One-click fix generation (Signal)',
             ]}
           />
         ) : (
           <>
-            <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-              <div className="rounded-xl border border-white/10 bg-gradient-to-br from-white/10 via-charcoal to-charcoal p-6 shadow-2xl sm:p-8">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-charcoal-deep px-3 py-1 text-[11px] uppercase tracking-wide text-white/70">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Competitor Intelligence
-                </div>
-                <h2 className="mt-4 text-3xl brand-title text-white/90 sm:text-4xl">
-                  See who owns the AI answer space in your market
-                </h2>
-                <p className="mt-4 max-w-3xl text-sm leading-8 text-white/60 sm:text-base">
-                  Track your competitors, compare visibility side by side, and
-                  find the structural or authority gaps that explain why some
-                  brands get surfaced while others stay invisible.
-                </p>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {VALUE_CARDS.map((item) => {
-                    const IconComponent = item.icon;
-                    return (
-                      <div
-                        key={item.label}
-                        className="rounded-2xl border border-white/10 bg-charcoal-deep p-4"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="rounded-xl border border-white/10 bg-charcoal p-2.5">
-                            <IconComponent className="h-4 w-4 text-white/75" />
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-white/85">
-                              {item.label}
-                            </div>
-                            <div className="mt-1 text-xs leading-6 text-white/55">
-                              {item.detail}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+            <section className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
+              <div className="flex items-center gap-2">
+                <CompetitorRadarIcon className="h-4 w-4 text-white/75" />
+                <h2 className="text-lg font-semibold text-white">Comparison target</h2>
               </div>
 
-              <aside className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
-                <div className="flex items-center gap-2">
-                  <Layers3 className="h-4 w-4 text-white/75" />
-                  <h2 className="text-sm font-semibold text-white/85">
-                    How to use this page
-                  </h2>
+              <div className="mt-5 flex flex-col gap-3">
+                <label className="text-xs text-white/60">Your page URL</label>
+
+                <div className="flex flex-col gap-2 md:flex-row">
+                  <input
+                    type="text"
+                    value={comparisonUrlInput}
+                    onChange={(e) => setComparisonUrlInput(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' && comparisonUrlInput.trim() && applyComparisonUrl()
+                    }
+                    enterKeyHint="done"
+                    placeholder="https://your-site.com"
+                    className="flex-1 rounded-lg border border-white/10 bg-charcoal-deep px-3 py-2 text-sm text-white placeholder:text-white/50"
+                  />
+                  <button
+                    onClick={applyComparisonUrl}
+                    className="rounded-lg bg-charcoal-deep px-3 py-2 text-sm text-white/85 transition-colors hover:bg-charcoal-light"
+                    type="button"
+                  >
+                    Apply
+                  </button>
                 </div>
 
-                <div className="mt-5 space-y-3">
-                  {[
-                    "Add direct competitors or brands occupying the same answer space",
-                    "Compare their visibility posture against your audited URL",
-                    "Use the gap to decide what needs fixing first",
-                    "Re-check after changes to see whether the spread improves",
-                  ].map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-start gap-2 rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/70"
+                <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                  <button
+                    onClick={useLatestAuditUrl}
+                    disabled={!latestResult?.url}
+                    className="rounded-lg border border-white/10 bg-charcoal-deep px-3 py-2 text-sm text-white/75 disabled:opacity-40"
+                    type="button"
+                  >
+                    Use Latest Audit
+                  </button>
+
+                  <div className="relative flex-1">
+                    <select
+                      value=""
+                      onChange={(e) => useRecentAuditUrl(e.target.value)}
+                      disabled={recentAuditLoading || recentAuditUrls.length === 0}
+                      className="w-full appearance-none rounded-lg border border-white/10 bg-charcoal-deep px-3 py-2 pr-10 text-sm text-white/75 disabled:opacity-40"
                     >
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-white/75" />
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-5 rounded-2xl border border-white/10 bg-charcoal-deep p-4">
-                  <div className="text-xs uppercase tracking-wide text-white/45">
-                    Current access
-                  </div>
-                  <div className="mt-2 text-sm font-semibold capitalize text-white/85">
-                    {userTier}
-                  </div>
-                  <div className="mt-2 text-xs leading-6 text-white/55">
-                    Alignment unlocks competitor comparison. Stronger downstream
-                    planning happens when these gaps feed into audit and
-                    remediation workflows.
-                  </div>
-                </div>
-              </aside>
-            </section>
-
-            <section className="grid gap-4 lg:grid-cols-3">
-              {USE_CASES.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 via-charcoal to-charcoal p-5"
-                >
-                  <p className="text-xs uppercase tracking-wide text-white/45">
-                    Use case
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-white">
-                    {item.title}
-                  </p>
-                  <p className="mt-2 text-xs leading-6 text-white/60">
-                    {item.detail}
-                  </p>
-                </div>
-              ))}
-            </section>
-
-            <section className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
-                <div className="flex items-center gap-2">
-                  <CompetitorRadarIcon className="h-4 w-4 text-white/75" />
-                  <h2 className="text-lg font-semibold text-white">
-                    Comparison target
-                  </h2>
-                </div>
-
-                <div className="mt-5 rounded-2xl border border-white/10 bg-charcoal-deep p-4">
-                  <div className="text-xs uppercase tracking-wide text-white/45">
-                    Current site
-                  </div>
-                  <div className="mt-2 truncate text-sm font-semibold text-white">
-                    {comparisonUrl || "Set your site URL"}
-                  </div>
-                  <div className="mt-2 flex items-center gap-1 text-xs text-white/60">
-                    <TrendingUp className="h-3.5 w-3.5" />
-                    Target +5 score points month-over-month
-                  </div>
-                </div>
-
-                <div className="mt-5 flex flex-col gap-3">
-                  <label className="text-xs text-white/60">
-                    Comparison target URL
-                  </label>
-
-                  <div className="flex flex-col gap-2 md:flex-row">
-                    <input
-                      type="text"
-                      value={comparisonUrlInput}
-                      onChange={(e) => setComparisonUrlInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && comparisonUrlInput.trim() && applyComparisonUrl()}
-                      enterKeyHint="done"
-                      placeholder="https://your-site.com"
-                      className="flex-1 rounded-lg border border-white/10 bg-charcoal px-3 py-2 text-sm text-white placeholder:text-white/50"
-                    />
-                    <button
-                      onClick={applyComparisonUrl}
-                      className="rounded-lg bg-charcoal px-3 py-2 text-sm text-white/85 transition-colors hover:bg-charcoal-light"
-                      type="button"
-                    >
-                      Apply
-                    </button>
-                  </div>
-
-                  <div className="flex flex-col gap-2 md:flex-row md:items-center">
-                    <button
-                      onClick={useLatestAuditUrl}
-                      disabled={!latestResult?.url}
-                      className="rounded-lg border border-white/10 bg-charcoal-light px-3 py-2 text-sm text-white/75 disabled:opacity-40"
-                      type="button"
-                    >
-                      Use Latest Audit
-                    </button>
-
-                    <div className="relative flex-1">
-                      <select
-                        value=""
-                        onChange={(e) => useRecentAuditUrl(e.target.value)}
-                        disabled={
-                          recentAuditLoading || recentAuditUrls.length === 0
-                        }
-                        className="w-full appearance-none rounded-lg border border-white/10 bg-charcoal-light px-3 py-2 pr-10 text-sm text-white/75 disabled:opacity-40"
-                      >
-                        <option value="">
-                          {recentAuditLoading
-                            ? "Loading recent audits..."
-                            : recentAuditUrls.length > 0
-                            ? "Pick from recent audits"
-                            : "No recent audits found"}
+                      <option value="">
+                        {recentAuditLoading
+                          ? 'Loading recent audits...'
+                          : recentAuditUrls.length > 0
+                            ? 'Pick from recent audits'
+                            : 'No recent audits found'}
+                      </option>
+                      {recentAuditUrls.map((url) => (
+                        <option key={url} value={url}>
+                          {url}
                         </option>
-                        {recentAuditUrls.map((url) => (
-                          <option key={url} value={url}>
-                            {url}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/45" />
-                    </div>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/45" />
                   </div>
+                </div>
 
-                  {comparisonUrlError && (
-                    <p className="text-xs text-white/80">
-                      {comparisonUrlError}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-white/10 bg-charcoal p-6 shadow-2xl sm:p-8">
-                <div className="flex items-center gap-2">
-                  <TrustGraphIcon className="h-4 w-4 text-white/75" />
-                  <h2 className="text-lg font-semibold text-white">
-                    Tier path
-                  </h2>
-                </div>
-                <div className="mt-5 grid gap-4">
-                  {TIER_PATH.map((item) => (
-                    <div
-                      key={item.tier}
-                      className="rounded-2xl border border-white/10 bg-charcoal-deep p-5"
-                    >
-                      <div className="text-xs uppercase tracking-wide text-white/45">
-                        {item.tier}
-                      </div>
-                      <div className="mt-2 text-sm font-semibold text-white">
-                        {item.title}
-                      </div>
-                      <div className="mt-2 text-xs leading-6 text-white/60">
-                        {item.detail}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {comparisonUrlError && (
+                  <p className="text-xs text-white/80">{comparisonUrlError}</p>
+                )}
               </div>
             </section>
 
             {comparisonUrl ? (
               <section className="space-y-6">
-                <div className="rounded-2xl border border-white/10 bg-charcoal p-5 shadow-2xl sm:p-6">
-                  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div>
-                      <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] uppercase tracking-wide text-emerald-200">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        Comparison ready
-                      </div>
-                      <h3 className="mt-3 text-xl font-semibold text-white">
-                        Your baseline is ready for competitor comparison
-                      </h3>
-                      <p className="mt-2 text-sm leading-7 text-white/65">
-                        Current baseline:{" "}
-                        <span className="font-medium text-white/85">
-                          {comparisonUrl}
-                        </span>
-                      </p>
-                    </div>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Link
-                        to="/app/reverse-engineer"
-                        className="rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/75 transition-colors hover:text-white"
-                      >
-                        Reverse Engineer
-                      </Link>
-                      <Link
-                        to="/app/score-fix"
-                        className="rounded-2xl border border-white/10 bg-charcoal-deep px-4 py-3 text-sm text-white/75 transition-colors hover:text-white"
-                      >
-                        Score Fix
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                <PlatformProofLoopCard
-                  url={comparisonUrl}
-                  title="Competitor validation loop"
-                  subtitle="Use the same target URL for each competitor run, then re-audit after fixes so movement is attributable and defensible."
-                  compact
-                />
-
                 <CompetitorManager
                   token={token}
                   comparisonUrl={comparisonUrl}
@@ -599,6 +304,7 @@ export default function CompetitorsPage() {
                   key={`${refreshKey}:${comparisonUrl}`}
                   yourUrl={comparisonUrl}
                   token={token}
+                  userTier={userTier}
                 />
               </section>
             ) : (
@@ -613,13 +319,12 @@ export default function CompetitorsPage() {
                       Set your site URL before comparing competitors
                     </h3>
                     <p className="mt-3 max-w-2xl text-sm leading-7 text-white/65">
-                      Competitor comparison works best when it starts from your
-                      real domain baseline. Use your latest audit, select a
-                      recent audit, or manually set the exact target URL above.
+                      Set your page URL, add competitors, and immediately see why they are getting
+                      cited and what to fix next.
                     </p>
                     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                       <button
-                        onClick={() => navigate("/app/analyze")}
+                        onClick={() => navigate('/app/analyze')}
                         className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-white/28 to-white/14 px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
                         type="button"
                       >
@@ -627,7 +332,7 @@ export default function CompetitorsPage() {
                         <ArrowRight className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => navigate("/app")}
+                        onClick={() => navigate('/app')}
                         className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-surface-raised px-6 py-3 text-sm text-white/75 transition-colors hover:text-white"
                         type="button"
                       >
@@ -638,19 +343,16 @@ export default function CompetitorsPage() {
 
                   <div className="rounded-2xl border border-white/10 bg-charcoal-deep p-5">
                     <div className="text-xs uppercase tracking-wide text-white/45">
-                      Why the baseline comes first
+                      Why this works
                     </div>
                     <div className="mt-4 space-y-3">
                       {[
-                        "Creates a real comparison target for your domain",
-                        "Makes competitor gaps more interpretable",
-                        "Connects comparison insights to actual fixes",
+                        'Shows where competitors are easier for AI to extract',
+                        'Turns missing structure into clear next actions',
+                        'Connects insight directly to fix generation',
                       ].map((item) => (
-                        <div
-                          key={item}
-                          className="flex items-start gap-2 text-sm text-white/70"
-                        >
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-white/75" />
+                        <div key={item} className="flex items-start gap-2 text-sm text-white/70">
+                          <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-white/75" />
                           <span>{item}</span>
                         </div>
                       ))}
@@ -662,12 +364,6 @@ export default function CompetitorsPage() {
           </>
         )}
       </div>
-
-      <PageQASection
-        items={COMPETITORS_FAQ}
-        heading="Understanding competitor AI visibility comparison"
-        className="mt-6"
-      />
     </div>
   );
 }

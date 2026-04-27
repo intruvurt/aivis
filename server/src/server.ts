@@ -1844,9 +1844,9 @@ app.get("/.well-known/webmcp.json", (_req, res) => {
     display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website.",
-    tools_endpoint: "/api/webmcp/tools",
-    invoke_endpoint: "/api/webmcp/tools/{tool_name}",
-    manifest_endpoint: "/api/webmcp/manifest",
+    tools_endpoint: "https://api.aivis.biz/api/webmcp/tools",
+    invoke_endpoint: "https://api.aivis.biz/api/webmcp/tools/{tool_name}",
+    manifest_endpoint: "https://api.aivis.biz/api/webmcp/manifest",
     auth: { type: "bearer", prefix: "avis_" },
   });
 });
@@ -1859,15 +1859,15 @@ app.get("/.well-known/mcp.json", (_req, res) => {
     display_name: "AiVIS.biz -> evidence-backed site analysis for AI answers",
     description:
       "Audit, measure, and improve how AI answer engines see your website. Tools for visibility scoring, citation testing, competitor comparison, and remediation planning.",
-    url: "https://aivis.biz/api/mcp",
+    url: "https://api.aivis.biz/api/mcp",
     transport: "http",
     auth: {
       type: "bearer",
       instructions:
         "Use an API key (avis_*) from your AiVIS.biz dashboard under Settings → API Keys.",
     },
-    tools_endpoint: "/api/mcp/tools",
-    invoke_endpoint: "/api/mcp/call",
+    tools_endpoint: "https://api.aivis.biz/api/mcp/tools",
+    invoke_endpoint: "https://api.aivis.biz/api/mcp/call",
     documentation: "https://aivis.biz/api-docs",
   });
 });

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "name": "aivis",
+  "display_name": "AiVIS.biz — evidence-backed AI visibility audits",
+  "description": "Audit, measure, and improve how AI answer engines see your website. Tools for visibility scoring, citation testing, competitor comparison, and remediation planning.",
+  "url": "https://api.aivis.biz/api/mcp",
+  "transport": "http",
+  "auth": {
+    "type": "bearer",
+    "instructions": "Use an API key (avis_*) from your AiVIS.biz dashboard under Settings → API Keys."
+  },
+  "tools_endpoint": "https://api.aivis.biz/api/mcp/tools",
+  "invoke_endpoint": "https://api.aivis.biz/api/mcp/call",
+  "documentation": "https://aivis.biz/api-docs"
+}

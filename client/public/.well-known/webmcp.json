@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1.0",
+  "name": "aivis",
+  "display_name": "AiVIS.biz — evidence-backed AI visibility audits",
+  "description": "Audit, measure, and improve how AI answer engines see your website.",
+  "tools_endpoint": "https://api.aivis.biz/api/webmcp/tools",
+  "invoke_endpoint": "https://api.aivis.biz/api/webmcp/tools/{tool_name}",
+  "manifest_endpoint": "https://api.aivis.biz/api/webmcp/manifest",
+  "auth": {
+    "type": "bearer",
+    "prefix": "avis_"
+  }
+}

@@ -30,6 +30,47 @@ import { ensureDefaultWorkspaceForUser } from '../services/tenantService.js';
 
 const router = Router();
 
+// ── Auth rate limiting (mirrors mcpServer.ts pattern) ────────────────────────
+
+const failedAuthAttempts = new Map<string, { count: number; firstAt: number; lastAt: number }>();
+const RATE_WINDOW_MS = 60_000;
+const MAX_FAILURES = 10;
+const BASE_BACKOFF_MS = 1_000;
+const MAX_BACKOFF_MS = 30_000;
+
+function recordAuthFailure(ip: string) {
+  const now = Date.now();
+  const entry = failedAuthAttempts.get(ip);
+  if (!entry) {
+    failedAuthAttempts.set(ip, { count: 1, firstAt: now, lastAt: now });
+    return;
+  }
+  if (now - entry.firstAt > RATE_WINDOW_MS) {
+    failedAuthAttempts.set(ip, { count: 1, firstAt: now, lastAt: now });
+    return;
+  }
+  entry.count++;
+  entry.lastAt = now;
+}
+
+function checkAuthRateLimit(ip: string): { blocked: boolean; retryAfterSeconds: number } {
+  const entry = failedAuthAttempts.get(ip);
+  if (!entry) return { blocked: false, retryAfterSeconds: 0 };
+  const now = Date.now();
+  if (now - entry.firstAt > RATE_WINDOW_MS) return { blocked: false, retryAfterSeconds: 0 };
+  if (entry.count < MAX_FAILURES) return { blocked: false, retryAfterSeconds: 0 };
+  const backoff = Math.min(BASE_BACKOFF_MS * 2 ** (entry.count - MAX_FAILURES), MAX_BACKOFF_MS);
+  return { blocked: true, retryAfterSeconds: Math.ceil(backoff / 1000) };
+}
+
+// Periodic cleanup to prevent memory leak from abandoned entries
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of failedAuthAttempts) {
+    if (now - entry.firstAt > RATE_WINDOW_MS * 2) failedAuthAttempts.delete(ip);
+  }
+}, RATE_WINDOW_MS).unref();
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface WebMcpTool {
@@ -51,15 +92,28 @@ type ToolExecutor = (
 // ── Auth (shared pattern with MCP) ───────────────────────────────────────────
 
 async function webMcpAuth(req: Request, res: Response, next: NextFunction) {
+  const clientIp = String(req.ip || (req.socket as any)?.remoteAddress || '');
+  const rateLimitCheck = checkAuthRateLimit(clientIp);
+  if (rateLimitCheck.blocked) {
+    return res.status(429).json({
+      error: 'Too many failed auth attempts. Please try again later.',
+      retryAfterSeconds: rateLimitCheck.retryAfterSeconds,
+    });
+  }
+
   const token = getRequestAuthToken(req);
   if (!token) {
+    recordAuthFailure(clientIp);
     return res.status(401).json({ error: 'Missing Authorization header. Use Bearer avis_* or avist_*' });
   }
   const pool = getPool();
 
   if (token.startsWith('avis_')) {
     const result = await validateApiKey(token);
-    if (!result.ok) return res.status(result.reason === 'tier_blocked' ? 403 : 401).json({ error: result.reason === 'tier_blocked' ? 'Your plan does not include API access. Upgrade to Alignment or higher.' : 'Invalid API key', code: result.reason });
+    if (!result.ok) {
+      recordAuthFailure(clientIp);
+      return res.status(result.reason === 'tier_blocked' ? 403 : 401).json({ error: result.reason === 'tier_blocked' ? 'Your plan does not include API access. Upgrade to Alignment or higher.' : 'Invalid API key', code: result.reason });
+    }
     (req as any).mcpUserId = result.userId;
     (req as any).mcpWorkspaceId = result.workspaceId;
     (req as any).mcpScopes = result.scopes;
@@ -76,6 +130,7 @@ async function webMcpAuth(req: Request, res: Response, next: NextFunction) {
       [tokenHash],
     );
     if (!rows.length || rows[0].revoked || new Date(rows[0].expires_at) < new Date()) {
+      recordAuthFailure(clientIp);
       return res.status(401).json({ error: 'Invalid or expired OAuth token' });
     }
 
@@ -104,6 +159,7 @@ async function webMcpAuth(req: Request, res: Response, next: NextFunction) {
     const decoded = verifyUserToken(token);
     const user = await getUserById(decoded.userId);
     if (!user) {
+      recordAuthFailure(clientIp);
       return res.status(401).json({ error: 'User not found for JWT' });
     }
 
@@ -132,6 +188,7 @@ async function webMcpAuth(req: Request, res: Response, next: NextFunction) {
 
     return next();
   } catch {
+    recordAuthFailure(clientIp);
     return res.status(401).json({ error: 'Token must start with avis_ (API key), avist_ (OAuth token), or be a valid session JWT' });
   }
 }

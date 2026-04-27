@@ -180,13 +180,13 @@ const TIER_COPY: Record<
   },
   scorefix: {
     headline: 'Continuous remediation and repair layer.',
-    body: 'Score Fix includes Signal plus automated, evidence-linked remediation cycles with recurring credits and GitHub PR workflows.',
+    body: 'Score Fix is a $299/mo subscription. It includes Signal plus always-on ledger monitoring, citation decay detection, and automated GitHub PR remediation tied to real evidence gaps.',
     includes: [
-      'missing query opportunities',
-      'citation gaps mapped to specific sources',
-      'authority weakness breakdown',
-      'content structure required to be recognized',
-      'entity clarity corrections',
+      '6-hour ledger watch-mode loop',
+      'Citation decay detection & entity graph repair',
+      'Auto-generated GitHub PRs (up to 5/week)',
+      '250 monthly repair credits — reset each cycle',
+      'Evidence delta tracking across repair cycles',
     ],
     cta: 'Get Score Fix',
   },
@@ -237,7 +237,7 @@ const PRICING_FAQ_ITEMS = [
   {
     question: 'How does Score Fix billing work?',
     answer:
-      'Score Fix is a remediation layer with credits and operates on existing audit snapshots. Billing model and limits are sourced from /api/payment/pricing and enforced server-side.',
+      'Score Fix is a $299/mo subscription that includes 250 monthly repair credits, always-on ledger monitoring, citation decay detection, and automated GitHub PR remediation. Credits reset each billing cycle. Annual billing is available at a discount.',
   },
   {
     question: 'How does annual billing work?',

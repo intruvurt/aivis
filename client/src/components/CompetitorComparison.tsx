@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import Spinner from './Spinner';
 import {
   Target,
@@ -14,8 +14,8 @@ import {
   ArrowRight,
   ExternalLink,
   RefreshCw,
-} from "lucide-react";
-import type { CompetitorComparison as ComparisonType } from "@shared/types";
+} from 'lucide-react';
+import type { CompetitorComparison as ComparisonType } from '@shared/types';
 
 import { API_URL } from '../config';
 import apiFetch from '../utils/api';
@@ -24,17 +24,17 @@ import { toSafeHref } from '../utils/safeHref';
 // ─── Grade Styling ──────────────────────────────────────────────────────────
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return "text-emerald-400";
-  if (score >= 60) return "text-sky-400";
-  if (score >= 40) return "text-amber-400";
-  return "text-red-400";
+  if (score >= 80) return 'text-emerald-400';
+  if (score >= 60) return 'text-sky-400';
+  if (score >= 40) return 'text-amber-400';
+  return 'text-red-400';
 }
 
 function getScoreBg(score: number): string {
-  if (score >= 80) return "bg-emerald-500/70";
-  if (score >= 60) return "bg-sky-500/60";
-  if (score >= 40) return "bg-amber-500/60";
-  return "bg-red-500/50";
+  if (score >= 80) return 'bg-emerald-500/70';
+  if (score >= 60) return 'bg-sky-500/60';
+  if (score >= 40) return 'bg-amber-500/60';
+  return 'bg-red-500/50';
 }
 
 // ─── Competitor Score Card ──────────────────────────────────────────────────
@@ -51,11 +51,11 @@ function CompetitorCard({ nickname, url, score, gap, isYou }: CompetitorCardProp
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className={`rounded-xl border transition-all ${
-      isYou
-        ? "border-white/12/30 bg-charcoal/5"
-        : "border-white/10 bg-charcoal-deep"
-    }`}>
+    <div
+      className={`rounded-xl border transition-all ${
+        isYou ? 'border-white/12/30 bg-charcoal/5' : 'border-white/10 bg-charcoal-deep'
+      }`}
+    >
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between p-4"
@@ -76,8 +76,14 @@ function CompetitorCard({ nickname, url, score, gap, isYou }: CompetitorCardProp
           <div className="text-right">
             <p className={`text-2xl font-bold ${getScoreColor(score)}`}>{score}</p>
             {!isYou && gap !== 0 && (
-              <div className={`flex items-center gap-1 text-xs ${gap > 0 ? "text-red-400" : "text-emerald-400"}`}>
-                {gap > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+              <div
+                className={`flex items-center gap-1 text-xs ${gap > 0 ? 'text-red-400' : 'text-emerald-400'}`}
+              >
+                {gap > 0 ? (
+                  <TrendingUp className="w-3 h-3" />
+                ) : (
+                  <TrendingDown className="w-3 h-3" />
+                )}
                 {Math.abs(gap)} pts
               </div>
             )}
@@ -129,9 +135,7 @@ function CategoryBar({ category, yourScore, competitorScores }: CategoryBarProps
           <p className="text-sm font-semibold text-white text-left truncate">{category}</p>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
-          <span className={`text-sm font-bold ${getScoreColor(yourScore)}`}>
-            {yourScore}
-          </span>
+          <span className={`text-sm font-bold ${getScoreColor(yourScore)}`}>{yourScore}</span>
           {expanded ? (
             <ChevronUp className="w-4 h-4 text-white/60" />
           ) : (
@@ -189,7 +193,12 @@ interface OpportunityCardProps {
   competitor_doing_it: string[];
 }
 
-function OpportunityCard({ title, description, impact, competitor_doing_it }: OpportunityCardProps) {
+function OpportunityCard({
+  title,
+  description,
+  impact,
+  competitor_doing_it,
+}: OpportunityCardProps) {
   return (
     <div className="rounded-xl border border-white/10 bg-charcoal p-4">
       <div className="flex items-start gap-3">
@@ -203,7 +212,7 @@ function OpportunityCard({ title, description, impact, competitor_doing_it }: Op
             <span className="text-[10px] text-white/80 font-medium">{impact}</span>
             {competitor_doing_it.length > 0 && (
               <span className="text-[10px] text-white/60">
-                • {competitor_doing_it.join(", ")} doing this
+                • {competitor_doing_it.join(', ')} doing this
               </span>
             )}
           </div>
@@ -248,15 +257,18 @@ interface CompetitorComparisonProps {
 
 export default function CompetitorComparison({ yourUrl, token }: CompetitorComparisonProps) {
   const [comparison, setComparison] = useState<ComparisonType | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchComparison();
+    if (!yourUrl || !token) return;
+    const controller = new AbortController();
+    fetchComparison(controller.signal);
+    return () => controller.abort();
   }, [yourUrl, token]);
 
-  async function fetchComparison() {
+  async function fetchComparison(signal?: AbortSignal) {
     if (!yourUrl || !token) {
       setLoading(false);
       return;
@@ -266,17 +278,21 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
       setLoading(true);
       setError(null);
 
-      const response = await apiFetch(`${API_URL}/api/competitors/comparison?url=${encodeURIComponent(yourUrl)}`);
+      const response = await apiFetch(
+        `${API_URL}/api/competitors/comparison?url=${encodeURIComponent(yourUrl)}`,
+        { signal }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to fetch comparison");
+        throw new Error((errorData as any).error || 'Failed to fetch comparison');
       }
 
       const data = await response.json();
       setComparison(data.comparison);
     } catch (err: any) {
-      console.error("Comparison error:", err);
+      if (err?.name === 'AbortError') return;
+      console.error('Comparison error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -303,13 +319,31 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
   }
 
   if (error) {
+    const isNoAudit = error.includes('No audit found') || error.includes('Run an audit');
     return (
       <div className="rounded-2xl border border-white/10 bg-charcoal p-6">
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-white/80 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-semibold text-white/80 mb-1">Failed to load comparison</p>
-            <p className="text-xs text-white/55">{error}</p>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-white/80 mb-1">
+              {isNoAudit ? 'No audit found for this URL' : 'Failed to load comparison'}
+            </p>
+            <p className="text-xs text-white/55">
+              {isNoAudit
+                ? 'Run an audit on your site first, then return here to compare competitors.'
+                : error}
+            </p>
+            {!isNoAudit && (
+              <button
+                type="button"
+                onClick={refreshComparison}
+                disabled={refreshing}
+                className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-charcoal px-3 py-1.5 text-xs text-white/80 disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} />
+                Retry
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -336,18 +370,17 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
       return {
         category: category.category,
         gap,
-        action:
-          /content/i.test(category.category)
-            ? "Expand answer blocks and depth on this topic cluster."
-            : /schema/i.test(category.category)
-              ? "Add or fix JSON-LD entities and validate structured data."
-              : /meta/i.test(category.category)
-                ? "Improve title/meta for specificity and AI answer relevance."
-                : /heading/i.test(category.category)
-                  ? "Tighten H1/H2 hierarchy and explicit section labeling."
-                  : /technical/i.test(category.category)
-                    ? "Resolve technical crawlability and canonical signal issues."
-                    : "Implement the top competitor pattern from this category.",
+        action: /content/i.test(category.category)
+          ? 'Expand answer blocks and depth on this topic cluster.'
+          : /schema/i.test(category.category)
+            ? 'Add or fix JSON-LD entities and validate structured data.'
+            : /meta/i.test(category.category)
+              ? 'Improve title/meta for specificity and AI answer relevance.'
+              : /heading/i.test(category.category)
+                ? 'Tighten H1/H2 hierarchy and explicit section labeling.'
+                : /technical/i.test(category.category)
+                  ? 'Resolve technical crawlability and canonical signal issues.'
+                  : 'Implement the top competitor pattern from this category.',
       };
     })
     .filter((item) => item.gap > 0)
@@ -356,28 +389,30 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
 
   const weeklyExecutionPlan = [
     {
-      step: "Day 1",
-      title: "Choose 1 category gap",
+      step: 'Day 1',
+      title: 'Choose 1 category gap',
       detail: gapClosurePlan[0]
         ? `Start with ${gapClosurePlan[0].category} (${gapClosurePlan[0].gap} point gap).`
-        : "Start with the largest scoring category gap.",
+        : 'Start with the largest scoring category gap.',
     },
     {
-      step: "Day 2-3",
-      title: "Ship focused improvements",
-      detail: gapClosurePlan[0]?.action || "Implement competitor pattern improvements for the chosen category.",
+      step: 'Day 2-3',
+      title: 'Ship focused improvements',
+      detail:
+        gapClosurePlan[0]?.action ||
+        'Implement competitor pattern improvements for the chosen category.',
     },
     {
-      step: "Day 4",
-      title: "Apply one quick win",
+      step: 'Day 4',
+      title: 'Apply one quick win',
       detail: comparison.opportunities?.[0]?.title
         ? `Apply: ${comparison.opportunities[0].title}.`
-        : "Apply one high-impact quick win from this comparison.",
+        : 'Apply one high-impact quick win from this comparison.',
     },
     {
-      step: "Day 5",
-      title: "Re-run comparison",
-      detail: "Refresh this view and confirm gap reduction before moving to the next category.",
+      step: 'Day 5',
+      title: 'Re-run comparison',
+      detail: 'Refresh this view and confirm gap reduction before moving to the next category.',
     },
   ];
 
@@ -396,7 +431,7 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
             className="ml-auto inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 bg-charcoal text-xs text-white/80 disabled:opacity-50"
             type="button"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
           </button>
         </div>
@@ -462,7 +497,10 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
           </div>
           <div className="space-y-3">
             {gapClosurePlan.map((item) => (
-              <div key={`gap-${item.category}`} className="rounded-xl border border-white/10 bg-charcoal p-4">
+              <div
+                key={`gap-${item.category}`}
+                className="rounded-xl border border-white/10 bg-charcoal p-4"
+              >
                 <div className="flex items-center justify-between gap-3 mb-1">
                   <p className="text-sm font-semibold text-white">{item.category}</p>
                   <span className="text-xs px-2 py-0.5 rounded-full bg-charcoal border border-white/10 text-white/80">
@@ -506,7 +544,10 @@ export default function CompetitorComparison({ yourUrl, token }: CompetitorCompa
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {weeklyExecutionPlan.map((item) => (
-            <div key={`${item.step}-${item.title}`} className="rounded-xl border border-white/10 bg-charcoal p-4">
+            <div
+              key={`${item.step}-${item.title}`}
+              className="rounded-xl border border-white/10 bg-charcoal p-4"
+            >
               <p className="text-[11px] uppercase tracking-wide text-white/55">{item.step}</p>
               <p className="text-sm font-semibold text-white mt-1">{item.title}</p>
               <p className="text-xs text-white/65 mt-1">{item.detail}</p>

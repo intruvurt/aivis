@@ -82,6 +82,7 @@ export default function useNotifications() {
   const latestSeenMsRef = useRef(0);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttemptRef = useRef(0);
+  const sseSuppressedRef = useRef(false);
   const eventSourceRef = useRef<EventSource | null>(null);
   const [streamConnected, setStreamConnected] = useState(false);
 
@@ -269,6 +270,11 @@ export default function useNotifications() {
       return;
     }
 
+    if (sseSuppressedRef.current) {
+      closeStream();
+      return;
+    }
+
     const token = useAuthStore.getState().token;
     if (!token) {
       closeStream();
@@ -276,6 +282,14 @@ export default function useNotifications() {
     }
 
     const base = (API_URL || "").replace(/\/+$/, "");
+    const isCrossOriginApi = (() => {
+      try {
+        const origin = new URL(base, window.location.origin).origin;
+        return origin !== window.location.origin;
+      } catch {
+        return false;
+      }
+    })();
     let disposed = false;
 
     const connect = () => {
@@ -312,6 +326,11 @@ export default function useNotifications() {
         }
         if (!disposed) {
           clearReconnectTimer();
+          if (isCrossOriginApi && reconnectAttemptRef.current >= 1) {
+            // QUIC/SSE transport failures can loop on some edge paths; fall back to polling.
+            sseSuppressedRef.current = true;
+            return;
+          }
           // Exponential backoff: 15s → 30s → 60s → 120s (cap)
           const attempt = reconnectAttemptRef.current;
           const delay = Math.min(15_000 * Math.pow(2, attempt), 120_000);

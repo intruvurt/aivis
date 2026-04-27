@@ -14,34 +14,120 @@ import type {
   CollisionDetectionResult,
 } from '../../../shared/types.js';
 
+let entitySchemaInitPromise: Promise<void> | null = null;
+
+function isMissingEntitySchemaError(err: unknown): boolean {
+  const code = String((err as any)?.code || '');
+  if (code === '42P01' || code === '42703') return true;
+  const message = String((err as any)?.message || '').toLowerCase();
+  return message.includes('entity_fingerprints')
+    || message.includes('entity_blocklists')
+    || message.includes('entity_audit_runs');
+}
+
+async function ensureEntitySchema(): Promise<void> {
+  if (entitySchemaInitPromise) {
+    await entitySchemaInitPromise;
+    return;
+  }
+
+  entitySchemaInitPromise = (async () => {
+    const pool = getPool();
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS entity_fingerprints (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        brand_name VARCHAR(200) NOT NULL,
+        canonical_domain VARCHAR(255) NOT NULL,
+        founder_name VARCHAR(200) NOT NULL DEFAULT '',
+        social_handles JSONB NOT NULL DEFAULT '{}',
+        wikidata_id VARCHAR(40) NOT NULL DEFAULT '',
+        google_kg_id VARCHAR(60) NOT NULL DEFAULT '',
+        schema_org_id TEXT NOT NULL DEFAULT '',
+        product_category VARCHAR(120) NOT NULL DEFAULT '',
+        description_keywords TEXT[] NOT NULL DEFAULT '{}',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(user_id)
+      )
+    `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_entity_fingerprints_user ON entity_fingerprints(user_id)`);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS entity_blocklists (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        pattern TEXT NOT NULL,
+        type VARCHAR(20) NOT NULL DEFAULT 'name',
+        reason TEXT NOT NULL DEFAULT '',
+        auto_detected BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_entity_blocklists_user ON entity_blocklists(user_id)`);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS entity_audit_runs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        triggered_by VARCHAR(60) NOT NULL DEFAULT 'manual',
+        queries_run INTEGER NOT NULL DEFAULT 0,
+        citations_found INTEGER NOT NULL DEFAULT 0,
+        false_positives_blocked INTEGER NOT NULL DEFAULT 0,
+        anchor_score INTEGER NOT NULL DEFAULT 0,
+        duration_ms INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_entity_audit_runs_user ON entity_audit_runs(user_id)`);
+  })();
+
+  try {
+    await entitySchemaInitPromise;
+  } catch (err) {
+    entitySchemaInitPromise = null;
+    throw err;
+  }
+}
+
 // ─── Fingerprint CRUD ────────────────────────────────────────────────────────
 
 export async function getFingerprint(userId: string): Promise<EntityFingerprint | null> {
-  const pool = getPool();
-  const { rows } = await pool.query(
-    `SELECT id, user_id, brand_name, canonical_domain, founder_name,
-            social_handles, wikidata_id, google_kg_id, schema_org_id,
-            product_category, description_keywords, created_at, updated_at
-     FROM entity_fingerprints WHERE user_id = $1`,
-    [userId],
-  );
-  if (!rows[0]) return null;
-  const row = rows[0];
-  return {
-    id: row.id,
-    user_id: row.user_id,
-    brand_name: row.brand_name,
-    canonical_domain: row.canonical_domain,
-    founder_name: row.founder_name || '',
-    social_handles: row.social_handles || {},
-    wikidata_id: row.wikidata_id || '',
-    google_kg_id: row.google_kg_id || '',
-    schema_org_id: row.schema_org_id || '',
-    product_category: row.product_category || '',
-    description_keywords: Array.isArray(row.description_keywords) ? row.description_keywords : [],
-    created_at: new Date(row.created_at).toISOString(),
-    updated_at: new Date(row.updated_at).toISOString(),
+  const run = async (): Promise<EntityFingerprint | null> => {
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `SELECT id, user_id, brand_name, canonical_domain, founder_name,
+              social_handles, wikidata_id, google_kg_id, schema_org_id,
+              product_category, description_keywords, created_at, updated_at
+       FROM entity_fingerprints WHERE user_id = $1`,
+      [userId],
+    );
+    if (!rows[0]) return null;
+    const row = rows[0];
+    return {
+      id: row.id,
+      user_id: row.user_id,
+      brand_name: row.brand_name,
+      canonical_domain: row.canonical_domain,
+      founder_name: row.founder_name || '',
+      social_handles: row.social_handles || {},
+      wikidata_id: row.wikidata_id || '',
+      google_kg_id: row.google_kg_id || '',
+      schema_org_id: row.schema_org_id || '',
+      product_category: row.product_category || '',
+      description_keywords: Array.isArray(row.description_keywords) ? row.description_keywords : [],
+      created_at: new Date(row.created_at).toISOString(),
+      updated_at: new Date(row.updated_at).toISOString(),
+    };
   };
+
+  try {
+    return await run();
+  } catch (err) {
+    if (!isMissingEntitySchemaError(err)) throw err;
+    await ensureEntitySchema();
+    return await run();
+  }
 }
 
 export interface UpsertFingerprintInput {
@@ -60,74 +146,94 @@ export async function upsertFingerprint(
   userId: string,
   data: UpsertFingerprintInput,
 ): Promise<EntityFingerprint> {
-  const pool = getPool();
-  const { rows } = await pool.query(
-    `INSERT INTO entity_fingerprints (
-       user_id, brand_name, canonical_domain, founder_name,
-       social_handles, wikidata_id, google_kg_id, schema_org_id,
-       product_category, description_keywords
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-     ON CONFLICT (user_id) DO UPDATE SET
-       brand_name = EXCLUDED.brand_name,
-       canonical_domain = EXCLUDED.canonical_domain,
-       founder_name = EXCLUDED.founder_name,
-       social_handles = EXCLUDED.social_handles,
-       wikidata_id = EXCLUDED.wikidata_id,
-       google_kg_id = EXCLUDED.google_kg_id,
-       schema_org_id = EXCLUDED.schema_org_id,
-       product_category = EXCLUDED.product_category,
-       description_keywords = EXCLUDED.description_keywords,
-       updated_at = NOW()
-     RETURNING *`,
-    [
-      userId,
-      data.brand_name,
-      data.canonical_domain,
-      data.founder_name || '',
-      JSON.stringify(data.social_handles || {}),
-      data.wikidata_id || '',
-      data.google_kg_id || '',
-      data.schema_org_id || '',
-      data.product_category || '',
-      data.description_keywords || [],
-    ],
-  );
-  const row = rows[0];
-  return {
-    id: row.id,
-    user_id: row.user_id,
-    brand_name: row.brand_name,
-    canonical_domain: row.canonical_domain,
-    founder_name: row.founder_name || '',
-    social_handles: row.social_handles || {},
-    wikidata_id: row.wikidata_id || '',
-    google_kg_id: row.google_kg_id || '',
-    schema_org_id: row.schema_org_id || '',
-    product_category: row.product_category || '',
-    description_keywords: Array.isArray(row.description_keywords) ? row.description_keywords : [],
-    created_at: new Date(row.created_at).toISOString(),
-    updated_at: new Date(row.updated_at).toISOString(),
+  const run = async (): Promise<EntityFingerprint> => {
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `INSERT INTO entity_fingerprints (
+         user_id, brand_name, canonical_domain, founder_name,
+         social_handles, wikidata_id, google_kg_id, schema_org_id,
+         product_category, description_keywords
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       ON CONFLICT (user_id) DO UPDATE SET
+         brand_name = EXCLUDED.brand_name,
+         canonical_domain = EXCLUDED.canonical_domain,
+         founder_name = EXCLUDED.founder_name,
+         social_handles = EXCLUDED.social_handles,
+         wikidata_id = EXCLUDED.wikidata_id,
+         google_kg_id = EXCLUDED.google_kg_id,
+         schema_org_id = EXCLUDED.schema_org_id,
+         product_category = EXCLUDED.product_category,
+         description_keywords = EXCLUDED.description_keywords,
+         updated_at = NOW()
+       RETURNING *`,
+      [
+        userId,
+        data.brand_name,
+        data.canonical_domain,
+        data.founder_name || '',
+        JSON.stringify(data.social_handles || {}),
+        data.wikidata_id || '',
+        data.google_kg_id || '',
+        data.schema_org_id || '',
+        data.product_category || '',
+        data.description_keywords || [],
+      ],
+    );
+    const row = rows[0];
+    return {
+      id: row.id,
+      user_id: row.user_id,
+      brand_name: row.brand_name,
+      canonical_domain: row.canonical_domain,
+      founder_name: row.founder_name || '',
+      social_handles: row.social_handles || {},
+      wikidata_id: row.wikidata_id || '',
+      google_kg_id: row.google_kg_id || '',
+      schema_org_id: row.schema_org_id || '',
+      product_category: row.product_category || '',
+      description_keywords: Array.isArray(row.description_keywords) ? row.description_keywords : [],
+      created_at: new Date(row.created_at).toISOString(),
+      updated_at: new Date(row.updated_at).toISOString(),
+    };
   };
+
+  try {
+    return await run();
+  } catch (err) {
+    if (!isMissingEntitySchemaError(err)) throw err;
+    await ensureEntitySchema();
+    return await run();
+  }
 }
 
 // ─── Blocklist CRUD ──────────────────────────────────────────────────────────
 
 export async function getBlocklist(userId: string): Promise<BlocklistEntry[]> {
-  const pool = getPool();
-  const { rows } = await pool.query(
-    `SELECT id, user_id, pattern, type, reason, auto_detected, created_at
-     FROM entity_blocklists WHERE user_id = $1 ORDER BY created_at DESC`,
-    [userId],
-  );
-  return rows.map((r: any) => ({
-    id: r.id,
-    user_id: r.user_id,
-    pattern: r.pattern,
-    type: r.type as BlocklistEntryType,
-    reason: r.reason || '',
-    auto_detected: Boolean(r.auto_detected),
-    created_at: new Date(r.created_at).toISOString(),
-  }));
+  const run = async (): Promise<BlocklistEntry[]> => {
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `SELECT id, user_id, pattern, type, reason, auto_detected, created_at
+       FROM entity_blocklists WHERE user_id = $1 ORDER BY created_at DESC`,
+      [userId],
+    );
+    return rows.map((r: any) => ({
+      id: r.id,
+      user_id: r.user_id,
+      pattern: r.pattern,
+      type: r.type as BlocklistEntryType,
+      reason: r.reason || '',
+      auto_detected: Boolean(r.auto_detected),
+      created_at: new Date(r.created_at).toISOString(),
+    }));
+  };
+
+  try {
+    return await run();
+  } catch (err) {
+    if (!isMissingEntitySchemaError(err)) throw err;
+    await ensureEntitySchema();
+    return await run();
+  }
 }
 
 export async function addBlocklistEntry(
@@ -137,32 +243,52 @@ export async function addBlocklistEntry(
   reason: string,
   autoDetected = false,
 ): Promise<BlocklistEntry> {
-  const pool = getPool();
-  const { rows } = await pool.query(
-    `INSERT INTO entity_blocklists (user_id, pattern, type, reason, auto_detected)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING *`,
-    [userId, pattern, type, reason, autoDetected],
-  );
-  const r = rows[0];
-  return {
-    id: r.id,
-    user_id: r.user_id,
-    pattern: r.pattern,
-    type: r.type as BlocklistEntryType,
-    reason: r.reason || '',
-    auto_detected: Boolean(r.auto_detected),
-    created_at: new Date(r.created_at).toISOString(),
+  const run = async (): Promise<BlocklistEntry> => {
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `INSERT INTO entity_blocklists (user_id, pattern, type, reason, auto_detected)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [userId, pattern, type, reason, autoDetected],
+    );
+    const r = rows[0];
+    return {
+      id: r.id,
+      user_id: r.user_id,
+      pattern: r.pattern,
+      type: r.type as BlocklistEntryType,
+      reason: r.reason || '',
+      auto_detected: Boolean(r.auto_detected),
+      created_at: new Date(r.created_at).toISOString(),
+    };
   };
+
+  try {
+    return await run();
+  } catch (err) {
+    if (!isMissingEntitySchemaError(err)) throw err;
+    await ensureEntitySchema();
+    return await run();
+  }
 }
 
 export async function removeBlocklistEntry(userId: string, entryId: string): Promise<boolean> {
-  const pool = getPool();
-  const { rowCount } = await pool.query(
-    `DELETE FROM entity_blocklists WHERE id = $1 AND user_id = $2`,
-    [entryId, userId],
-  );
-  return (rowCount ?? 0) > 0;
+  const run = async (): Promise<boolean> => {
+    const pool = getPool();
+    const { rowCount } = await pool.query(
+      `DELETE FROM entity_blocklists WHERE id = $1 AND user_id = $2`,
+      [entryId, userId],
+    );
+    return (rowCount ?? 0) > 0;
+  };
+
+  try {
+    return await run();
+  } catch (err) {
+    if (!isMissingEntitySchemaError(err)) throw err;
+    await ensureEntitySchema();
+    return await run();
+  }
 }
 
 export async function addAutoBlocklistEntries(
@@ -170,20 +296,30 @@ export async function addAutoBlocklistEntries(
   entries: Array<{ pattern: string; type: BlocklistEntryType; reason: string }>,
 ): Promise<number> {
   if (!entries.length) return 0;
-  const pool = getPool();
-  let added = 0;
-  for (const entry of entries) {
-    try {
-      await pool.query(
-        `INSERT INTO entity_blocklists (user_id, pattern, type, reason, auto_detected)
-         VALUES ($1, $2, $3, $4, TRUE)
-         ON CONFLICT DO NOTHING`,
-        [userId, entry.pattern, entry.type, entry.reason],
-      );
-      added++;
-    } catch { /* skip duplicates */ }
+  const run = async (): Promise<number> => {
+    const pool = getPool();
+    let added = 0;
+    for (const entry of entries) {
+      try {
+        await pool.query(
+          `INSERT INTO entity_blocklists (user_id, pattern, type, reason, auto_detected)
+           VALUES ($1, $2, $3, $4, TRUE)
+           ON CONFLICT DO NOTHING`,
+          [userId, entry.pattern, entry.type, entry.reason],
+        );
+        added++;
+      } catch { /* skip duplicates */ }
+    }
+    return added;
+  };
+
+  try {
+    return await run();
+  } catch (err) {
+    if (!isMissingEntitySchemaError(err)) throw err;
+    await ensureEntitySchema();
+    return await run();
   }
-  return added;
 }
 
 // ─── Entity-Aware Filtering ──────────────────────────────────────────────────
@@ -702,24 +838,43 @@ export async function getAuditRunHistory(
   duration_ms: number;
   created_at: string;
 }>> {
-  const pool = getPool();
-  const { rows } = await pool.query(
-    `SELECT id, triggered_by, queries_run, citations_found,
-            false_positives_blocked, anchor_score, duration_ms, created_at
-     FROM entity_audit_runs
-     WHERE user_id = $1
-     ORDER BY created_at DESC
-     LIMIT $2`,
-    [userId, limit],
-  );
-  return rows.map((r: any) => ({
-    id: r.id,
-    triggered_by: r.triggered_by,
-    queries_run: r.queries_run,
-    citations_found: r.citations_found,
-    false_positives_blocked: r.false_positives_blocked,
-    anchor_score: r.anchor_score,
-    duration_ms: r.duration_ms,
-    created_at: new Date(r.created_at).toISOString(),
-  }));
+  const run = async (): Promise<Array<{
+    id: string;
+    triggered_by: string;
+    queries_run: number;
+    citations_found: number;
+    false_positives_blocked: number;
+    anchor_score: number;
+    duration_ms: number;
+    created_at: string;
+  }>> => {
+    const pool = getPool();
+    const { rows } = await pool.query(
+      `SELECT id, triggered_by, queries_run, citations_found,
+              false_positives_blocked, anchor_score, duration_ms, created_at
+       FROM entity_audit_runs
+       WHERE user_id = $1
+       ORDER BY created_at DESC
+       LIMIT $2`,
+      [userId, limit],
+    );
+    return rows.map((r: any) => ({
+      id: r.id,
+      triggered_by: r.triggered_by,
+      queries_run: r.queries_run,
+      citations_found: r.citations_found,
+      false_positives_blocked: r.false_positives_blocked,
+      anchor_score: r.anchor_score,
+      duration_ms: r.duration_ms,
+      created_at: new Date(r.created_at).toISOString(),
+    }));
+  };
+
+  try {
+    return await run();
+  } catch (err) {
+    if (!isMissingEntitySchemaError(err)) throw err;
+    await ensureEntitySchema();
+    return await run();
+  }
 }

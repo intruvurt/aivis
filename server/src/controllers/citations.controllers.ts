@@ -81,9 +81,20 @@ function getServerApiKey(): string | null {
 
 const CITATION_QUERY_LIMITS: Record<string, number> = {
   observer: 10,
-  alignment: 100,
+  starter: 10,
+  alignment: 50,
   signal: 200,
   scorefix: 400,
+};
+
+/** Max citation tests per calendar month by tier (0 = no access) */
+const CITATION_TEST_MONTHLY_LIMITS: Record<string, number> = {
+  observer: 0,
+  starter: 5,
+  alignment: 50,
+  signal: 250,
+  agency: 1000,
+  scorefix: 250,
 };
 
 const ALL_CITATION_PLATFORMS = ['chatgpt', 'perplexity', 'claude', 'google_ai'] as const;
@@ -1518,7 +1529,31 @@ export async function startCitationTest(req: Request, res: Response) {
     }
 
     const user = (req as any).user;
-    const maxQueries = CITATION_QUERY_LIMITS[user.tier] || CITATION_QUERY_LIMITS.observer;
+    const tier: string = user.tier || 'observer';
+    const maxQueries = CITATION_QUERY_LIMITS[tier] || CITATION_QUERY_LIMITS.observer;
+    const monthlyTestLimit = CITATION_TEST_MONTHLY_LIMITS[tier] ?? 0;
+
+    // Enforce monthly test cap for limited tiers
+    if (monthlyTestLimit > 0) {
+      const pool = getPool();
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+      const { rows: usageRows } = await pool.query<{ count: string }>(
+        `SELECT COUNT(*) AS count FROM citation_tests WHERE user_id = $1 AND created_at >= $2`,
+        [userId, startOfMonth.toISOString()]
+      );
+      const usedThisMonth = parseInt(usageRows[0]?.count ?? '0', 10);
+      if (usedThisMonth >= monthlyTestLimit) {
+        return res.status(402).json({
+          error: `Your ${tier} plan allows ${monthlyTestLimit} citation tests per month. Upgrade for more.`,
+          code: 'MONTHLY_TEST_LIMIT_EXCEEDED',
+          used: usedThisMonth,
+          limit: monthlyTestLimit,
+        });
+      }
+    }
+
     const normalizedQueries = normalizeQueries(queries, maxQueries);
 
     if (!normalizedQueries.length) {
@@ -1530,7 +1565,7 @@ export async function startCitationTest(req: Request, res: Response) {
 
     if (normalizedQueries.length > maxQueries) {
       return res.status(403).json({
-        error: `Your ${user.tier} plan allows ${maxQueries} queries per test. Upgrade for more.`,
+        error: `Your ${tier} plan allows ${maxQueries} queries per test. Upgrade for more.`,
         code: 'QUERY_LIMIT_EXCEEDED',
       });
     }

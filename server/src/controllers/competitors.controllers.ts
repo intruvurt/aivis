@@ -302,6 +302,8 @@ export async function listCompetitors(req: Request, res: Response) {
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
     const pool = getPool();
+    // Only fetch the columns CompetitorManager actually uses — no result JSON, no lateral join.
+    // The comparison endpoint has its own optimised query that fetches result JSON when needed.
     const { rows } = await pool.query(
       `SELECT
         ct.id, ct.user_id, ct.competitor_url, ct.nickname,
@@ -310,17 +312,8 @@ export async function listCompetitors(req: Request, res: Response) {
         ct.last_checked_at, ct.last_change_detected_at,
         ct.last_change_evidence, ct.last_score_change_reason,
         ct.screenshot_url, ct.auto_discovered,
-        ct.created_at, ct.updated_at,
-        COALESCE(a.result, fb.result) as latest_result,
-        COALESCE(ct.latest_audit_id, fb.id) as resolved_audit_id
+        ct.created_at, ct.updated_at
        FROM competitor_tracking ct
-       LEFT JOIN audits a ON ct.latest_audit_id = a.id
-       LEFT JOIN LATERAL (
-         SELECT id, result FROM audits
-         WHERE lower(regexp_replace(regexp_replace(url, '^https?://(www\\.)?', ''), '/+$', ''))
-             = lower(regexp_replace(regexp_replace(ct.competitor_url, '^https?://(www\\.)?', ''), '/+$', ''))
-         ORDER BY created_at DESC LIMIT 1
-       ) fb ON ct.latest_audit_id IS NULL OR a.result IS NULL
        WHERE ct.user_id = $1
        ORDER BY ct.created_at DESC`,
       [userId]

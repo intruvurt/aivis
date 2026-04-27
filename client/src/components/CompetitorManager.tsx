@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Plus,
   Trash2,
@@ -11,11 +11,11 @@ import {
   CheckCircle2,
   ToggleLeft,
   ToggleRight,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { API_URL } from '../config';
-import { appInputSurfaceClass, appSelectSurfaceClass } from "../lib/formStyles";
+import { appInputSurfaceClass, appSelectSurfaceClass } from '../lib/formStyles';
 import apiFetch from '../utils/api';
 import { toSafeHref } from '../utils/safeHref';
 import Spinner from './Spinner';
@@ -65,30 +65,41 @@ function toFriendlyCompetitorError(message: string): string {
   return message;
 }
 
-export default function CompetitorManager({ token, comparisonUrl, onCompetitorsChange, onScanComplete }: CompetitorManagerProps) {
+export default function CompetitorManager({
+  token,
+  comparisonUrl,
+  onCompetitorsChange,
+  onScanComplete,
+}: CompetitorManagerProps) {
   const navigate = useNavigate();
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addingNew, setAddingNew] = useState(false);
-  const [newUrl, setNewUrl] = useState("");
-  const [newNickname, setNewNickname] = useState("");
+  const [newUrl, setNewUrl] = useState('');
+  const [newNickname, setNewNickname] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
   const [suggestionsError, setSuggestionsError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<CompetitorSuggestion[]>([]);
   const [niches, setNiches] = useState<SuggestionNiche[]>([]);
-  const [selectedNiche, setSelectedNiche] = useState("");
+  const [selectedNiche, setSelectedNiche] = useState('');
   // Tracks which competitor rows are actively being scanned
   const [scanningIds, setScanningIds] = useState<Set<string>>(new Set());
-  const [bulkScanState, setBulkScanState] = useState<{ active: boolean; total: number; completed: number }>({
+  const [bulkScanState, setBulkScanState] = useState<{
+    active: boolean;
+    total: number;
+    completed: number;
+  }>({
     active: false,
     total: 0,
     completed: 0,
   });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortMode, setSortMode] = useState<"recent" | "score-desc" | "score-asc">("recent");
-  const [lastScanSummary, setLastScanSummary] = useState<{ url: string; score?: number } | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortMode, setSortMode] = useState<'recent' | 'score-desc' | 'score-asc'>('recent');
+  const [lastScanSummary, setLastScanSummary] = useState<{ url: string; score?: number } | null>(
+    null
+  );
   const [bulkSummary, setBulkSummary] = useState<string | null>(null);
   const [discoverySource, setDiscoverySource] = useState<string>('none');
 
@@ -101,7 +112,7 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
   useEffect(() => {
     if (!token || !addingNew) return;
     void fetchSuggestions(selectedNiche);
-  }, [token, addingNew, selectedNiche]);
+  }, [token, addingNew, selectedNiche, comparisonUrl]);
 
   async function fetchCompetitors() {
     if (!token) return;
@@ -110,19 +121,21 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
       setLoading(true);
       setError(null);
 
-      const response = await apiFetch(`${API_URL}/api/competitors`, {
-        headers: {},
-      });
-      if (response.status === 401) { setError('Session expired — please sign in again.'); return; }
+      const response = await apiFetch(`${API_URL}/api/competitors`);
+      if (response.status === 401) {
+        setError('Session expired — please sign in again.');
+        return;
+      }
 
       if (!response.ok) {
-        throw new Error("Failed to fetch competitors");
+        const body = await response.json().catch(() => ({}));
+        throw new Error((body as any)?.error || `Failed to fetch competitors (${response.status})`);
       }
 
       const data = await response.json();
       setCompetitors(data.competitors || []);
     } catch (err: any) {
-      console.error("Fetch competitors error:", err);
+      console.error('Fetch competitors error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -168,71 +181,77 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
       setError(null);
 
       const response = await apiFetch(`${API_URL}/api/competitors`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           url: url.trim(),
           nickname: nickname.trim(),
         }),
       });
-      if (response.status === 401) { setError('Session expired — please sign in again.'); return; }
+      if (response.status === 401) {
+        setError('Session expired — please sign in again.');
+        return;
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to add competitor");
+        throw new Error(errorData.error || 'Failed to add competitor');
       }
 
-        return true;
-      } catch (err: any) {
-        console.error("Add competitor error:", err);
-        setError(err.message);
-        return false;
-      } finally {
-        setSubmitting(false);
-      }
+      return true;
+    } catch (err: any) {
+      console.error('Add competitor error:', err);
+      setError(err.message);
+      return false;
+    } finally {
+      setSubmitting(false);
     }
+  }
 
-    async function addCompetitor() {
-      if (!newUrl.trim() || !newNickname.trim() || !token) return;
+  async function addCompetitor() {
+    if (!newUrl.trim() || !newNickname.trim() || !token) return;
 
-      const added = await createCompetitor(newUrl, newNickname);
-      if (added) {
-      setNewUrl("");
-      setNewNickname("");
+    const added = await createCompetitor(newUrl, newNickname);
+    if (added) {
+      setNewUrl('');
+      setNewNickname('');
       setAddingNew(false);
       await fetchCompetitors();
       onCompetitorsChange?.();
     }
   }
 
-    async function addSuggestedCompetitor(suggestion: CompetitorSuggestion) {
-      const added = await createCompetitor(suggestion.url, suggestion.nickname);
-      if (added) {
-        await fetchCompetitors();
-        onCompetitorsChange?.();
-      }
+  async function addSuggestedCompetitor(suggestion: CompetitorSuggestion) {
+    const added = await createCompetitor(suggestion.url, suggestion.nickname);
+    if (added) {
+      await fetchCompetitors();
+      onCompetitorsChange?.();
     }
+  }
 
   async function removeCompetitor(id: string) {
-    if (!token || !confirm("Remove this competitor?")) return;
+    if (!token || !confirm('Remove this competitor?')) return;
 
     try {
       const response = await apiFetch(`${API_URL}/api/competitors/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {},
       });
-      if (response.status === 401) { setError('Session expired — please sign in again.'); return; }
+      if (response.status === 401) {
+        setError('Session expired — please sign in again.');
+        return;
+      }
 
       if (!response.ok) {
-        throw new Error("Failed to remove competitor");
+        throw new Error('Failed to remove competitor');
       }
 
       await fetchCompetitors();
       onCompetitorsChange?.();
     } catch (err: any) {
-      console.error("Remove competitor error:", err);
+      console.error('Remove competitor error:', err);
       setError(err.message);
     }
   }
@@ -254,7 +273,11 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
     }
   }
 
-  async function scanCompetitor(id: string, url: string, options?: { skipListRefresh?: boolean; silentSuccess?: boolean }) {
+  async function scanCompetitor(
+    id: string,
+    url: string,
+    options?: { skipListRefresh?: boolean; silentSuccess?: boolean }
+  ) {
     if (!token || scanningIds.has(id)) return;
 
     setScanningIds((prev) => new Set(prev).add(id));
@@ -265,8 +288,8 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
       // POST /api/analyze runs the full audit and auto-updates competitor_tracking
       // via an UPDATE query in the analyze handler.
       const response = await apiFetch(`${API_URL}/api/analyze`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
 
@@ -277,9 +300,8 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
 
       const payload = await response.json().catch(() => ({}));
       const resolvedUrl = String(payload?.url || url || '').trim();
-      const resolvedScore = typeof payload?.visibility_score === 'number'
-        ? payload.visibility_score
-        : undefined;
+      const resolvedScore =
+        typeof payload?.visibility_score === 'number' ? payload.visibility_score : undefined;
 
       if (resolvedUrl && !options?.silentSuccess) {
         setLastScanSummary({ url: resolvedUrl, score: resolvedScore });
@@ -294,7 +316,7 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
         onCompetitorsChange?.();
       }
     } catch (err: any) {
-      console.error("Audit competitor error:", err);
+      console.error('Audit competitor error:', err);
       setError(toFriendlyCompetitorError(err?.message || 'Audit failed. Please try again.'));
     } finally {
       setScanningIds((prev) => {
@@ -346,29 +368,31 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
     });
 
     return filtered.sort((a, b) => {
-      if (sortMode === "score-desc") return (b.latest_score ?? -1) - (a.latest_score ?? -1);
-      if (sortMode === "score-asc") return (a.latest_score ?? 999) - (b.latest_score ?? 999);
+      if (sortMode === 'score-desc') return (b.latest_score ?? -1) - (a.latest_score ?? -1);
+      if (sortMode === 'score-asc') return (a.latest_score ?? 999) - (b.latest_score ?? 999);
       return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
     });
   }, [competitors, searchTerm, sortMode]);
 
   const averageScore = useMemo(() => {
-    const scored = competitors.filter((comp) => typeof comp.latest_score === "number");
+    const scored = competitors.filter((comp) => typeof comp.latest_score === 'number');
     if (!scored.length) return null;
-    return Math.round(scored.reduce((acc, comp) => acc + (comp.latest_score || 0), 0) / scored.length);
+    return Math.round(
+      scored.reduce((acc, comp) => acc + (comp.latest_score || 0), 0) / scored.length
+    );
   }, [competitors]);
 
   function scoreColor(score: number): string {
-    if (score >= 80) return "text-emerald-400";
-    if (score >= 60) return "text-sky-400";
-    if (score >= 40) return "text-amber-400";
-    return "text-red-400";
+    if (score >= 80) return 'text-emerald-400';
+    if (score >= 60) return 'text-sky-400';
+    if (score >= 40) return 'text-amber-400';
+    return 'text-red-400';
   }
 
   function relativeTime(dateStr: string): string {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 1) return "just now";
+    if (mins < 1) return 'just now';
     if (mins < 60) return `${mins}m ago`;
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h ago`;
@@ -401,7 +425,7 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
           <div>
             <h3 className="text-lg font-semibold text-white">Competitor Tracking</h3>
             <p className="text-xs text-white/55">
-              {competitors.length} competitor{competitors.length !== 1 ? "s" : ""} tracked
+              {competitors.length} competitor{competitors.length !== 1 ? 's' : ''} tracked
             </p>
           </div>
         </div>
@@ -420,9 +444,20 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
         <div className="rounded-xl border border-white/10 bg-charcoal p-4">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-white/80 flex-shrink-0 mt-0.5" />
-            <div>
+            <div className="flex-1">
               <p className="text-sm font-semibold text-white/80 mb-1">Error</p>
               <p className="text-xs text-white/55">{error}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setError(null);
+                  fetchCompetitors();
+                }}
+                className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-charcoal-light px-3 py-1.5 text-xs text-white/75 hover:text-white transition-colors"
+              >
+                <RefreshCw className="w-3 h-3" />
+                Retry
+              </button>
             </div>
           </div>
         </div>
@@ -437,7 +472,9 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                 <p className="text-sm font-semibold text-emerald-100">Competitor audit complete</p>
                 <p className="truncate text-xs text-emerald-100/80">
                   {lastScanSummary.url}
-                  {typeof lastScanSummary.score === 'number' ? ` • Score ${lastScanSummary.score}` : ''}
+                  {typeof lastScanSummary.score === 'number'
+                    ? ` • Score ${lastScanSummary.score}`
+                    : ''}
                 </p>
               </div>
             </div>
@@ -478,7 +515,13 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                 type="text"
                 value={newUrl}
                 onChange={(e) => setNewUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && newUrl.trim() && newNickname.trim() && !submitting && addCompetitor()}
+                onKeyDown={(e) =>
+                  e.key === 'Enter' &&
+                  newUrl.trim() &&
+                  newNickname.trim() &&
+                  !submitting &&
+                  addCompetitor()
+                }
                 enterKeyHint="done"
                 placeholder="https://competitor.com"
                 disabled={submitting}
@@ -491,7 +534,13 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                 type="text"
                 value={newNickname}
                 onChange={(e) => setNewNickname(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && newUrl.trim() && newNickname.trim() && !submitting && addCompetitor()}
+                onKeyDown={(e) =>
+                  e.key === 'Enter' &&
+                  newUrl.trim() &&
+                  newNickname.trim() &&
+                  !submitting &&
+                  addCompetitor()
+                }
                 enterKeyHint="done"
                 placeholder="Main Competitor"
                 disabled={submitting}
@@ -502,7 +551,9 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
             <div className="rounded-lg border border-white/10 bg-charcoal p-3">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <p className="text-xs font-semibold text-white/80">
-                  {discoverySource === 'audit_history' ? 'Discovered from your audits' : 'Need ideas? Pick an industry'}
+                  {discoverySource === 'audit_history'
+                    ? 'Discovered from your audits'
+                    : 'Need ideas? Pick an industry'}
                 </p>
                 {discoverySource !== 'audit_history' && (
                   <select
@@ -526,7 +577,11 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
               ) : suggestionsError ? (
                 <p className="text-xs text-white/70">{suggestionsError}</p>
               ) : suggestions.length === 0 ? (
-                <p className="text-xs text-white/55">{discoverySource === 'none' && !selectedNiche ? 'Select an industry above for example competitors, or type a URL manually.' : 'No suggestions found. Enter a competitor URL manually.'}</p>
+                <p className="text-xs text-white/55">
+                  {discoverySource === 'none' && !selectedNiche
+                    ? 'Select an industry above for example competitors, or type a URL manually.'
+                    : 'No suggestions found. Enter a competitor URL manually.'}
+                </p>
               ) : (
                 <div className="space-y-2 max-h-44 overflow-auto pr-1">
                   {suggestions.map((suggestion) => (
@@ -535,7 +590,9 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                       className="flex items-center justify-between gap-2 rounded-md border border-white/10 bg-charcoal-light px-2 py-1.5"
                     >
                       <div className="min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{suggestion.nickname}</p>
+                        <p className="text-xs font-medium text-white truncate">
+                          {suggestion.nickname}
+                        </p>
                         <p className="text-[11px] text-white/60 truncate">{suggestion.url}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -584,9 +641,9 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
               <button
                 onClick={() => {
                   setAddingNew(false);
-                  setNewUrl("");
-                  setNewNickname("");
-                  setSelectedNiche("");
+                  setNewUrl('');
+                  setNewNickname('');
+                  setSelectedNiche('');
                 }}
                 disabled={submitting}
                 className="px-4 py-2 bg-charcoal-light rounded-lg text-white text-sm font-medium hover:bg-charcoal disabled:opacity-40 transition-colors"
@@ -605,8 +662,10 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
         </div>
         <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3">
           <p className="text-[11px] uppercase tracking-wide text-white/55">Avg Score</p>
-          <p className={`text-xl font-bold mt-1 ${averageScore !== null ? scoreColor(averageScore) : "text-white/40"}`}>
-            {averageScore !== null ? averageScore : "N/A"}
+          <p
+            className={`text-xl font-bold mt-1 ${averageScore !== null ? scoreColor(averageScore) : 'text-white/40'}`}
+          >
+            {averageScore !== null ? averageScore : 'N/A'}
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-charcoal-deep p-3 col-span-2">
@@ -622,7 +681,7 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
             </div>
             <select
               value={sortMode}
-              onChange={(e) => setSortMode(e.target.value as "recent" | "score-desc" | "score-asc")}
+              onChange={(e) => setSortMode(e.target.value as 'recent' | 'score-desc' | 'score-asc')}
               className={`px-3 py-2 rounded-lg text-sm ${appSelectSurfaceClass}`}
             >
               <option value="recent">Sort: Recently Updated</option>
@@ -648,7 +707,9 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
         <div className="rounded-xl border border-white/10 bg-charcoal-deep p-8 text-center">
           <Users className="w-12 h-12 text-white/70 mx-auto mb-3" />
           <p className="text-sm text-white/55">No competitors tracked yet.</p>
-          <p className="text-xs text-white/60 mt-1">Add your first competitor to start comparing!</p>
+          <p className="text-xs text-white/60 mt-1">
+            Add your first competitor to start comparing!
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -667,7 +728,10 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                       </span>
                     )}
                     {isStale(competitor.updated_at) && (
-                      <span className="text-[10px] text-amber-400/80 bg-amber-400/10 px-1.5 py-0.5 rounded" title="Score may be outdated">
+                      <span
+                        className="text-[10px] text-amber-400/80 bg-amber-400/10 px-1.5 py-0.5 rounded"
+                        title="Score may be outdated"
+                      >
                         Stale
                       </span>
                     )}
@@ -682,7 +746,8 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                     <ExternalLink className="w-3 h-3" />
                   </a>
                   <p className="text-[10px] text-white/40 mt-1">
-                    Audited {relativeTime(competitor.updated_at)} • Added {new Date(competitor.created_at).toLocaleDateString()}
+                    Audited {relativeTime(competitor.updated_at)} • Added{' '}
+                    {new Date(competitor.created_at).toLocaleDateString()}
                   </p>
                 </div>
 
@@ -693,10 +758,10 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                     className="p-2 rounded-lg bg-charcoal-light hover:bg-charcoal text-white/55 hover:text-white/85 transition-all group disabled:opacity-50 disabled:cursor-not-allowed order-2"
                     title={
                       bulkScanState.active
-                        ? "Bulk refresh in progress"
+                        ? 'Bulk refresh in progress'
                         : scanningIds.has(competitor.id)
-                          ? "Scanning…"
-                          : "Audit competitor"
+                          ? 'Scanning…'
+                          : 'Audit competitor'
                     }
                   >
                     {scanningIds.has(competitor.id) ? (
@@ -732,13 +797,25 @@ export default function CompetitorManager({ token, comparisonUrl, onCompetitorsC
                       </select>
                     )}
                     <button
-                      onClick={() => void setMonitoringEnabled(competitor.id, !competitor.monitoring_enabled, competitor.monitor_frequency || 'daily')}
+                      onClick={() =>
+                        void setMonitoringEnabled(
+                          competitor.id,
+                          !competitor.monitoring_enabled,
+                          competitor.monitor_frequency || 'daily'
+                        )
+                      }
                       className={`p-2 rounded-lg transition-all ${competitor.monitoring_enabled ? 'bg-charcoal-light text-emerald-400' : 'bg-charcoal-light text-white/30 hover:text-white/60'}`}
-                      title={competitor.monitoring_enabled ? `Auto-monitoring on (${competitor.monitor_frequency || 'daily'}) - click to disable` : 'Enable auto-monitoring'}
+                      title={
+                        competitor.monitoring_enabled
+                          ? `Auto-monitoring on (${competitor.monitor_frequency || 'daily'}) - click to disable`
+                          : 'Enable auto-monitoring'
+                      }
                     >
-                      {competitor.monitoring_enabled
-                        ? <ToggleRight className="w-4 h-4" />
-                        : <ToggleLeft className="w-4 h-4" />}
+                      {competitor.monitoring_enabled ? (
+                        <ToggleRight className="w-4 h-4" />
+                      ) : (
+                        <ToggleLeft className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </div>

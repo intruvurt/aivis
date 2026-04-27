@@ -278,7 +278,7 @@ export const PRICING = {
   starter: {
     name: 'Starter',
     billing: { monthly: 15, yearly: 140, yearlyDiscount: 0.22 },
-    limits: { scans: 15, competitors: 0, citations: 0 },
+    limits: { scans: 15, competitors: 0, citations: 5 },
   },
   alignment: {
     name: 'Alignment',

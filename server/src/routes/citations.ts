@@ -65,12 +65,25 @@ const requireAlignmentOrHigher = (req: Request, res: Response, next: NextFunctio
   next();
 };
 
+const requireStarterOrHigher = (req: Request, res: Response, next: NextFunction) => {
+  const user = (req as any).user;
+  const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
+  if (!meetsMinimumTier(userTier, 'starter')) {
+    return res.status(403).json({
+      error: 'Citation Testing requires a Starter plan or higher.',
+      code: 'TIER_INSUFFICIENT',
+      requiredTier: 'starter',
+    });
+  }
+  next();
+};
+
 const requireSignal = (req: Request, res: Response, next: NextFunction) => {
   const user = (req as any).user;
   const userTier = (user?.tier || 'observer') as CanonicalTier | LegacyTier;
   if (!meetsMinimumTier(userTier, 'signal')) {
     return res.status(403).json({
-      error: 'Citation Testing requires a Signal plan.',
+      error: 'Advanced Citation features require a Signal plan.',
       code: 'TIER_INSUFFICIENT',
       requiredTier: 'signal',
     });
@@ -85,19 +98,19 @@ router.get('/identity', requireAlignmentOrHigher, getCitationIdentity);
 // Prompt Intelligence query generation (Alignment+)
 router.post('/generate-queries', requireAlignmentOrHigher, generateTestQueries);
 
-// Start a new citation test
-router.post('/test', requireSignal, startCitationTest);
+// Start a new citation test (Starter: 5/mo · Alignment: 50/mo · Signal+: 250/mo)
+router.post('/test', requireStarterOrHigher, startCitationTest);
 
 // Get specific citation test results
-router.get('/test/:id', requireSignal, getCitationTest);
+router.get('/test/:id', requireStarterOrHigher, getCitationTest);
 
 // Export specific citation test results as CSV
-router.get('/test/:id/export.csv', requireSignal, exportCitationTestCsv);
+router.get('/test/:id/export.csv', requireStarterOrHigher, exportCitationTestCsv);
 
 // List all citation tests for user
-router.get('/tests', requireSignal, listCitationTests);
+router.get('/tests', requireStarterOrHigher, listCitationTests);
 
-// List validated prompt runs tied to citation tests and URLs
+// List validated prompt runs tied to citation tests and URLs (Signal+)
 router.get('/prompt-ledger', requireSignal, listCitationPromptLedger);
 
 // ─────────────────────────────────────────────────────────────────────────────

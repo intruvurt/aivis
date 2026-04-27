@@ -5696,6 +5696,224 @@ That is where AI visibility stops being theory and becomes infrastructure.`,
     tier: 'free',
     featured: true,
   },
+  {
+    slug: 'ten-ways-to-get-cited-by-ai-systems',
+    path: '/blogs/ten-ways-to-get-cited-by-ai-systems',
+    title: 'Ten Ways to Get Cited by AI Systems (Most Sites Miss All of Them)',
+    description:
+      'Most sites over-invest in content volume and ignore the signals machines actually reuse. Here are ten concrete ways to become an entity AI systems extract, trust, and cite.',
+    excerpt:
+      'Content volume is not the problem. Signal density is. Here is a ten-point blueprint for building pages, authority, and structure that AI systems can actually cite.',
+    publishedAt: '2026-04-27',
+    readMinutes: 11,
+    category: 'aeo',
+    tags: ['AEO', 'Citations', 'Strategy', 'Technical', 'EEAT', 'Extraction', 'Authority'],
+    keywords: [
+      'ai citation optimization',
+      'citation anchors',
+      'entity graph',
+      'extractable content',
+      'json-ld structured data',
+      'topical authority',
+      'answer engine optimization',
+      'machine-readable trust',
+      'content signal density',
+      'ai visibility strategy',
+    ],
+    author: {
+      name: 'R. Mason',
+      title: 'Founder, AiVIS.biz',
+      expertise: ['Answer Engine Optimization', 'Entity Authority', 'Citation Architecture'],
+      credentials: ['Founded AiVIS.biz', 'AI Visibility Research'],
+      experience: '8+ years in search systems, structured content, and AI visibility research',
+    },
+    content: `Most sites over-invest in content volume and ignore the signals machines actually reuse.
+
+Here is the complete blueprint.
+
+## 1. Authority is not claimed — it's proven and connected
+
+AI doesn't "believe" you. It cross-references you.
+
+The trust model for AI systems is not declaration — it is corroboration. Your site saying you are an expert carries less weight than three independent sources referencing you as one.
+
+**What to harden**
+
+- Author entities: real people with verifiable records, not ghost writers
+- Consistent identity across your site, LinkedIn, GitHub, and citations on other domains
+
+**Implementation**
+
+Add Person and Organization JSON-LD on every page. Link authors to published work, social profiles, and external contributions including repositories, talks, and press mentions.
+
+**Upgrade move**
+
+Build a public evidence layer. "As seen in" sections, "referenced by" listings, and "used by" citations with timestamps and links. That structure is machine-readable trust, not marketing copy.
+
+## 2. Structure for extraction, not reading
+
+Search engines ranked pages. AI extracts answers inside pages.
+
+If your content isn't shaped like a clean answer, it gets skipped. The model does not struggle with your page — it simply reaches for a cleaner one.
+
+**Page architecture that gets cited**
+
+- H1: direct answer to the query
+- 2–3 sentence summary (tight, factual, no filler)
+- H2: explanation
+- H2: example or use case
+- H2: edge cases and limitations
+- H2: related questions as a mini FAQ
+
+**Critical detail:** each section should stand alone. If an LLM lifts just one block, that block should still make complete sense in isolation. Sections that depend on surrounding context are extraction dead zones.
+
+## 3. Build citation anchors (this is where most sites fail)
+
+You need sections that are easy to quote.
+
+A citation anchor is a passage structured so precisely that a model can lift it verbatim and it reads as complete. Most content fails this test because it is written to flow for human readers, not to function as atomic units of information.
+
+**Anchor formats that work**
+
+- Definitions: "X is Y" constructions
+- Step-by-step processes with numbered steps
+- Named frameworks: give your method a title
+- Comparisons: clear A vs B structures
+- Short verdict summaries: one or two sentences that close a section with a claim
+
+Ask yourself: if a model had to copy three lines from this page, what would it take? That is your anchor. Build ten of them.
+
+## 4. Instrument your content (the quiet advantage)
+
+Most teams publish and guess. You should track.
+
+The sites that compound visibility are the ones that measure which pages are cited, which queries trigger that visibility, and which competitors replace them over time. That data becomes a moat because it tells you where to invest before the competition notices the gap.
+
+**What to build**
+
+- Query to response diff tracking: monitor when AI answers change
+- Citation frequency logs: record which of your pages appear in AI outputs
+- Snapshot history of AI answers: document what models say today so you can measure drift
+
+AiVIS runs this tracking infrastructure for you. The visibility timeline is evidence, not estimation.
+
+## 5. Technical layer (non-negotiable baseline)
+
+If this layer is weak, nothing above it matters.
+
+A beautiful content strategy running on a structurally broken site is invisible to machines. Technical readiness is not optional — it is the foundation.
+
+**Must-haves**
+
+- Clean semantic HTML: no div soup, no heading skips
+- Fast load with low JavaScript dependency for core content
+- Proper heading hierarchy from H1 down
+- JSON-LD schema: Article, FAQPage, HowTo, BreadcrumbList
+
+**Hidden edge:** render important content server-side. Bots still struggle with heavy client hydration. If your answer blocks only exist after JavaScript executes, they may not exist at all from the model's perspective.
+
+## 6. Topical authority over random coverage
+
+AI systems prefer consistent domains, not scattered ones.
+
+A site with 12 deeply interconnected articles on one narrow topic consistently outperforms a site with 200 loosely related posts. Depth signals mastery. Breadth without depth signals generalism.
+
+**Do this**
+
+- Cluster content into tight topic groups
+- Interlink aggressively within clusters
+- Build depth before adding new topic areas
+
+The wrong move: write 50 generic posts about AI and SEO. The right move: dominate one specific slice — like AI citation optimization — until you are the referenced source on that topic.
+
+## 7. Freshness with continuity
+
+Models track change over time.
+
+A page that is regularly updated signals that the information is maintained. A page that was published once and never touched signals that it may be stale.
+
+**Update strategy**
+
+- Refresh high-value pages on a regular cadence
+- Keep URLs stable — URL churn destroys citation history
+- Append updates at the bottom rather than rewriting from scratch
+
+The last point matters. Appending preserves the original publication signal while adding freshness. Rewriting from scratch looks like a new page to many systems, losing accumulated trust.
+
+## 8. External validation loops
+
+You need signals outside your site.
+
+On-site optimization has a ceiling. What lifts you above that ceiling is the web talking about you. External validation is the difference between a site that is machine-readable and one that is machine-trusted.
+
+**Fastest compounding paths**
+
+- Niche communities: get mentioned in Reddit threads, GitHub discussions, and forums that AI systems index heavily
+- Being quoted on other sites: a single reference from a high-authority domain compounds over time
+- Tool usage: people referencing your product by name in their own content is one of the strongest citation signals available
+
+Even small mentions compound. A ten-mention footprint beats a zero-mention footprint every time.
+
+## 9. Reduce fluff, increase signal density
+
+AI skips filler intros, generic advice, and padded explanations. It favors tight answers, clear claims, and verifiable information.
+
+Most pages could cut 40% of their content and become more citeable in the process. Padding is not neutral — it dilutes the signal-to-noise ratio that models use to evaluate extraction quality.
+
+**Test:** read your top-performing page and remove every sentence that does not contain a specific claim, a concrete number, or an actionable instruction. What remains is your signal. If it is less than half the original, the page needed this edit.
+
+## 10. Build something worth citing
+
+Content alone is the weakest possible strategy. Content that references a tool, a dataset, an original framework, or a real experiment is orders of magnitude more citeable.
+
+**Assets with compounding citation value**
+
+- Tools with a public URL that people link to and reference
+- Original datasets or benchmarks (even small ones, if documented well)
+- Named frameworks: give your methodology a title and define it precisely
+- Published experiments with results: "we tested X and found Y" is a citation magnet
+
+These become default references. Once a model has seen your framework cited enough times, it becomes part of how the model describes the category.
+
+---
+
+## The condensed blueprint
+
+1. **Prove identity** — build an entity graph that cross-references across the open web
+2. **Structure answers** — every section should be extraction-ready
+3. **Add anchors** — quotable blocks that work as standalone units
+4. **Track visibility** — build memory so you know what is working
+5. **Validate externally** — reinforce trust signals outside your own domain
+
+---
+
+The shift is simple but most teams resist it.
+
+Pages do not compete anymore. Answers do.
+
+If your page does not contain the cleanest, most reusable version of an answer, it does not exist in AI search — regardless of how it ranks on a traditional result page.
+
+The question to ask about every page you publish: if a model needed to reconstruct this topic in one paragraph, would it reach for this page or for something cleaner?
+
+If the answer is something cleaner, you know what to fix.`,
+    keyPoints: [
+      'AI systems cross-reference authority — they do not accept claimed expertise, they verify it through external citations and consistent identity.',
+      'Page structure must be designed for extraction: each section should stand alone so a model can lift it without surrounding context.',
+      'Citation anchors are specific passage formats — definitions, numbered frameworks, comparisons, verdict summaries — that models can quote verbatim.',
+      'Instrumenting visibility (query diffs, citation logs, AI answer snapshots) compounds advantage over teams that publish without measuring.',
+      'Topical depth on a narrow cluster consistently outperforms broad coverage — AI systems prefer consistent domain expertise over generalism.',
+      'External validation loops (community mentions, cross-site references, tool usage citations) are the ceiling-breaker for on-site optimization alone.',
+    ],
+    relatedPostSlugs: [
+      'when-ai-speaks-are-you-inside-the-answer',
+      'answer-engine-optimization-2026-why-citation-readiness-matters',
+      'building-author-authority-for-citations-e-e-a-t-in-ai-era',
+      'how-to-structure-content-for-ai-extraction-technical-guide',
+    ],
+    sourceMediumUrl: 'https://aivis.biz/blogs/ten-ways-to-get-cited-by-ai-systems',
+    tier: 'free',
+    featured: false,
+  },
 ];
 
 const DEFAULT_GENERATED_AUTHOR: AuthorEEAT = {

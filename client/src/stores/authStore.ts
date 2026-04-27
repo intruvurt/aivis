@@ -206,6 +206,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 }
 
                 const data = await response.json().catch(() => null);
+                if (!data?.success || !data?.user) {
+                    writePersistedToken(null);
+                    set({
+                        user: null,
+                        token: null,
+                        isAuthenticated: false,
+                        isHydrated: true,
+                    });
+                    return false;
+                }
+
                 const nextUser = normalizeAuthUser(data?.user ?? data?.data?.user ?? null);
                 const nextToken = normalizeAuthToken(data?.token ?? data?.data?.token ?? null) ?? currentToken;
 

@@ -1928,12 +1928,12 @@ app.post("/api/user/refresh", async (req: Request, res: Response) => {
   try {
     const token = getRequestAuthToken(req);
     if (!token)
-      return res.status(401).json({ success: false, error: "No token" });
+      return res.json({ success: false, authenticated: false, token: null, user: null });
 
     const decoded = verifyUserToken(token);
     const user = await getUserById(decoded.userId);
     if (!user)
-      return res.status(401).json({ success: false, error: "User not found" });
+      return res.json({ success: false, authenticated: false, token: null, user: null });
 
     const effectiveTier = await enforceEffectiveTier(user);
     const tier = uiTierFromCanonical(
@@ -1997,7 +1997,7 @@ app.post("/api/user/refresh", async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     console.error("[/api/user/refresh]", err.message);
-    return res.status(401).json({ success: false, error: "Invalid token" });
+    return res.json({ success: false, authenticated: false, token: null, user: null });
   }
 });
 

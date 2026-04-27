@@ -3,6 +3,7 @@ import { useEffect, useSyncExternalStore } from 'react';
 /** Lightweight shared visibility tracker - avoids duplicate listeners across hooks. */
 let visible = typeof document !== 'undefined' ? document.visibilityState === 'visible' : true;
 const listeners = new Set<() => void>();
+let notifyFrame: number | null = null;
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
@@ -16,7 +17,15 @@ function getSnapshot() {
 if (typeof document !== 'undefined') {
   document.addEventListener('visibilitychange', () => {
     visible = document.visibilityState === 'visible';
-    listeners.forEach((cb) => cb());
+
+    if (notifyFrame !== null) {
+      window.cancelAnimationFrame(notifyFrame);
+    }
+
+    notifyFrame = window.requestAnimationFrame(() => {
+      notifyFrame = null;
+      listeners.forEach((cb) => cb());
+    });
   });
 }
 

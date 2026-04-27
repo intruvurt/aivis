@@ -34,6 +34,10 @@ async function tryRefreshTokenOnce(): Promise<boolean> {
     if (!res.ok) return false;
 
     const payload = await res.json();
+    if (!payload?.success || !payload?.user) {
+      return false;
+    }
+
     if (payload?.success && payload?.user) {
       // Update user info (tier, role, entitlements) without changing the token
       const store = useAuthStore.getState();

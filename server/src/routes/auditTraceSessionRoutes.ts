@@ -45,7 +45,7 @@ router.get('/audit/session/latest', async (_req: Request, res: Response) => {
         const artifact = await getLatestCompletedHomepageSession();
         if (!artifact) {
             const queuedSessionId = await ensureHomepageAutorunSessionQueued();
-            return res.status(503).json({
+            return res.status(202).json({
                 ok: false,
                 capability: 'public_trace_artifact',
                 tier_gate: 'none',
@@ -169,7 +169,7 @@ router.get('/audit/session/latest/replay', async (req: Request, res: Response) =
         const latest = await getLatestCompletedHomepageSession();
         if (!latest) {
             const queuedSessionId = await ensureHomepageAutorunSessionQueued();
-            return res.status(503).json({
+            return res.status(202).json({
                 ok: false,
                 capability: 'public_trace_replay',
                 tier_gate: 'none',

@@ -1,5 +1,6 @@
 // client/src/views/PricingPage.tsx
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Check,
@@ -126,6 +127,47 @@ const TIER_AUDIENCE: Record<string, string> = {
   alignment: 'For teams monitoring temporal interpretation drift',
   signal: 'For teams operating AI visibility infrastructure',
   scorefix: 'For teams running continuous evidence-linked repairs',
+};
+
+const TIER_LAYER_LABELS: Record<string, string> = {
+  observer: 'Surface Layer',
+  starter: 'Structural Layer',
+  alignment: 'Temporal Layer',
+  signal: 'Infrastructure Layer',
+  scorefix: 'Remediation Layer',
+};
+
+const TIER_CORE_QUESTION: Record<string, string> = {
+  observer: 'Am I visible to AI at all?',
+  starter: 'Why is AI skipping me?',
+  alignment: 'Who is displacing me over time?',
+  signal: 'Can I automate and control this?',
+  scorefix: 'Fix the gaps now — automatically.',
+};
+
+// ── Animation variants ──────────────────────────────
+const STAGGER_CONTAINER = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+const FADE_UP = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const CARD_ITEM = {
+  hidden: { opacity: 0, y: 32, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
 };
 
 const TIER_COPY: Record<
@@ -1220,6 +1262,53 @@ export default function PricingPage() {
           </div>
         </div>
 
+        {/* ── Tier Narrative Strip ───────────────────────── */}
+        <motion.section
+          className="mt-10 mb-2"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={STAGGER_CONTAINER}
+        >
+          <motion.p
+            variants={FADE_UP}
+            className="text-center text-[10px] text-white/35 uppercase tracking-[0.18em] font-semibold mb-5"
+          >
+            Five layers — one evidence model
+          </motion.p>
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            {REFERENCE_TIER_ORDER.map((key) => {
+              const colors = TIER_COLORS[key];
+              const copy = TIER_COPY[key];
+              return (
+                <motion.div
+                  key={key}
+                  variants={FADE_UP}
+                  className="relative rounded-xl border border-white/8 bg-charcoal-light/25 p-4 hover:bg-charcoal-light/45 transition-colors overflow-hidden cursor-default"
+                >
+                  <div
+                    className={`absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b ${colors.gradient} opacity-80 rounded-l-xl`}
+                  />
+                  <span
+                    className={`inline-block text-[8px] font-black tracking-[0.14em] uppercase mb-2.5 px-2 py-0.5 rounded-full bg-gradient-to-r ${colors.gradient} text-white opacity-90`}
+                  >
+                    {TIER_LAYER_LABELS[key]}
+                  </span>
+                  <p className="text-[13px] font-bold text-white mb-1">
+                    {PRICING[key as keyof typeof PRICING]?.name ?? key}
+                  </p>
+                  <p className="text-[10px] font-mono text-[#22ff6e]/75 mb-2 leading-snug">
+                    {TIER_CORE_QUESTION[key]}
+                  </p>
+                  <p className="text-[11px] text-white/45 leading-relaxed line-clamp-3">
+                    {copy?.body}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.section>
+
         {/* ── Pricing Cards ──────────────────────────────── */}
         {isLoadingPricing ? (
           <PricingPageSkeleton />
@@ -1235,9 +1324,15 @@ export default function PricingPage() {
             </button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10 mb-8">
+          <motion.div
+            className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10 mb-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-40px' }}
+            variants={STAGGER_CONTAINER}
+          >
             {tiers.map((tier) => (
-              <div key={tier.key}>
+              <motion.div key={tier.key} variants={CARD_ITEM}>
                 <PricingCard
                   tier={tier}
                   billingPeriod={billingPeriod}
@@ -1249,9 +1344,9 @@ export default function PricingPage() {
                   canStartTrial={canStartTrial}
                   isStartingTrial={isStartingTrial}
                 />
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {error && tiers.length > 0 && (

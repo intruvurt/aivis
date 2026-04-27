@@ -12,7 +12,7 @@ import {
   BarChart3,
   FileText,
 } from 'lucide-react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { usePageMeta } from '../hooks/usePageMeta';
 import PublicPageFrame from '../components/PublicPageFrame';
@@ -201,6 +201,7 @@ const ABOUT_STRUCTURED_DATA = [
 ];
 
 export default function AboutPage() {
+  const prefersReducedMotion = useReducedMotion();
   usePageMeta({
     title: 'About AiVIS.biz | AI Visibility Audit & Fix Platform',
     description:
@@ -223,13 +224,15 @@ export default function AboutPage() {
       <section className="relative py-6 md:py-10 overflow-hidden">
         {/* Animated gradient orbs */}
         <motion.div
+          aria-hidden="true"
           className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-cyan-500/8 blur-3xl pointer-events-none"
-          animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+          animate={prefersReducedMotion ? {} : { x: [0, 30, 0], y: [0, -20, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
+          aria-hidden="true"
           className="absolute -bottom-16 -right-16 w-56 h-56 rounded-full bg-blue-500/8 blur-3xl pointer-events-none"
-          animate={{ x: [0, -20, 0], y: [0, 15, 0] }}
+          animate={prefersReducedMotion ? {} : { x: [0, -20, 0], y: [0, 15, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
         />
 

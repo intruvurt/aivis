@@ -301,15 +301,7 @@ export default function ScoreFixPage() {
       setLiveEvidenceState('loading');
 
       try {
-        const base = (API_URL || '').replace(/\/+$/, '');
-        const auditsRes = await fetch(`${base}/api/audits?limit=1`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: 'include',
-        });
+        const auditsRes = await apiFetch(`${API_URL}/api/audits?limit=1`);
 
         if (!auditsRes.ok) {
           setLiveEvidenceState('unavailable');
@@ -330,14 +322,9 @@ export default function ScoreFixPage() {
           return;
         }
 
-        const detailRes = await fetch(`${base}/api/audits/${encodeURIComponent(latestAuditId)}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: 'include',
-        });
+        const detailRes = await apiFetch(
+          `${API_URL}/api/audits/${encodeURIComponent(latestAuditId)}`
+        );
 
         if (!detailRes.ok) {
           setLiveEvidenceState('unavailable');

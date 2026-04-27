@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express';
 import { authRequired } from '../middleware/authRequired.js';
 import { workspaceRequired } from '../middleware/workspaceRequired.js';
 import { usageGate } from '../middleware/usageGate.js';
+import { incrementUsage } from '../middleware/incrementUsage.js';
 import { enqueueAnalyzeCompilerJob } from '../infra/queues/analyzeCompilerQueue.js';
 import {
     createAnalyzeCompilerJob,
@@ -17,6 +18,7 @@ router.post(
     authRequired,
     workspaceRequired,
     usageGate,
+    incrementUsage,
     async (req: Request, res: Response) => {
         try {
             const userId = String((req as any).user?.id || '').trim();

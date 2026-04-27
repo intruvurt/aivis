@@ -198,9 +198,12 @@ export function scoreEvidence(evidence: SSFREvidenceItem[]): ScoringResult {
     });
   }
 
-  // Calculate overall score
-  let overallScore = Math.round(
-    categories.reduce((sum, c) => sum + c.weighted_contribution, 0),
+  // Calculate overall score — clamped to [0, 100]
+  let overallScore = Math.min(
+    100,
+    Math.max(0, Math.round(
+      categories.reduce((sum, c) => sum + c.weighted_contribution, 0),
+    )),
   );
 
   // Apply soft blocker deductions — conflicts reduce, not destroy

@@ -116,6 +116,7 @@ export function CookieConsent() {
   return (
     <div
       role="dialog"
+      aria-modal="true"
       aria-labelledby="cookie-consent-heading"
       className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-2 no-print border-t border-[color:var(--border)] bg-[linear-gradient(180deg,rgba(8,12,10,0.96),rgba(13,18,16,0.98))] p-4 text-white shadow-[0_-24px_60px_rgba(0,0,0,0.38)] backdrop-blur-xl"
     >

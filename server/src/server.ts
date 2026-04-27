@@ -12562,6 +12562,15 @@ For each recommendation:
         // The AI-derived score (evidenceAnchoredScore) is kept for diagnostics only.
         if (bragValidation) {
           finalVisibilityScore = Math.round(bragValidation.derived_score);
+          // Re-apply rule engine hard blocker cap: BRAG's severity-deduction model can produce a
+          // higher score than the deterministic rule engine cap (e.g. AI crawlers blocked → cap 40).
+          // The rule engine is more conservative and must win when it asserts a hard cap.
+          if (ruleSnapshot.scoreCap !== null && finalVisibilityScore > ruleSnapshot.scoreCap) {
+            console.warn(
+              `[${requestId}] BRAG score (${finalVisibilityScore}) exceeds rule engine hard cap (${ruleSnapshot.scoreCap}) — clamping`,
+            );
+            finalVisibilityScore = ruleSnapshot.scoreCap;
+          }
           pipelineScoreSource = 'evidence';
         }
 

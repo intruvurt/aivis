@@ -2,6 +2,7 @@ import "dotenv/config";
 import pg from "pg";
 import type { Pool, PoolClient } from "pg";
 import { existsSync } from "fs";
+import { createHash } from "crypto";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { IS_PRODUCTION } from "../config/runtime.js";
@@ -224,6 +225,53 @@ async function checkDatabaseInitialized(client: PoolClient): Promise<boolean> {
     return false;
   }
 }
+
+// ── Schema patch version gate ────────────────────────────────────────────────
+// Hashes the full patch statement list. If the hash is already recorded in DB,
+// the entire 400+ statement loop is skipped, reducing cold-start time from ~30s
+// to a single round-trip.
+
+function computePatchHash(stmts: string[]): string {
+  return createHash("sha256")
+    .update(stmts.join("\n"))
+    .digest("hex")
+    .slice(0, 16);
+}
+
+async function ensurePatchVersionTable(client: PoolClient): Promise<void> {
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS schema_patch_versions (
+      version_hash  TEXT        PRIMARY KEY,
+      applied_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+}
+
+async function isPatchVersionApplied(
+  client: PoolClient,
+  hash: string,
+): Promise<boolean> {
+  try {
+    const res = await client.query(
+      `SELECT 1 FROM schema_patch_versions WHERE version_hash = $1 LIMIT 1`,
+      [hash],
+    );
+    return (res.rowCount ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
+async function recordPatchVersion(
+  client: PoolClient,
+  hash: string,
+): Promise<void> {
+  await client.query(
+    `INSERT INTO schema_patch_versions (version_hash) VALUES ($1) ON CONFLICT DO NOTHING`,
+    [hash],
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function assertLegacySnapshotRetired(): void {
   const blockedFiles = [
@@ -1850,24 +1898,35 @@ export async function runMigrations(): Promise<void> {
             END
             $$`,
           ];
-          let patchOk = 0;
-          let patchFail = 0;
-          for (const stmt of patchStatements) {
-            try {
-              await client.query(stmt);
-              patchOk++;
-            } catch (stmtErr: any) {
-              patchFail++;
-              // Log first 100 chars of the failing statement + error for debuggability
-              const stmtPreview = stmt.replace(/\s+/g, " ").substring(0, 100);
-              console.warn(
-                `[DB] Patch stmt failed (non-fatal): ${stmtPreview}... | ${stmtErr?.message?.substring(0, 80)}`,
-              );
+          // ── Patch version gate: skip 400+ serial round-trips if hash matches ──
+          await ensurePatchVersionTable(client);
+          const patchHash = computePatchHash(patchStatements);
+          const alreadyApplied = await isPatchVersionApplied(client, patchHash);
+          if (alreadyApplied) {
+            console.log(
+              `[DB] Schema patch skipped — version ${patchHash} already applied`,
+            );
+          } else {
+            let patchOk = 0;
+            let patchFail = 0;
+            for (const stmt of patchStatements) {
+              try {
+                await client.query(stmt);
+                patchOk++;
+              } catch (stmtErr: any) {
+                patchFail++;
+                // Log first 100 chars of the failing statement + error for debuggability
+                const stmtPreview = stmt.replace(/\s+/g, " ").substring(0, 100);
+                console.warn(
+                  `[DB] Patch stmt failed (non-fatal): ${stmtPreview}... | ${stmtErr?.message?.substring(0, 80)}`,
+                );
+              }
             }
+            await recordPatchVersion(client, patchHash);
+            console.log(
+              `[DB] Schema patch complete: ${patchOk} applied, ${patchFail} skipped (hash ${patchHash})`,
+            );
           }
-          console.log(
-            `[DB] Schema patch complete: ${patchOk} applied, ${patchFail} skipped`,
-          );
         }
         markDatabaseAvailable();
         console.log("[DB] Database already initialized, schema verified");

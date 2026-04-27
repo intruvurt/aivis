@@ -1,6 +1,21 @@
 import { ArrowRight, CheckCircle2, Clock3 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import type { GuideFlowStage } from './guideTypes';
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.07, duration: 0.35, ease: 'easeOut' },
+  }),
+};
+
+const ctaHover = {
+  rest: { scale: 1 },
+  hover: { scale: 1.04, transition: { duration: 0.18, ease: 'easeOut' } },
+};
 
 interface GuideScanFlowProps {
   stages: GuideFlowStage[];
@@ -21,8 +36,13 @@ export default function GuideScanFlow({ stages }: GuideScanFlowProps) {
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {stages.map((stage, index) => (
-          <article
+          <motion.article
             key={stage.id}
+            custom={index}
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-40px' }}
             className="rounded-xl border border-white/10 bg-charcoal-deep/90 p-4"
           >
             <div className="flex items-center justify-between gap-2">
@@ -37,24 +57,29 @@ export default function GuideScanFlow({ stages }: GuideScanFlowProps) {
             <h3 className="mt-3 text-sm font-semibold text-white/90">{stage.title}</h3>
             <p className="mt-2 text-xs leading-relaxed text-white/65">{stage.summary}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <a
+              <motion.a
                 href={`#${stage.anchorId}`}
+                variants={ctaHover}
+                initial="rest"
+                whileHover="hover"
                 className="inline-flex items-center gap-1 rounded-lg border border-white/15 px-2.5 py-1.5 text-[11px] font-medium text-white/80 transition-colors hover:border-white/30 hover:text-white"
               >
                 {stage.ctaLabel}
                 <ArrowRight className="h-3 w-3" />
-              </a>
+              </motion.a>
               {stage.ctaTo && (
-                <Link
-                  to={stage.ctaTo}
-                  className="inline-flex items-center gap-1 rounded-lg border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-1.5 text-[11px] font-medium text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
-                >
-                  Open tool
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
+                <motion.div variants={ctaHover} initial="rest" whileHover="hover">
+                  <Link
+                    to={stage.ctaTo}
+                    className="inline-flex items-center gap-1 rounded-lg border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-1.5 text-[11px] font-medium text-cyan-200 transition-colors hover:border-cyan-300/40 hover:text-cyan-100"
+                  >
+                    Open tool
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
+                </motion.div>
               )}
             </div>
-          </article>
+          </motion.article>
         ))}
       </div>
     </section>

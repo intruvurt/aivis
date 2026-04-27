@@ -11,6 +11,7 @@ import {
     computeRunInsightsForUser,
     getEntityClarityWithSERP,
 } from '../services/trackingService.js';
+import { getRunCompetitorsForUser, getNERForRun } from '../services/trackingService.js';
 import { enqueueTrackingRun } from '../infra/queues/trackingQueue.js';
 
 const router = Router();
@@ -138,6 +139,74 @@ router.get('/runs/:runId/entity-clarity', injectTenantContext, async (req: Reque
     );
     if (!clarityData) return res.status(404).json({ error: 'Data not yet available' });
     return res.json(clarityData);
+});
+
+/**
+ * GET /api/tracking/projects/:projectId/runs
+ * Returns a paginated list of runs for the given project, most recent first.
+ * Auth: caller must be a tenant member with access to this project.
+ */
+router.get('/projects/:projectId/runs', injectTenantContext, async (req: Request, res: Response) => {
+    const userId = (req as any).user?.id as string;
+    const projectId = String(req.params.projectId);
+    const limit = Math.min(Number(req.query.limit) || 20, 100);
+    const offset = Math.max(Number(req.query.offset) || 0, 0);
+    try {
+        // Verify caller has access to this project
+        const access = await getPool().query(
+            `SELECT p.id FROM tracking_projects p
+             JOIN tenant_users tu ON tu.tenant_id = p.tenant_id
+             WHERE p.id = $1 AND tu.user_id = $2 LIMIT 1`,
+            [projectId, userId],
+        );
+        if (!access.rowCount) return res.status(403).json({ error: 'Access denied' });
+
+        const runsRes = await getPool().query(
+            `SELECT id, status, total_queries, completed_queries, created_at, updated_at, error_message
+             FROM tracking_runs
+             WHERE project_id = $1
+             ORDER BY created_at DESC
+             LIMIT $2 OFFSET $3`,
+            [projectId, limit, offset],
+        );
+        return res.json({ runs: runsRes.rows, projectId, limit, offset });
+    } catch {
+        return res.status(500).json({ error: 'Failed to retrieve runs' });
+    }
+});
+
+/**
+ * GET /api/tracking/runs/:runId/competitors
+ * Returns competitor citation share data for a completed tracking run.
+ * Auth: caller must own the run via tenant membership.
+ */
+router.get('/runs/:runId/competitors', injectTenantContext, async (req: Request, res: Response) => {
+    const userId = (req as any).user?.id as string;
+    try {
+        const competitors = await getRunCompetitorsForUser(userId, String(req.params.runId));
+        return res.json({ competitors });
+    } catch (err: any) {
+        if (err?.message === 'Unauthorized') return res.status(403).json({ error: 'Access denied' });
+        return res.status(500).json({ error: 'Failed to retrieve competitor data' });
+    }
+});
+
+/**
+ * GET /api/tracking/runs/:runId/ner
+ * Returns Named Entity Recognition (NER) summary for a completed tracking run.
+ * Entities are extracted from raw AI responses — no external API needed.
+ * Auth: caller must own the run via tenant membership.
+ */
+router.get('/runs/:runId/ner', injectTenantContext, async (req: Request, res: Response) => {
+    const userId = (req as any).user?.id as string;
+    try {
+        const nerSummary = await getNERForRun(userId, String(req.params.runId));
+        if (!nerSummary) return res.status(404).json({ error: 'NER data not yet available for this run' });
+        return res.json(nerSummary);
+    } catch (err: any) {
+        if (err?.message === 'Unauthorized') return res.status(403).json({ error: 'Access denied' });
+        return res.status(500).json({ error: 'Failed to retrieve NER data' });
+    }
 });
 
 export default router;

@@ -451,7 +451,7 @@ export const CANONICAL_TIER_PRICING: Readonly<Record<CanonicalTier, TierPricing>
   alignment: { monthlyUsd: PRICING.alignment.billing.monthly, yearlyUsd: PRICING.alignment.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
   signal: { monthlyUsd: PRICING.signal.billing.monthly, yearlyUsd: PRICING.signal.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
   scorefix: { monthlyUsd: PRICING.scorefix.billing.monthly, yearlyUsd: PRICING.scorefix.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
-  agency: { monthlyUsd: 299, yearlyUsd: 2990, oneTimeUsd: 0, billingModel: 'subscription' },
+  agency: { monthlyUsd: PRICING.agency.billing.monthly, yearlyUsd: PRICING.agency.billing.yearly, oneTimeUsd: 0, billingModel: 'subscription' },
 };
 
 /* ── Analysis execution class ───────────────────────────────────────────── */

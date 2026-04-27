@@ -264,7 +264,7 @@ export default function BrandIntegrityPage() {
         setLoading(false);
       }
     },
-    [urlInput, token]
+    [brandInput, urlInput, token]
   );
 
   /* ── Upgrade wall for observer tier ── */
@@ -397,13 +397,14 @@ export default function BrandIntegrityPage() {
               />
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
               <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
               <input
                 type="text"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
+                enterKeyHint="go"
                 placeholder="Domain (optional, e.g. aivis.biz)..."
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-white/30 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/25 transition"
               />
@@ -411,7 +412,7 @@ export default function BrandIntegrityPage() {
             <button
               type="submit"
               disabled={loading || !brandInput.trim()}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold hover:from-emerald-500 hover:to-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold hover:from-emerald-500 hover:to-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

@@ -5,7 +5,55 @@ import User from "../models/User.js";
 import { validationResult } from "express-validator";
 import { normalizeEvidenceArray } from "../utils/evidence.js";
 import { runForensicPipeline } from "../utils/forensicPipeline.js";
-import { checkUsageLimit } from "../utils/pricingUtils.js";
+import { TIER_LIMITS, uiTierFromCanonical } from "../../../shared/types.js";
+
+const toValidDate = (value) => {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
+  if (typeof value === "string" || typeof value === "number") {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+  return null;
+};
+
+const monthsBetween = (a, b) =>
+  (a.getFullYear() - b.getFullYear()) * 12 + (a.getMonth() - b.getMonth());
+
+const checkCanonicalUsageLimit = (user, action) => {
+  const tier = uiTierFromCanonical(String(user?.tier || "observer"));
+  const limits = TIER_LIMITS[tier] || TIER_LIMITS.observer;
+  const now = new Date();
+  const lastReset = toValidDate(user?.lastResetDate);
+
+  if (!lastReset || monthsBetween(now, lastReset) >= 1) {
+    return { allowed: true, resetNeeded: true, limit: limits.scansPerMonth, used: 0 };
+  }
+
+  if (action !== "scan") {
+    return { allowed: true, resetNeeded: false };
+  }
+
+  const used = typeof user?.usageCount === "number" && Number.isFinite(user.usageCount)
+    ? user.usageCount
+    : 0;
+
+  if (used >= limits.scansPerMonth) {
+    return {
+      allowed: false,
+      resetNeeded: false,
+      limit: limits.scansPerMonth,
+      used,
+      error: "Monthly scan limit reached.",
+    };
+  }
+
+  return {
+    allowed: true,
+    resetNeeded: false,
+    limit: limits.scansPerMonth,
+    used,
+  };
+};
 
 export const createAudit = async (req, res) => {
   try {
@@ -23,7 +71,7 @@ export const createAudit = async (req, res) => {
 
     // Enforce usage limits
     const user = await User.findById(userId);
-    const usageCheck = checkUsageLimit(user, "scan");
+    const usageCheck = checkCanonicalUsageLimit(user, "scan");
 
     if (!usageCheck.allowed) {
       return res.status(403).json({

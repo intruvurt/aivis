@@ -96,6 +96,188 @@ const STATIC_BLOG_ENTRIES: BlogEntry[] = [
     tier: 'free',
   },
   {
+    slug: 'google-doesnt-trust-you-yet-heres-the-eeat-blueprint-that-changes-that',
+    path: '/blogs/google-doesnt-trust-you-yet-heres-the-eeat-blueprint-that-changes-that',
+    title: "Google Doesn't Trust You Yet - Here's the EEAT Blueprint That Changes That",
+    description:
+      'EEAT is now a gating layer for search and AI citations. Learn the 17 concrete signals that raise trust, authority, and citation probability.',
+    excerpt:
+      'Most sites fail EEAT not because content is bad, but because nothing proves it is trustworthy. This blueprint breaks down 17 implementable signals across experience, expertise, authoritativeness, and trustworthiness.',
+    publishedAt: '2026-04-27',
+    readMinutes: 9,
+    category: 'eeat',
+    tags: ['EEAT', 'Authority', 'Visibility', 'Strategy', 'Advanced'],
+    keywords: [
+      'EEAT blueprint',
+      'Google trust signals',
+      'AI citation readiness',
+      'authority building',
+      'AI visibility',
+      'content strategy 2026',
+      'Google Knowledge Graph',
+    ],
+    author: {
+      name: 'AiVIS Editorial Team',
+      title: 'Editorial, AiVIS.biz',
+      expertise: ['EEAT Strategy', 'AI Visibility', 'Citation Readiness'],
+      credentials: ['AiVIS Research Team'],
+      experience: 'Cross-domain analysis of citation and trust signals in AI answer systems',
+    },
+    content: `Published: April 2026 | Category: AI Visibility, Authority Building, Content Strategy
+Reading time: 9 minutes
+
+---
+
+> TLDR: EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) is Google\'s and AI\'s shared framework for deciding whose content gets cited, surfaced, and rewarded. Most sites fail it not because content is bad, but because nothing on-site proves the content is good. This post breaks down what EEAT is, why it matters in the AI era, and 17 signals you can build now.
+
+The Cold Open Nobody Talks About
+
+Your content is good. You know it. Your team knows it. And yet Google keeps placing someone else above you. ChatGPT quotes a competitor on the exact question your long-form page answers better.
+
+This is not only a keyword problem. It is not only a backlink problem. It is not only a technical SEO problem.
+
+It is an authority problem. In 2026, authority is measured through EEAT.
+
+Google and major AI systems are asking one core question before they surface your page: can this source be trusted to provide the right answer?
+
+If the answer is unclear, they move on.
+
+EEAT is the rubric that answers that question. Understanding it is now baseline infrastructure for visibility.
+
+What EEAT Actually Means
+
+EEAT stands for Experience, Expertise, Authoritativeness, and Trustworthiness.
+
+- Experience: first-hand, lived, or direct professional involvement
+- Expertise: depth, credentials, and accuracy of subject matter knowledge
+- Authoritativeness: recognition by other credible sources in the same domain
+- Trustworthiness: verifiable transparency, accuracy, and accountability
+
+Google\'s quality systems and modern answer engines converge on these signals. Trustworthiness remains the master signal.
+
+Why EEAT Matters More in the AI Search Era
+
+Before AI answers, EEAT mostly influenced ranking position.
+
+Now it affects whether you appear at all.
+
+AI systems do not present ten links and ask users to choose. They synthesize one answer and cite a narrow source set. If your content is outside the trusted set, you are effectively invisible.
+
+The implication is practical: EEAT is no longer a soft ranking factor. It behaves as a hard eligibility gate.
+
+The 17 EEAT Signals You Can Actually Build
+
+Experience Signals
+
+1. First-person case studies and original outcomes
+2. Behind-the-scenes process documentation
+3. Date-stamped iteration history
+4. Multimedia evidence of real involvement
+
+Expertise Signals
+
+5. Named, credentialed authors on every strategic page
+6. Author bio pages with verifiable credentials
+7. Technical depth that demonstrates mechanism-level understanding
+8. Outbound citations to primary sources
+
+Authoritativeness Signals
+
+9. Backlinks from recognized authorities in your topical cluster
+10. Entity presence in Google\'s Knowledge Graph
+11. Unlinked brand mentions in credible publications
+12. Guest bylines on recognized external publications
+13. Consistent topical focus across domain publishing history
+
+Trustworthiness Signals
+
+14. Transparent About, Contact, and Policy pages
+15. Title, meta description, and H1 alignment
+16. Documented freshness and meaningful revisions
+17. Accurate, verifiable claims with clear sourcing or clear opinion framing
+
+The Authority Stack
+
+These signals compound.
+
+A named expert author, first-hand evidence, external citations, and transparent site infrastructure together form a trust stack stronger than any single tactic.
+
+Think of it as a trust ledger. Every verified signal adds confidence. Every missing signal adds ambiguity.
+
+Where Most Sites Fail EEAT
+
+Most failures are structural, not stylistic.
+
+Common breaks include:
+
+- Anonymous posts with no author attribution
+- No primary-source citations for factual claims
+- Missing accountability pages
+- Stale content with no revision history
+
+The fix is systematic. Authority should be built as an explicit asset, not assumed as a side effect of publishing volume.
+
+The One-Sentence Test
+
+Before publishing, ask:
+
+If an AI model had to decide whether to cite this page, what on this page would make it confident it should?
+
+If you cannot answer that clearly, the page is not ready.
+
+The Bottom Line
+
+EEAT is not just a Google framework. It is the trust architecture that now governs visibility in both search and AI-generated answers.
+
+Teams that build it systematically will accumulate compounding citation advantage. Teams that ignore it will keep producing good content that rarely gets surfaced.
+
+Quick Reference: 17 EEAT Signals
+
+Experience
+- First-person case studies with specific outcomes
+- Process documentation with operational details
+- Date-stamped iteration and updates
+- Multimedia proof of direct involvement
+
+Expertise
+- Named authors with relevant credentials
+- Verifiable author bio infrastructure
+- Deep technical and contextual treatment
+- Primary-source citations for substantive claims
+
+Authoritativeness
+- Topically relevant authority backlinks
+- Knowledge Graph entity presence
+- Credible unlinked brand mentions
+- Guest bylines on established publications
+- Domain-wide topical consistency
+
+Trustworthiness
+- Clear About, Contact, and Privacy pages
+- Title, meta, and H1 consistency
+- Visible freshness and real updates
+- Verifiable factual claims with sourcing discipline
+
+This post was written and reviewed by the AiVIS editorial team. AiVIS is an AI visibility intelligence platform that evaluates EEAT and citation probability.
+
+Sources referenced: Google Search Quality Rater Guidelines (2024), Google Search Central EEAT documentation, and AI overview citation pattern studies (Q1 2026).`,
+    keyPoints: [
+      'EEAT now acts as an eligibility gate for both search visibility and AI citation selection.',
+      'Most EEAT failures are structural proof gaps, not writing-quality gaps.',
+      'Named authorship, source citation discipline, and entity consistency deliver high-leverage improvements.',
+      'Authority compounds when experience, expertise, authoritativeness, and trustworthiness signals stack together.',
+      'Applying a one-sentence citation-confidence test before publish prevents low-trust pages from shipping.',
+    ],
+    relatedPostSlugs: [
+      'building-author-authority-for-citations-e-e-a-t-in-ai-era',
+      'why-traditional-seo-tactics-fail-for-ai-visibility',
+      'how-to-get-cited-by-chatgpt-perplexity-gemini-ai-citation-guide',
+    ],
+    sourceMediumUrl: 'https://intruvurt.medium.com/',
+    tier: 'free',
+    featured: true,
+  },
+  {
     slug: 'answer-engine-optimization-2026-why-citation-readiness-matters',
     path: '/blogs/answer-engine-optimization-2026-why-citation-readiness-matters',
     title: 'Answer Engine Optimization in 2026 - Why Citation Readiness Matters More Than Ranking',

@@ -266,12 +266,12 @@ const CATEGORIES: HelpCategory[] = [
     articles: [
       {
         q: 'What are the tiers?',
-        a: 'Observer, Starter, Alignment, Signal, and Score Fix tiers are available. Plan limits and pricing are live-configured and always shown on the Pricing page. Starter, Alignment and Signal are subscriptions; Score Fix is a one-time remediation purchase.',
+        a: 'Observer, Starter, Alignment, Signal, and Score Fix tiers are available. Plan limits and pricing are live-configured and always shown on the Pricing page. Starter, Alignment, Signal, and Score Fix are subscription tiers.',
         tags: ['pricing', 'tiers', 'plans', 'cost'],
       },
       {
         q: 'Can I cancel anytime?',
-        a: 'Yes. Subscriptions (Starter/Alignment/Signal) can be managed from Billing and cancellation takes effect at the end of the current cycle. Score Fix is one-time, so there is no recurring cancellation cycle for that purchase.',
+        a: 'Yes. Subscriptions (Starter/Alignment/Signal/Score Fix) can be managed from Billing and cancellation takes effect at the end of the current cycle.',
         tags: ['cancel', 'subscription', 'billing'],
       },
       {
@@ -673,7 +673,7 @@ const CATEGORIES: HelpCategory[] = [
     articles: [
       {
         q: 'How do I generate an AiVIS.biz API key?',
-        a: 'Go to Settings → API and Integrations → Generate API Key. Keys are prefixed with avis_ and tied to your account tier. Alignment+ tiers have API access enabled. API keys are shown only once at generation — store them immediately in a secrets manager or environment variable because they cannot be retrieved again after leaving the page.',
+        a: 'Go to Settings → API and Integrations → Generate API Key. Keys are prefixed with avis_ and tied to your account tier. Signal+ tiers have API access enabled. API keys are shown only once at generation — store them immediately in a secrets manager or environment variable because they cannot be retrieved again after leaving the page.',
         tags: ['api key', 'generate', 'avis_', 'settings', 'secrets manager', 'alignment'],
       },
       {
@@ -744,7 +744,7 @@ const CATEGORIES: HelpCategory[] = [
       },
       {
         q: 'What rate limits apply to the AiVIS.biz external API?',
-        a: 'Tier-based limits apply. Alignment: 500 API requests per month. Signal: 5,000 requests per month. Score Fix: 2,000 requests per month. Requests exceeding the limit receive a 429 Too Many Requests response with a Retry-After header showing the next reset time. Scan quotas are tracked separately and displayed in Settings alongside API usage.',
+        a: 'Tier-based limits apply. Signal: 5,000 API requests per month. Score Fix: 5,000 API requests per month. Agency: 20,000 API requests per month. Requests exceeding the limit receive a 429 Too Many Requests response with a Retry-After header showing the next reset time. Scan quotas are tracked separately and displayed in Settings alongside API usage.',
         tags: [
           'rate limits',
           '429',

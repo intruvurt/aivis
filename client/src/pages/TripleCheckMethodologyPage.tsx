@@ -254,7 +254,7 @@ const faqItems = [
   {
     question: 'Is the Triple-Check Methodology available on all plans?',
     answer:
-      'The full three-stage pipeline is available on the Signal tier ($149/mo) and Score Fix tier ($299 one-time). Starter and Alignment tiers receive Stage 1 (Extraction) and Stage 2 (Verification) with single-model AI analysis. All tiers receive deterministic rule scoring and the full evidence manifest — the Triple-Check adds multi-model consensus validation on top of that foundation.',
+      'The full three-stage pipeline is available on the Signal tier ($149/mo) and Score Fix tier ($299/mo). Starter and Alignment tiers receive Stage 1 (Extraction) and Stage 2 (Verification) with single-model AI analysis. All tiers receive deterministic rule scoring and the full evidence manifest — the Triple-Check adds multi-model consensus validation on top of that foundation.',
   },
   {
     question: 'How does AiVIS.biz ensure the Triple-Check pipeline is reproducible?',
@@ -538,7 +538,7 @@ export default function TripleCheckMethodologyPage() {
               note: 'Triple-check: GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast',
             },
             {
-              tier: 'Score Fix ($299)',
+              tier: 'Score Fix ($299/mo)',
               s1: true,
               s2: true,
               s3: true,

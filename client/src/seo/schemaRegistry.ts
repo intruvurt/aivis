@@ -172,7 +172,7 @@ export const landingSchema = {
           '@type': 'ListItem',
           position: 4,
           url: 'https://aivis.biz/pricing#signal',
-          name: 'Signal (Pro) – 110 audits/month',
+          name: 'Signal (Pro) – 200 audits/month',
         },
       ],
     },
@@ -217,7 +217,7 @@ export const landingSchema = {
           price: '149',
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
-          description: '110 audits/month with triple-check AI and citation testing',
+          description: '200 audits/month with triple-check AI and citation testing',
         },
       ],
       aggregateRating: {

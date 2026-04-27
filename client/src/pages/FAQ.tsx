@@ -491,7 +491,7 @@ const categories: FAQCategory[] = [
         question: 'What is the difference between Alignment ($49/mo) and Signal ($149/mo)?',
         answer: [
           'Alignment gives you 60 audits per month, competitor tracking, mention monitoring across 19 free social and web sources (Reddit, HN, Mastodon, Google News, GitHub, Dev.to, YouTube, Bluesky, and more), and SerpAPI-enhanced entity clarity scoring.',
-          'Signal gives you 110 audits per month and activates the triple-check pipeline: three AI models (GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast) run in sequence on every audit. This multi-model agreement mechanism significantly reduces false positives and produces higher-confidence findings. Signal also includes citation testing — you can query AI systems for your primary use cases and see whether your brand appears, in what position, and against which competitors.',
+          'Signal gives you 200 audits per month and activates the triple-check pipeline: three AI models (GPT-5 Mini → Claude Sonnet 4.6 → Grok 4.1 Fast) run in sequence on every audit. This multi-model agreement mechanism significantly reduces false positives and produces higher-confidence findings. Signal also includes citation testing — you can query AI systems for your primary use cases and see whether your brand appears, in what position, and against which competitors.',
           'The practical difference: Alignment is the right tier if you are managing extraction readiness across a site and tracking competitive gaps. Signal is the right tier if you need to prove that findings are reliable enough to justify engineering investment, or if you are actively testing whether fixes translate into citation improvements.',
         ],
       },
@@ -560,7 +560,7 @@ const categories: FAQCategory[] = [
       {
         question: 'Is there an API for programmatic audit access?',
         answer: [
-          'Yes. The External API (v1) is available on Starter and above tiers. API keys with the prefix avis_ are issued per account and can be used for Bearer token authentication on all /api/v1/* endpoints. OAuth 2.0 (RFC 6749) is also supported, with token exchange using avist_ prefixed tokens — enabling third-party integrations without sharing primary credentials.',
+          'Yes. The External API (v1) is available on Signal and above tiers. API keys with the prefix avis_ are issued per account and can be used for Bearer token authentication on all /api/v1/* endpoints. OAuth 2.0 (RFC 6749) is also supported, with token exchange using avist_ prefixed tokens — enabling third-party integrations without sharing primary credentials.',
           'Available API endpoints include: POST /api/v1/analyze (trigger an audit), GET /api/v1/audits (retrieve audit history), GET /api/v1/analytics (score trends over time). The OpenAPI 3.0.3 specification is available at /api/v1/openapi.json for client code generation.',
           'Rate limits apply per tier. All API requests are logged and deducted from your monthly audit allowance. API keys can be rotated or revoked through Account Settings without affecting account access.',
         ],

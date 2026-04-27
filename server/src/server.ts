@@ -16182,6 +16182,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
 
 // Start server
 (async function start() {
+  const startupBeginMs = Date.now();
   const runBackgroundLoopsRaw = String(
     process.env.RUN_BACKGROUND_LOOPS ?? process.env.RUN_WORKERS ?? "true",
   )
@@ -16882,6 +16883,7 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
   }
 
   startHttpServer();
+  console.log(`[Startup] Bootstrap complete in ${Date.now() - startupBeginMs}ms — HTTP server now accepting traffic on port ${PORT}`);
 })();
 
 export default app;

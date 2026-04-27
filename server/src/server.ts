@@ -16019,6 +16019,69 @@ app.use((req, res) => {
 // Module-level ref so shutdown() can close the HTTP server before draining the pool.
 let _httpServer: ReturnType<typeof app.listen> | null = null;
 
+function startHttpServer() {
+  const server = app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://0.0.0.0:${PORT} (${NODE_ENV})`);
+    _httpServer = server;
+
+    // Dev-only: validate pricing contract consistency
+    if (NODE_ENV === "development") {
+      import("./config/stripeConfig.js").then(({ default: STRIPE_PRICING }) => {
+        const driftErrors: string[] = [];
+        const check = (label: string, actual: number, expected: number) => {
+          if (actual !== expected)
+            driftErrors.push(`${label}: got ${actual}, expected ${expected}`);
+        };
+        check(
+          "alignment monthly cents",
+          STRIPE_PRICING.alignment?.amountCents,
+          PRICING.alignment.billing.monthly * 100,
+        );
+        check(
+          "alignment yearly cents",
+          STRIPE_PRICING.alignment?.yearlyAmountCents,
+          PRICING.alignment.billing.yearly * 100,
+        );
+        check(
+          "signal monthly cents",
+          STRIPE_PRICING.signal?.amountCents,
+          PRICING.signal.billing.monthly * 100,
+        );
+        check(
+          "signal yearly cents",
+          STRIPE_PRICING.signal?.yearlyAmountCents,
+          PRICING.signal.billing.yearly * 100,
+        );
+        check(
+          "scorefix monthly cents",
+          STRIPE_PRICING.scorefix?.amountCents,
+          PRICING.scorefix.billing.monthly * 100,
+        );
+        if (driftErrors.length) {
+          console.error(
+            "[Pricing Drift] Stripe config does not match PRICING contract:\n  " +
+            driftErrors.join("\n  "),
+          );
+        } else {
+          console.log("[Pricing] All Stripe amounts match PRICING contract ✓");
+        }
+      });
+    }
+  });
+
+  // Render proxy compatibility
+  // Global 5-minute hard wall: prevents zombie requests that bypass route-level timeouts.
+  // Analyze routes override to 60s via PROXY_HARD_LIMIT_MS; SSE connections extend via keep-alive.
+  server.keepAliveTimeout = 120_000;
+  server.headersTimeout = 121_000;
+  server.requestTimeout = 300_000; // 5 min hard ceiling
+  server.timeout = 300_000;
+
+  console.log("[Startup] HTTP timeouts set for reverse proxy compatibility");
+
+  return server;
+}
+
 // Graceful shutdown
 async function shutdown(signal: string) {
   console.log(`[${signal}] Shutting down — stopping background loops`);
@@ -16160,65 +16223,6 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
       console.error(`[Startup] CRITICAL: FRONTEND_URL="${_frontendUrlVal}" is missing the https:// scheme prefix. GitHub OAuth redirects will be malformed. Set FRONTEND_URL=https://yourdomain.com`);
     }
   }
-
-  const server = app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${PORT} (${NODE_ENV})`);
-    _httpServer = server;
-
-    // Dev-only: validate pricing contract consistency
-    if (NODE_ENV === "development") {
-      import("./config/stripeConfig.js").then(({ default: STRIPE_PRICING }) => {
-        const driftErrors: string[] = [];
-        const check = (label: string, actual: number, expected: number) => {
-          if (actual !== expected)
-            driftErrors.push(`${label}: got ${actual}, expected ${expected}`);
-        };
-        check(
-          "alignment monthly cents",
-          STRIPE_PRICING.alignment?.amountCents,
-          PRICING.alignment.billing.monthly * 100,
-        );
-        check(
-          "alignment yearly cents",
-          STRIPE_PRICING.alignment?.yearlyAmountCents,
-          PRICING.alignment.billing.yearly * 100,
-        );
-        check(
-          "signal monthly cents",
-          STRIPE_PRICING.signal?.amountCents,
-          PRICING.signal.billing.monthly * 100,
-        );
-        check(
-          "signal yearly cents",
-          STRIPE_PRICING.signal?.yearlyAmountCents,
-          PRICING.signal.billing.yearly * 100,
-        );
-        check(
-          "scorefix monthly cents",
-          STRIPE_PRICING.scorefix?.amountCents,
-          PRICING.scorefix.billing.monthly * 100,
-        );
-        if (driftErrors.length) {
-          console.error(
-            "[Pricing Drift] Stripe config does not match PRICING contract:\n  " +
-            driftErrors.join("\n  "),
-          );
-        } else {
-          console.log("[Pricing] All Stripe amounts match PRICING contract ✓");
-        }
-      });
-    }
-  });
-
-  // Render proxy compatibility
-  // Global 5-minute hard wall: prevents zombie requests that bypass route-level timeouts.
-  // Analyze routes override to 60s via PROXY_HARD_LIMIT_MS; SSE connections extend via keep-alive.
-  server.keepAliveTimeout = 120_000;
-  server.headersTimeout = 121_000;
-  server.requestTimeout = 300_000; // 5 min hard ceiling
-  server.timeout = 300_000;
-
-  console.log("[Startup] HTTP timeouts set for reverse proxy compatibility");
 
   let databaseReady = false;
   try {
@@ -16876,6 +16880,8 @@ app.get("/api/admin/logs/stats", adminLimiter, async (req, res) => {
       "[Startup] Background worker loops disabled via RUN_BACKGROUND_LOOPS/RUN_WORKERS",
     );
   }
+
+  startHttpServer();
 })();
 
 export default app;

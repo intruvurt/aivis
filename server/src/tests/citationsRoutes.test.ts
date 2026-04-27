@@ -14,6 +14,7 @@ const mockGenerateQueries = vi.fn();
 const mockPrioritizeQueries = vi.fn();
 const mockTestMultipleQueries = vi.fn();
 const mockCalculateCitationSummary = vi.fn();
+const mockComputeCitationRankScore = vi.fn();
 
 /* ── Mocks ────────────────────────────────────────────────────────────────── */
 
@@ -81,6 +82,13 @@ vi.mock('../services/citationIntelligenceService.js', () => ({
   computeMentionQuality: vi.fn(),
 }));
 
+vi.mock('../services/citationRankScoreService.js', () => ({
+  computeCitationRankScore: (...args: unknown[]) => mockComputeCitationRankScore(...args),
+  saveCitationRankSnapshot: vi.fn().mockResolvedValue(undefined),
+  getLatestCitationRankSnapshot: vi.fn(),
+  getCitationRankHistory: vi.fn(),
+}));
+
 vi.mock('../services/webSearch.js', () => ({
   scrapeBingRaw: vi.fn().mockResolvedValue([]),
 }));
@@ -126,15 +134,25 @@ describe('Citation Routes', () => {
       expect(res.body.code).toBe('TIER_INSUFFICIENT');
     });
 
-    it('blocks alignment tier from generate-queries (Signal only)', async () => {
+    it('allows alignment tier to generate-queries', async () => {
       authState.tier = 'alignment';
+      mockGenerateQueries.mockResolvedValueOnce({
+        queries: ['best CRM software 2025', 'how to choose a CRM'],
+        industry: 'software',
+        topics: ['CRM', 'software'],
+      });
+      mockPrioritizeQueries.mockReturnValueOnce([
+        'best CRM software 2025',
+        'how to choose a CRM',
+      ]);
+
       const app = makeApp();
       const res = await request(app)
         .post('/api/citations/generate-queries')
         .send({ url: 'https://example.com' });
 
-      expect(res.status).toBe(403);
-      expect(res.body.code).toBe('TIER_INSUFFICIENT');
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
     });
 
     it('allows signal tier to generate-queries', async () => {
@@ -219,8 +237,10 @@ describe('Citation Routes', () => {
 
     it('creates citation test successfully', async () => {
       // Mock: gateToolAction (already mocked globally)
-      // Mock: INSERT citation test
-      mockQuery.mockResolvedValueOnce({ rows: [{ id: 'ct_123' }] });
+      // Mock: monthly usage check then INSERT citation test
+      mockQuery
+        .mockResolvedValueOnce({ rows: [{ count: '0' }] })
+        .mockResolvedValueOnce({ rows: [{ id: 'ct_123' }] });
 
       const app = makeApp();
       const res = await request(app)
@@ -309,6 +329,69 @@ describe('Citation Routes', () => {
       const res = await request(app).get('/api/citations/test/nonexistent');
 
       expect(res.status).toBe(404);
+    });
+  });
+
+  describe('POST /api/citations/rank-score', () => {
+    it('auto-generates top20 queries when queries are omitted', async () => {
+      mockQuery.mockResolvedValueOnce({
+        rows: [{
+          url: 'https://example.com',
+          result: {
+            brand_entities: ['Example Brand'],
+            topical_keywords: ['citation engine'],
+            primary_topics: ['AI visibility'],
+            recommendations: [],
+            faq_count: 3,
+            domain_intelligence: { page_title: 'Example Brand - AI Visibility' },
+          },
+          created_at: '2026-01-01T00:00:00.000Z',
+        }],
+      });
+
+      mockGenerateQueries.mockResolvedValueOnce({
+        queries: ['example brand ai visibility', 'example brand citation engine'],
+        industry: 'ai_visibility',
+        topics: ['citations'],
+        fallback: false,
+      });
+      mockPrioritizeQueries.mockReturnValueOnce([
+        'example brand ai visibility',
+        'example brand citation engine',
+      ]);
+      mockComputeCitationRankScore.mockResolvedValueOnce({
+        score: 61,
+        confidence: 0.82,
+        tier: 'signal',
+      });
+
+      const app = makeApp();
+      const res = await request(app)
+        .post('/api/citations/rank-score')
+        .send({ url: 'https://example.com' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.auto_generated_queries).toBe(true);
+      expect(Array.isArray(res.body.top20_queries)).toBe(true);
+      expect(res.body.top20_queries.length).toBeGreaterThan(0);
+      expect(mockComputeCitationRankScore).toHaveBeenCalledTimes(1);
+    });
+
+    it('rejects more than 20 explicitly provided queries', async () => {
+      const app = makeApp();
+      const tooManyQueries = Array.from({ length: 21 }, (_, i) => `query ${i + 1}`);
+
+      const res = await request(app)
+        .post('/api/citations/rank-score')
+        .send({
+          brand: 'Example Brand',
+          url: 'https://example.com',
+          queries: tooManyQueries,
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toContain('Maximum 20 queries');
     });
   });
 });

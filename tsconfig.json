@@ -4,9 +4,5 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true
   },
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.server.json" },
-    { "path": "./client/tsconfig.app.json" }
-  ]
+  "files": []
 }

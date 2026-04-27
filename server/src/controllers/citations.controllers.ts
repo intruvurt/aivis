@@ -40,6 +40,7 @@ import { resolveEntityFromKG } from '../services/googleKnowledgeGraph.js';
 import { runCitationEvolutionEngine } from '../services/citationEvolutionEngine.js';
 import { getLatestCloudflareSignal, deriveAiTrustScore, listCloudflareSignalHistory } from '../services/cloudflareMetricsService.js';
 import { fetchGeekflareEnrichment, isGeekflareAvailable } from '../services/geekflareService.js';
+import { fetchBrowserWorkerCitableSignals } from '../services/browserWorkerClient.js';
 
 /** Safe JSON.parse with fallback — prevents one corrupted record from crashing entire response */
 function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
@@ -413,6 +414,148 @@ function buildPromptCoverageDiagnostics(params: {
     reasons,
     strengths,
     content_gaps: contentGaps,
+  };
+}
+
+type CitationQueryBundle = {
+  identity: CitationIdentityResponse;
+  queries: string[];
+  top20Queries: string[];
+  industry: string;
+  topics: string[];
+  fallback: boolean;
+  workerEnrichment: {
+    enabled: boolean;
+    citable_block_count?: number;
+    extracted_query_count?: number;
+    fetched_at?: string;
+  };
+  coverageDiagnostics: PromptCoverageDiagnostics;
+  promptMapping: PromptMappingHint[];
+};
+
+async function buildCitationQueryBundle(params: {
+  userId: string;
+  rawUrl: string;
+  count: number;
+  apiKey: string;
+}): Promise<CitationQueryBundle | null> {
+  const identity = await resolveCitationIdentity(params.userId, String(params.rawUrl));
+  if (!identity) return null;
+
+  const auditRecord = await findLatestAuditForTarget(params.userId, identity.normalized_url);
+  const audit = auditRecord?.result;
+  const content = {
+    title: audit?.domain_intelligence?.page_title || '',
+    description: audit?.domain_intelligence?.page_description || '',
+    keywords: audit?.topical_keywords || [],
+    topics: audit?.primary_topics || audit?.domain_intelligence?.primary_topics || [],
+    brandName: identity.business_name || extractDomainLabel(identity.normalized_url),
+    entities: Array.isArray(audit?.brand_entities) ? audit.brand_entities : [],
+    contentHighlights: Array.isArray(audit?.content_highlights) ? audit.content_highlights : [],
+    recommendations: Array.isArray(audit?.recommendations) ? audit.recommendations : [],
+    keywordIntelligence: Array.isArray(audit?.keyword_intelligence) ? audit.keyword_intelligence : [],
+    faqCount: Number(audit?.faq_count || audit?.content_analysis?.faq_count || 0),
+    seoDiagnostics: audit?.seo_diagnostics || null,
+  };
+
+  const workerEnrichmentPayload = await fetchBrowserWorkerCitableSignals({
+    url: identity.normalized_url,
+    brandName: content.brandName || extractDomainLabel(identity.normalized_url),
+    maxQueries: Math.min(Math.max(Number(params.count) || 20, 10), 20),
+    maxBlocks: 12,
+  });
+
+  if (workerEnrichmentPayload) {
+    if (!content.title && workerEnrichmentPayload.page_signals?.title) {
+      content.title = String(workerEnrichmentPayload.page_signals.title);
+    }
+    if (!content.description && workerEnrichmentPayload.page_signals?.meta_description) {
+      content.description = String(workerEnrichmentPayload.page_signals.meta_description);
+    }
+
+    const mergedTopics = [
+      ...(Array.isArray(content.topics) ? content.topics : []),
+      ...(Array.isArray(workerEnrichmentPayload.topic_candidates) ? workerEnrichmentPayload.topic_candidates : []),
+    ]
+      .map((topic: any) => String(topic || '').trim())
+      .filter(Boolean);
+    content.topics = Array.from(new Set(mergedTopics)).slice(0, 12);
+
+    const mergedEntities = [
+      ...(Array.isArray(content.entities) ? content.entities : []),
+      ...(Array.isArray(workerEnrichmentPayload.entity_candidates) ? workerEnrichmentPayload.entity_candidates : []),
+    ]
+      .map((entity: any) => String(entity || '').trim())
+      .filter(Boolean);
+    content.entities = Array.from(new Set(mergedEntities)).slice(0, 10);
+
+    const workerHighlights = Array.isArray(workerEnrichmentPayload.citable_blocks)
+      ? workerEnrichmentPayload.citable_blocks.map((block) => ({
+        found: String(block?.text || '').trim(),
+        note: `browser-worker:${String(block?.reason || 'citable-context')}`,
+        area: 'content',
+      }))
+      : [];
+
+    const mergedHighlights = [
+      ...(Array.isArray(content.contentHighlights) ? content.contentHighlights : []),
+      ...workerHighlights,
+    ];
+    content.contentHighlights = mergedHighlights
+      .map((item: any) => ({
+        found: String(item?.found || '').trim(),
+        note: String(item?.note || '').trim(),
+        area: String(item?.area || 'content').trim(),
+      }))
+      .filter((item) => item.found.length >= 18)
+      .slice(0, 14);
+  }
+
+  const generated = await generateQueries(identity.normalized_url, content, params.count, params.apiKey);
+
+  const workerQueries = Array.isArray(workerEnrichmentPayload?.brand_queries)
+    ? workerEnrichmentPayload.brand_queries.map((query) => String(query || '').trim()).filter(Boolean)
+    : [];
+  const mergedQueryUniverse = Array.from(new Set([
+    ...workerQueries,
+    ...(Array.isArray(generated.queries) ? generated.queries : []),
+  ]));
+
+  const prioritized = prioritizeQueries(
+    mergedQueryUniverse,
+    content.brandName || extractDomainLabel(identity.normalized_url),
+  );
+  const top20Queries = prioritized.slice(0, 20);
+
+  const coverageDiagnostics = buildPromptCoverageDiagnostics({
+    faqCount: content.faqCount,
+    entityCount: Array.isArray(content.entities) ? content.entities.length : 0,
+    topicCount: Array.isArray(content.topics) ? content.topics.length : 0,
+    recommendationCount: Array.isArray(content.recommendations) ? content.recommendations.length : 0,
+  });
+
+  return {
+    identity,
+    queries: prioritized,
+    top20Queries,
+    industry: generated.industry,
+    topics: generated.topics,
+    fallback: generated.fallback === true,
+    workerEnrichment: workerEnrichmentPayload
+      ? {
+        enabled: true,
+        citable_block_count: Array.isArray(workerEnrichmentPayload.citable_blocks)
+          ? workerEnrichmentPayload.citable_blocks.length
+          : 0,
+        extracted_query_count: Array.isArray(workerEnrichmentPayload.brand_queries)
+          ? workerEnrichmentPayload.brand_queries.length
+          : 0,
+        fetched_at: workerEnrichmentPayload.fetched_at,
+      }
+      : { enabled: false },
+    coverageDiagnostics,
+    promptMapping: buildPromptMappingHints(prioritized),
   };
 }
 
@@ -1618,46 +1761,27 @@ export async function generateTestQueries(req: Request, res: Response) {
       return res.status(500).json({ error: 'AI provider key not configured' });
     }
 
-    const identity = await resolveCitationIdentity(userId, String(url));
-    if (!identity) {
+    const queryBundle = await buildCitationQueryBundle({
+      userId,
+      rawUrl: String(url),
+      count,
+      apiKey,
+    });
+    if (!queryBundle) {
       return res.status(400).json({ error: 'URL is invalid or cannot be normalized' });
     }
 
-    const auditRecord = await findLatestAuditForTarget(userId, identity.normalized_url);
-    const audit = auditRecord?.result;
-    const content = {
-      title: audit?.domain_intelligence?.page_title || '',
-      description: audit?.domain_intelligence?.page_description || '',
-      keywords: audit?.topical_keywords || [],
-      topics: audit?.primary_topics || audit?.domain_intelligence?.primary_topics || [],
-      brandName: identity.business_name || extractDomainLabel(identity.normalized_url),
-      entities: Array.isArray(audit?.brand_entities) ? audit.brand_entities : [],
-      contentHighlights: Array.isArray(audit?.content_highlights) ? audit.content_highlights : [],
-      recommendations: Array.isArray(audit?.recommendations) ? audit.recommendations : [],
-      keywordIntelligence: Array.isArray(audit?.keyword_intelligence) ? audit.keyword_intelligence : [],
-      faqCount: Number(audit?.faq_count || audit?.content_analysis?.faq_count || 0),
-      seoDiagnostics: audit?.seo_diagnostics || null,
-    };
-
-    const generated = await generateQueries(identity.normalized_url, content, count, apiKey);
-    const prioritized = prioritizeQueries(generated.queries, content.brandName || extractDomainLabel(identity.normalized_url));
-    const coverageDiagnostics = buildPromptCoverageDiagnostics({
-      faqCount: content.faqCount,
-      entityCount: Array.isArray(content.entities) ? content.entities.length : 0,
-      topicCount: Array.isArray(content.topics) ? content.topics.length : 0,
-      recommendationCount: Array.isArray(content.recommendations) ? content.recommendations.length : 0,
-    });
-    const promptMapping = buildPromptMappingHints(prioritized);
-
     return res.json({
       success: true,
-      identity,
-      queries: prioritized,
-      industry: generated.industry,
-      topics: generated.topics,
-      fallback: generated.fallback === true,
-      coverage_diagnostics: coverageDiagnostics,
-      prompt_mapping: promptMapping,
+      identity: queryBundle.identity,
+      queries: queryBundle.queries,
+      top20_queries: queryBundle.top20Queries,
+      industry: queryBundle.industry,
+      topics: queryBundle.topics,
+      fallback: queryBundle.fallback,
+      worker_enrichment: queryBundle.workerEnrichment,
+      coverage_diagnostics: queryBundle.coverageDiagnostics,
+      prompt_mapping: queryBundle.promptMapping,
     });
   } catch (err: any) {
     console.error('[Citations] Generate queries error:', err);
@@ -3425,9 +3549,10 @@ export async function runCoOccurrenceCheckHandler(req: Request, res: Response) {
  * Compute the probabilistic CitationRankScore for a brand across AI models.
  *
  * Body: {
- *   brand: string,
+ *   brand?: string,
  *   url: string,
- *   queries: string[],           // 1–20 queries
+ *   queries?: string[],          // optional; when omitted auto-generated top20 is used
+ *   count?: number,              // optional generation count clamp: 5–20
  * }
  *
  * Tier: Alignment (1 model/query) or Signal (3 models/query).
@@ -3436,18 +3561,12 @@ export async function runCitationRankScoreHandler(req: Request, res: Response) {
   const user = (req as any).user;
   if (!user?.id) return res.status(401).json({ error: 'Unauthorized' });
 
-  const { brand, url: rawUrl, queries } = (req.body || {}) as any;
+  const { brand, url: rawUrl, queries, count } = (req.body || {}) as any;
 
-  if (!brand || typeof brand !== 'string' || brand.trim().length < 2) {
-    return res.status(400).json({ error: 'brand is required (min 2 characters)' });
-  }
   if (!rawUrl || typeof rawUrl !== 'string') {
     return res.status(400).json({ error: 'url is required' });
   }
-  if (!Array.isArray(queries) || queries.length === 0) {
-    return res.status(400).json({ error: 'queries array is required (at least one query)' });
-  }
-  if (queries.length > 20) {
+  if (Array.isArray(queries) && queries.length > 20) {
     return res.status(400).json({ error: 'Maximum 20 queries per request' });
   }
 
@@ -3460,13 +3579,38 @@ export async function runCitationRankScoreHandler(req: Request, res: Response) {
   if (!normalizedTarget.ok) return res.status(400).json({ error: normalizedTarget.error ?? 'Invalid URL' });
   const url = normalizedTarget.url;
 
-  const cleanBrand = brand.trim().slice(0, 100);
-  const cleanQueries: string[] = queries
-    .map((q: any) => String(q || '').trim().slice(0, 200))
-    .filter((q: string) => q.length > 3);
+  const requestedCount = Math.min(Math.max(Number(count || 20) || 20, 5), 20);
+  let cleanQueries = normalizeQueries(queries, 20).map((query) => query.slice(0, 200));
+  let autoGeneratedQueries = false;
+  let generatedQueryContext: CitationQueryBundle | null = null;
 
   if (cleanQueries.length === 0) {
-    return res.status(400).json({ error: 'No valid queries provided' });
+    generatedQueryContext = await buildCitationQueryBundle({
+      userId: user.id,
+      rawUrl: url,
+      count: requestedCount,
+      apiKey,
+    });
+    if (!generatedQueryContext) {
+      return res.status(400).json({ error: 'Unable to generate queries for this URL' });
+    }
+    cleanQueries = generatedQueryContext.top20Queries.slice(0, 20);
+    autoGeneratedQueries = true;
+  }
+
+  if (cleanQueries.length === 0) {
+    return res.status(400).json({ error: 'No valid queries available for rank scoring' });
+  }
+
+  const inferredBrand =
+    (typeof brand === 'string' ? brand.trim() : '')
+    || generatedQueryContext?.identity?.business_name
+    || extractDomainLabel(url)
+    || '';
+  const cleanBrand = inferredBrand.trim().slice(0, 100);
+
+  if (cleanBrand.length < 2) {
+    return res.status(400).json({ error: 'brand is required or must be inferable from URL' });
   }
 
   const tier = (user.tier || 'observer') as string;
@@ -3486,7 +3630,23 @@ export async function runCitationRankScoreHandler(req: Request, res: Response) {
       console.warn('[CitationRankScore] Snapshot save failed (non-fatal):', err?.message),
     );
 
-    return res.json({ success: true, ...result });
+    return res.json({
+      success: true,
+      ...result,
+      auto_generated_queries: autoGeneratedQueries,
+      top20_queries: cleanQueries.slice(0, 20),
+      query_generation: generatedQueryContext
+        ? {
+          identity: generatedQueryContext.identity,
+          industry: generatedQueryContext.industry,
+          topics: generatedQueryContext.topics,
+          fallback: generatedQueryContext.fallback,
+          worker_enrichment: generatedQueryContext.workerEnrichment,
+          coverage_diagnostics: generatedQueryContext.coverageDiagnostics,
+          prompt_mapping: generatedQueryContext.promptMapping,
+        }
+        : undefined,
+    });
   } catch (err: any) {
     console.error('[CitationRankScore] Error:', err?.message, '\n', err?.stack || err);
     return res.status(500).json({ error: 'Citation rank score computation failed' });

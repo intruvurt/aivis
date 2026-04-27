@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { usePageMeta } from '../hooks/usePageMeta';
 
@@ -12,12 +12,20 @@ export default function PaymentSuccessPage() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const refreshUser = useAuthStore((s) => s.refreshUser);
+  const navigate = useNavigate();
   const [refreshed, setRefreshed] = useState(false);
 
   useEffect(() => {
-    // Refresh user data to pick up the new tier from the webhook
-    refreshUser().finally(() => setRefreshed(true));
-  }, [refreshUser]);
+    refreshUser().finally(() => {
+      setRefreshed(true);
+      // Redirect to tier welcome page if we stored a pending tier before checkout
+      const pendingTier = sessionStorage.getItem('aivis_pending_tier');
+      if (pendingTier) {
+        sessionStorage.removeItem('aivis_pending_tier');
+        navigate(`/app/welcome?tier=${encodeURIComponent(pendingTier)}`, { replace: true });
+      }
+    });
+  }, [refreshUser, navigate]);
 
   return (
     <div className="flex flex-1 items-center justify-center p-8">

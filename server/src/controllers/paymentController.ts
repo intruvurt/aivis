@@ -1573,6 +1573,10 @@ export const getPricingInfo = async (req: Request, res: Response) => {
       success: true,
       tiers: publicPricing,
       defaultTier: 'observer',
+      refund_policy: {
+        subscription_refund_window_hours: 24,
+        note: '24-hour refund window from payment date. No refund after code is pushed or a PR is confirmed.',
+      },
       scan_packs: Object.values(SCAN_PACKS).map((pack) => ({
         key: pack.key,
         scans: pack.scans,

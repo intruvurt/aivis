@@ -55,6 +55,7 @@ const VerifyEmailPage = React.lazy(() => import('./pages/VerifyEmailPage'));
 const VerifyLicensePage = React.lazy(() => import('./pages/VerifyLicensePage'));
 const PaymentSuccessPage = React.lazy(() => import('./pages/PaymentSuccessPage'));
 const PaymentCanceledPage = React.lazy(() => import('./pages/PaymentCanceledPage'));
+const TierWelcomePage = React.lazy(() => import('./pages/TierWelcomePage'));
 const ResetAuth = React.lazy(() => import('./pages/ResetAuth'));
 const ApiDocsPage = React.lazy(() => import('./pages/ApiDocsPage'));
 const ServerHeadersPage = React.lazy(() => import('./pages/ServerHeadersPage'));
@@ -412,6 +413,7 @@ export default function App() {
             <Route path="referrals" element={<ReferralsPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="billing" element={<BillingPage />} />
+            <Route path="welcome" element={<TierWelcomePage />} />
             <Route path="compliance-dashboard" element={<ComplianceDashboardPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="admin" element={<Admin />} />

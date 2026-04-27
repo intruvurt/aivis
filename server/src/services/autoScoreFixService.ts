@@ -9,7 +9,8 @@
  *   - Cost: AUTO_SCORE_FIX_CREDIT_COST credits per job
  *   - Minimum balance required: AUTO_SCORE_FIX_CREDIT_COST
  *   - PR expires after 48 hours
- *   - No response by hour 49: 80% refund, 20% service fee retained
+ *   - No refund after confirmed PR or code push
+ *   - Full refund only for technical failures before code reaches VCS
  */
 
 import crypto from 'crypto';
@@ -35,8 +36,8 @@ import type { SSFRRuleResult, SSFREvidenceItem } from '../../../shared/types.js'
 
 export const AUTO_SCORE_FIX_CREDIT_COST = 10;
 export const AUTO_SCORE_FIX_EXPIRY_HOURS = 48;
-export const AUTO_SCORE_FIX_REFUND_PERCENT = 0.80;
-export const AUTO_SCORE_FIX_FEE_PERCENT = 0.20;
+export const AUTO_SCORE_FIX_REFUND_PERCENT = 0;
+export const AUTO_SCORE_FIX_FEE_PERCENT = 0;
 
 /**
  * Ledger Watch Mode — ScoreFix tier always-on configuration.
@@ -1702,14 +1703,14 @@ export async function rejectJob(jobId: string, userId: string, workspaceId?: str
       delta: refundAmount,
       source: 'system',
       requestId: `asf-reject-refund:${jobId}`,
-      metadata: { jobId, refundPercent: AUTO_SCORE_FIX_REFUND_PERCENT, reason: 'auto_score_fix_rejection_refund' },
+      metadata: { jobId, refundPercent: 0, reason: 'auto_score_fix_rejection_refund' },
       client,
     });
     const balanceAfter = await getCreditLedgerBalance(userId, client);
     await client.query(
       `INSERT INTO credit_usage_ledger (user_id, delta_credits, balance_after, reason, metadata)
        VALUES ($1, $2, $3, 'auto_score_fix_rejection_refund', $4)`,
-      [userId, refundAmount, balanceAfter, JSON.stringify({ jobId, refund_percent: 80 })]
+      [userId, refundAmount, balanceAfter, JSON.stringify({ jobId, refund_percent: 0 })]
     );
   });
 
@@ -1862,9 +1863,9 @@ export function startAutoScoreFixExpiryLoop(): void {
                 balanceAfter,
                 JSON.stringify({
                   jobId: job.id,
-                  refund_percent: 80,
-                  fee_percent: 20,
-                  reason: 'No approval received within 49 hours',
+                  refund_percent: 0,
+                  fee_percent: 0,
+                  reason: 'No refund after confirmed PR or code push',
                 }),
               ]
             );

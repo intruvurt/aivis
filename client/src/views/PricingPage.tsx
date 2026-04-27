@@ -1,6 +1,6 @@
 // client/src/views/PricingPage.tsx
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Check,
   Loader2,
@@ -28,6 +28,7 @@ import {
   buildWebPageSchema,
 } from '../lib/seoSchema';
 import { PRICING, TIER_LIMITS } from '../../../shared/types';
+import TierConfirmModal from '../components/TierConfirmModal';
 
 type BillingPeriod = 'monthly' | 'yearly';
 
@@ -247,6 +248,11 @@ const PRICING_FAQ_ITEMS = [
     question: 'Can I cancel at any time?',
     answer:
       'Yes. Paid plans are managed in Billing Center and can be canceled from account settings. Access remains active through the paid period.',
+  },
+  {
+    question: 'What is the refund policy?',
+    answer:
+      'Subscription payments include a 24-hour refund window from the date of payment. Refunds are not available after code has been pushed or a pull request has been confirmed through Score Fix. Observer is permanently free — no payment required.',
   },
 ] as const;
 
@@ -721,6 +727,8 @@ export default function PricingPage() {
   const [error, setError] = useState<string | null>(null);
   const [canStartTrial, setCanStartTrial] = useState(false);
   const [isStartingTrial, setIsStartingTrial] = useState(false);
+  const [pendingTierKey, setPendingTierKey] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
   const [totalAudits, setTotalAudits] = useState<number | null>(null);
   const [avgScore, setAvgScore] = useState<number | null>(null);
 
@@ -737,6 +745,17 @@ export default function PricingPage() {
   }, []);
 
   const currentTier = String(user?.tier || 'observer').toLowerCase();
+
+  // Auto-open confirm modal when navigated here with ?tier=X&confirm=1 (e.g. from UpgradeWall)
+  useEffect(() => {
+    const tierParam = searchParams.get('tier');
+    const confirmParam = searchParams.get('confirm');
+    if (tierParam && confirmParam === '1' && isAuthenticated && tiers.length > 0) {
+      if (['starter', 'alignment', 'signal', 'scorefix', 'agency'].includes(tierParam)) {
+        setPendingTierKey(tierParam);
+      }
+    }
+  }, [searchParams, tiers.length, isAuthenticated]);
 
   const yearlySavingsPercent = Math.max(
     0,
@@ -1004,8 +1023,8 @@ export default function PricingPage() {
         setError(data.error || 'Failed to start trial');
         return;
       }
-      // Reload auth state to reflect new trial tier
-      window.location.reload();
+      // Navigate to welcome page so user sees what they just unlocked
+      navigate('/app/welcome?tier=signal');
     } catch (err: any) {
       console.error('[PricingPage] Start trial error:', err);
       setError('Failed to start trial. Please try again.');
@@ -1025,6 +1044,11 @@ export default function PricingPage() {
       return;
     }
 
+    // Show tier intro + confirmation modal before proceeding to Stripe checkout
+    setPendingTierKey(tierKey);
+  }
+
+  async function handleConfirmCheckout(tierKey: string) {
     setIsCheckingOutTier(tierKey);
     setError(null);
 
@@ -1054,12 +1078,40 @@ export default function PricingPage() {
         return;
       }
 
+      // Store pending tier so PaymentSuccessPage can redirect to the welcome intro
+      sessionStorage.setItem('aivis_pending_tier', tierKey);
       window.location.assign(checkoutUrl);
     } catch (err) {
       console.error('Checkout error:', err);
       setError('Failed to start checkout. Please try again.');
     } finally {
       setIsCheckingOutTier(null);
+    }
+  }
+
+  async function handleModalStartTrial() {
+    if (!isAuthenticated || !token) {
+      navigate('/auth?mode=signup&redirect=/pricing');
+      return;
+    }
+    setIsStartingTrial(true);
+    setError(null);
+    try {
+      const res = await apiFetch('/api/billing/start-trial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Failed to start trial');
+        return;
+      }
+      navigate('/app/welcome?tier=signal');
+    } catch (err: any) {
+      console.error('[PricingPage] Start trial error:', err);
+      setError('Failed to start trial. Please try again.');
+    } finally {
+      setIsStartingTrial(false);
     }
   }
 
@@ -1551,6 +1603,25 @@ export default function PricingPage() {
           </Link>
         </div>
       </div>
+
+      {/* Tier intro + confirmation modal — intercepts direct checkout flow */}
+      {pendingTierKey && (
+        <TierConfirmModal
+          tierKey={pendingTierKey}
+          billingPeriod={billingPeriod}
+          priceMonthly={
+            tiers.find((t) => t.key === pendingTierKey)?.pricing.monthly?.amount ?? null
+          }
+          priceYearly={tiers.find((t) => t.key === pendingTierKey)?.pricing.yearly?.amount ?? null}
+          isOpen={pendingTierKey !== null}
+          onClose={() => setPendingTierKey(null)}
+          onConfirm={() => handleConfirmCheckout(pendingTierKey)}
+          canStartTrial={canStartTrial && pendingTierKey === 'signal'}
+          onStartTrial={handleModalStartTrial}
+          isCheckingOut={isCheckingOutTier === pendingTierKey}
+          isStartingTrial={isStartingTrial}
+        />
+      )}
     </div>
   );
 }

@@ -310,7 +310,7 @@ router.post('/jobs', workspaceRequired, async (req: Request, res: Response) => {
       message: 'Auto Score Fix job submitted. PR will be created within 60–90 seconds.',
       credits_reserved: AUTO_SCORE_FIX_CREDIT_COST,
       expires_in_hours: 48,
-      refund_policy: 'Cancel before PR approval: 100% refund while generating, 80% refund once PR is pending approval (or after 49h expiry).',
+      refund_policy: 'No refund after confirmed PR or code push. Full refund only if the job fails before code reaches your repository.',
     });
   } catch (err: any) {
     console.error('[AutoScoreFix] Job submission error:', err?.message);

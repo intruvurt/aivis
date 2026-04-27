@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useAnalysisStore } from '../stores/analysisStore';
 import { appInputSurfaceClass, appTextareaSurfaceClass } from '../lib/formStyles';
@@ -2945,6 +2945,7 @@ function RewriteResult({ data }: { data: any }) {
 
 export default function ReverseEngineerPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isAuthenticated, user } = useAuthStore();
   const latestResult = useAnalysisStore((s) => s.result);
 
@@ -3021,6 +3022,32 @@ export default function ReverseEngineerPage() {
       // no-op
     }
   }, []);
+
+  React.useEffect(() => {
+    const toolParam = String(searchParams.get('tool') || '').trim();
+    const inputParam = String(searchParams.get('input') || '').trim();
+    const secondaryParam = String(searchParams.get('secondary') || '').trim();
+    if (!toolParam && !inputParam && !secondaryParam) return;
+
+    const tool =
+      toolParam === 'decompile' ||
+      toolParam === 'ghost' ||
+      toolParam === 'model-diff' ||
+      toolParam === 'simulate' ||
+      toolParam === 'rewrite'
+        ? (toolParam as Tool)
+        : null;
+
+    if (tool) setActiveTool(tool);
+    if (inputParam) setInput(inputParam);
+    if (secondaryParam) setSecondaryInput(secondaryParam);
+
+    const next = new URLSearchParams(searchParams);
+    next.delete('tool');
+    next.delete('input');
+    next.delete('secondary');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   const handleRun = async () => {
     if (!input.trim()) {

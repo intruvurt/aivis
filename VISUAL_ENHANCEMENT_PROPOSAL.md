@@ -692,7 +692,7 @@ PROFILE: "Strong authority, weak extractability"
 │  ○ 11–50 pages (small operation)                │
 │  ○ 51–200 pages (mid-scale)                     │
 │  ○ 200–1000 pages (at-scale)                    │
-│  ○ 1000+ pages (enterprise)                     │
+│  ○ 1000+ pages (Premium)                     │
 │                                                  │
 │  Q3: Do you need automation features?           │
 │  ○ No, I'll run audits ad-hoc                  │

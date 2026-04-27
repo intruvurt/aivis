@@ -368,6 +368,7 @@ const AnalyzePage: React.FC = () => {
     step: 'idle',
     percent: 0,
   });
+  const [animatedProgressPercent, setAnimatedProgressPercent] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [scanLimitReached, setScanLimitReached] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -416,6 +417,31 @@ const AnalyzePage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { token, isAuthenticated, isHydrated, refreshUser, logout, user } = useAuthStore();
+
+  useEffect(() => {
+    if (!loading) {
+      setAnimatedProgressPercent(progress.percent);
+      return;
+    }
+
+    let rafId = 0;
+    let current = animatedProgressPercent;
+    const target = Math.max(0, Math.min(100, progress.percent));
+
+    const animate = () => {
+      const delta = target - current;
+      if (Math.abs(delta) < 0.2) {
+        setAnimatedProgressPercent(target);
+        return;
+      }
+      current += delta * 0.18;
+      setAnimatedProgressPercent(current);
+      rafId = window.requestAnimationFrame(animate);
+    };
+
+    rafId = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(rafId);
+  }, [loading, progress.percent]);
 
   useEffect(() => {
     if (!isHydrated) return;
@@ -1028,6 +1054,7 @@ const AnalyzePage: React.FC = () => {
       <AnalyzeCognitionView
         loading={loading}
         step={progress.step}
+        progressPercent={animatedProgressPercent}
         result={result}
         error={error}
         onSubmit={(urlInput: string) => {
@@ -1047,6 +1074,7 @@ const AnalyzePage: React.FC = () => {
       <AnalyzeCognitionView
         loading={false}
         step={progress.step}
+        progressPercent={animatedProgressPercent}
         result={null}
         error={error}
         onSubmit={(urlInput: string) => {
@@ -1135,6 +1163,7 @@ const AnalyzePage: React.FC = () => {
             <AnalyzeCognitionView
               loading={false}
               step="complete"
+              progressPercent={100}
               result={result}
               error={null}
               onSubmit={(urlInput: string) => {

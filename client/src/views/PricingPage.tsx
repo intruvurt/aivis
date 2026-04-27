@@ -176,19 +176,19 @@ const TIER_COPY: Record<
 > = {
   observer: {
     headline: 'Surface interpretation layer.',
-    body: 'Observer shows the first ledger surface: whether AI systems can extract and cite your site at all.',
+    body: 'Observer answers one clear question first: can AI systems extract a clean answer from your page and attach your domain as a citation?',
     includes: [
-      'surface interpretation snapshot',
+      'extractability baseline from real AI-answer style prompts',
       'first ledger reconstruction samples',
-      'basic citation evidence from surfaced results',
+      'citation evidence from surfaced AI responses',
     ],
     cta: 'Start free',
   },
   starter: {
     headline: 'Structural interpretation layer.',
-    body: 'Starter unlocks structural visibility: full mismatch UI, entity-level ledger entries, and evidence traces tied to each scan.',
+    body: 'Starter shows exactly which page structures weaken citation eligibility, then ties each weakness to a repair path your team can execute.',
     includes: [
-      'full mismatch breakdown',
+      'full mismatch breakdown with impact labels',
       'entity-level ledger entries',
       'evidence trace per scan',
       'scan timeline replay (basic)',
@@ -198,7 +198,7 @@ const TIER_COPY: Record<
   },
   alignment: {
     headline: 'Temporal interpretation layer.',
-    body: 'Alignment reveals how AI understanding shifts over time with cross-scan context and propagation-level evidence history.',
+    body: 'Alignment tracks citation inclusion over time, so you can prove whether content updates are improving extraction and mention stability.',
     includes: [
       'interpretation drift over time',
       'cross-scan entity graph context',
@@ -210,7 +210,7 @@ const TIER_COPY: Record<
   },
   signal: {
     headline: 'Infrastructure access layer.',
-    body: 'Signal operationalizes the ledger as infrastructure with APIs, automation, team workflows, and real-time observability.',
+    body: 'Signal turns visibility into an operating system: API access, automations, and continuous alerting around citation decay and displacement.',
     includes: [
       'real-time scan stream observability',
       'API access to ledger and query engine',
@@ -222,7 +222,7 @@ const TIER_COPY: Record<
   },
   scorefix: {
     headline: 'Continuous remediation and repair layer.',
-    body: 'Score Fix is a $299/mo subscription. It includes Signal plus always-on ledger monitoring, citation decay detection, and automated GitHub PR remediation tied to real evidence gaps.',
+    body: 'Score Fix closes the loop with recurring remediation. Evidence gaps produce repair actions, then verification confirms whether citation probability improved.',
     includes: [
       '6-hour ledger watch-mode loop',
       'Citation decay detection & entity graph repair',
@@ -231,6 +231,83 @@ const TIER_COPY: Record<
       'Evidence delta tracking across repair cycles',
     ],
     cta: 'Get Score Fix',
+  },
+};
+
+const TIER_SUMMARY: Record<
+  string,
+  {
+    label: string;
+    outcome: string;
+    extractability: string;
+    evidence: string[];
+    bestFor: string;
+  }
+> = {
+  observer: {
+    label: 'Stage 1: Detection',
+    outcome:
+      'Confirms if your page can be extracted into an AI answer format and cited with confidence.',
+    extractability:
+      'You get a fast yes/no signal for citation eligibility before investing in deeper workflows.',
+    evidence: [
+      'Initial query-to-citation snapshots',
+      'Top-line extractability markers',
+      'First-pass evidence records',
+    ],
+    bestFor: 'Best for first-time validation and baseline visibility proof.',
+  },
+  starter: {
+    label: 'Stage 2: Diagnosis',
+    outcome:
+      'Maps exactly why AI systems skip or weaken your mentions, with issue-level remediation guidance.',
+    extractability:
+      'Each weakness is tied to a specific structure, entity cue, or formatting gap impacting citations.',
+    evidence: [
+      'Mismatch classes by severity',
+      'Entity-level evidence traces',
+      'Implementation-ready correction actions',
+    ],
+    bestFor: 'Best for teams fixing pages to increase extractable citation blocks.',
+  },
+  alignment: {
+    label: 'Stage 3: Verification Over Time',
+    outcome:
+      'Shows whether your fixes are actually changing citation behavior across repeated scans.',
+    extractability:
+      'Tracks trend movement in extraction, mention consistency, and displacement risk over time.',
+    evidence: [
+      'Cross-scan citation trendlines',
+      'Entity drift and competitor overlap',
+      'Propagation history by query class',
+    ],
+    bestFor: 'Best for weekly optimization cycles and proving lift to stakeholders.',
+  },
+  signal: {
+    label: 'Stage 4: Operations',
+    outcome:
+      'Turns citation intelligence into an operational loop with APIs, automations, and team workflows.',
+    extractability:
+      'You can route extraction failures and citation drops directly into your execution systems.',
+    evidence: [
+      'Live stream of visibility state changes',
+      'Automation-ready ledger outputs',
+      'Team workflows for response and escalation',
+    ],
+    bestFor: 'Best for orgs running AI visibility as an ongoing operating function.',
+  },
+  scorefix: {
+    label: 'Stage 5: Remediation Loop',
+    outcome:
+      'Automates repair workflows, then verifies post-fix citation outcomes against prior evidence.',
+    extractability:
+      'Designed for continuous correction where extractable answer blocks must improve month over month.',
+    evidence: [
+      'Decay detection and repair triggers',
+      'Evidence-linked Auto PR remediation',
+      'Credit-metered verification cycles',
+    ],
+    bestFor: 'Best for teams that need always-on remediation with measurable proof.',
   },
 };
 
@@ -730,10 +807,21 @@ function PricingCard({
 
 function PricingPageSkeleton() {
   return (
-    <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-      {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="relative">
-          <div className="bg-charcoal border border-white/10 rounded-2xl p-6 animate-pulse">
+    <div className="space-y-8">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="grid gap-5 lg:grid-cols-12">
+          <div className="lg:col-span-7 bg-charcoal border border-white/10 rounded-2xl p-6 animate-pulse">
+            <div className="h-3 w-28 bg-charcoal-light rounded mb-4" />
+            <div className="h-8 w-2/3 bg-charcoal-light rounded mb-3" />
+            <div className="h-4 w-full bg-charcoal-light rounded mb-2" />
+            <div className="h-4 w-5/6 bg-charcoal-light rounded mb-4" />
+            <div className="space-y-2">
+              {[1, 2, 3].map((j) => (
+                <div key={j} className="h-4 bg-charcoal-light rounded w-full" />
+              ))}
+            </div>
+          </div>
+          <div className="lg:col-span-5 bg-charcoal border border-white/10 rounded-2xl p-6 animate-pulse">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-charcoal-light rounded-lg" />
               <div>
@@ -1168,11 +1256,11 @@ export default function PricingPage() {
 
           <div className="lonely-text">
             <h1 className="text-5xl md:text-7xl brand-title-lg mb-6 leading-tight tracking-tight">
-              Know if AI will cite you
+              Citation tiers built for extractable answers
             </h1>
             <p className="text-xl text-white/65 max-w-2xl mx-auto leading-relaxed">
-              Stop guessing. See exactly why AI systems use your content, skip it, or cite a
-              competitor instead.
+              Each tier increases how deeply you can detect, diagnose, verify, and remediate
+              citation gaps with evidence you can trace.
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
@@ -1218,10 +1306,12 @@ export default function PricingPage() {
         </div>
 
         <div className="text-center mb-10 rounded-2xl border border-white/8 bg-charcoal-light/40 p-7">
-          <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">This is not SEO</h2>
+          <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">
+            Designed for citation extraction, not vanity metrics
+          </h2>
           <p className="text-white/60 max-w-3xl mx-auto text-[15px] leading-relaxed">
-            AiVIS tells you whether AI systems will actually quote your page - not just where it
-            ranks in traditional search.
+            AiVIS measures whether AI systems can pull a usable answer from your content, attribute
+            it correctly, and keep citing you as competition evolves.
           </p>
         </div>
 
@@ -1262,54 +1352,7 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {/* ── Tier Narrative Strip ───────────────────────── */}
-        <motion.section
-          className="mt-10 mb-2"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          variants={STAGGER_CONTAINER}
-        >
-          <motion.p
-            variants={FADE_UP}
-            className="text-center text-[10px] text-white/35 uppercase tracking-[0.18em] font-semibold mb-5"
-          >
-            Five layers — one evidence model
-          </motion.p>
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-            {REFERENCE_TIER_ORDER.map((key) => {
-              const colors = TIER_COLORS[key];
-              const copy = TIER_COPY[key];
-              return (
-                <motion.div
-                  key={key}
-                  variants={FADE_UP}
-                  className="relative rounded-xl border border-white/8 bg-charcoal-light/25 p-4 hover:bg-charcoal-light/45 transition-colors overflow-hidden cursor-default"
-                >
-                  <div
-                    className={`absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b ${colors.gradient} opacity-80 rounded-l-xl`}
-                  />
-                  <span
-                    className={`inline-block text-[8px] font-black tracking-[0.14em] uppercase mb-2.5 px-2 py-0.5 rounded-full bg-gradient-to-r ${colors.gradient} text-white opacity-90`}
-                  >
-                    {TIER_LAYER_LABELS[key]}
-                  </span>
-                  <p className="text-[13px] font-bold text-white mb-1">
-                    {PRICING[key as keyof typeof PRICING]?.name ?? key}
-                  </p>
-                  <p className="text-[10px] font-mono text-[#22ff6e]/75 mb-2 leading-snug">
-                    {TIER_CORE_QUESTION[key]}
-                  </p>
-                  <p className="text-[11px] text-white/45 leading-relaxed line-clamp-3">
-                    {copy?.body}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.section>
-
-        {/* ── Pricing Cards ──────────────────────────────── */}
+        {/* ── Staggered tier narratives + cards ─────────────────────────── */}
         {isLoadingPricing ? (
           <PricingPageSkeleton />
         ) : error && tiers.length === 0 ? (
@@ -1325,27 +1368,79 @@ export default function PricingPage() {
           </div>
         ) : (
           <motion.div
-            className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10 mb-8"
+            className="space-y-7 mt-10 mb-10"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-40px' }}
             variants={STAGGER_CONTAINER}
           >
-            {tiers.map((tier) => (
-              <motion.div key={tier.key} variants={CARD_ITEM}>
-                <PricingCard
-                  tier={tier}
-                  billingPeriod={billingPeriod}
-                  onSelect={handleSelectTier}
-                  onStartTrial={handleStartTrial}
-                  currentTier={currentTier}
-                  isLoading={isCheckingOutTier === tier.key}
-                  isHighlighted={tier.key === 'signal'}
-                  canStartTrial={canStartTrial}
-                  isStartingTrial={isStartingTrial}
-                />
-              </motion.div>
-            ))}
+            {tiers.map((tier, idx) => {
+              const isOdd = idx % 2 === 1;
+              const summary = TIER_SUMMARY[tier.key] || TIER_SUMMARY.observer;
+              const colors = TIER_COLORS[tier.key] || TIER_COLORS.observer;
+
+              return (
+                <motion.div
+                  key={tier.key}
+                  variants={CARD_ITEM}
+                  className={`relative grid gap-5 lg:grid-cols-12 items-stretch ${
+                    isOdd ? 'lg:translate-y-5' : ''
+                  }`}
+                >
+                  <section
+                    className={`relative rounded-2xl border border-white/10 bg-charcoal-light/55 p-6 lg:p-7 ${
+                      isOdd ? 'lg:order-2 lg:col-span-7' : 'lg:col-span-7'
+                    }`}
+                  >
+                    <div
+                      className={`absolute left-0 top-0 bottom-0 w-[4px] rounded-l-2xl bg-gradient-to-b ${colors.gradient}`}
+                    />
+                    <p className="text-[11px] uppercase tracking-[0.14em] font-bold text-white/55 mb-3">
+                      {summary.label}
+                    </p>
+                    <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
+                      {tier.name}: {TIER_CORE_QUESTION[tier.key]}
+                    </h3>
+                    <p className="text-base text-white/75 leading-relaxed mb-4">
+                      {summary.outcome}
+                    </p>
+                    <p className="text-sm text-white/65 leading-relaxed mb-5">
+                      {summary.extractability}
+                    </p>
+
+                    <div className="rounded-xl border border-white/10 bg-charcoal/45 p-4 mb-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/60 mb-2">
+                        Evidence produced in this tier
+                      </p>
+                      <ul className="space-y-2">
+                        {summary.evidence.map((item) => (
+                          <li key={item} className="flex items-start gap-2 text-sm text-white/78">
+                            <Check className="w-4 h-4 text-emerald-300/90 mt-0.5 flex-shrink-0" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <p className="text-sm text-white/72 font-medium">{summary.bestFor}</p>
+                  </section>
+
+                  <div className={isOdd ? 'lg:order-1 lg:col-span-5' : 'lg:col-span-5'}>
+                    <PricingCard
+                      tier={tier}
+                      billingPeriod={billingPeriod}
+                      onSelect={handleSelectTier}
+                      onStartTrial={handleStartTrial}
+                      currentTier={currentTier}
+                      isLoading={isCheckingOutTier === tier.key}
+                      isHighlighted={tier.key === 'signal'}
+                      canStartTrial={canStartTrial}
+                      isStartingTrial={isStartingTrial}
+                    />
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
 

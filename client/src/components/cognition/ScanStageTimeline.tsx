@@ -61,6 +61,8 @@ export interface ScanStageTimelineProps {
   currentStep: string;
   /** True once the scan has completed successfully */
   complete: boolean;
+  /** Optional live percent from SSE progress */
+  progressPercent?: number;
   /** User's actively selected stage (for StageDeepView display) */
   selectedStage: ScanStage;
   onStageSelect: (stage: ScanStage) => void;
@@ -69,14 +71,20 @@ export interface ScanStageTimelineProps {
 export default function ScanStageTimeline({
   currentStep,
   complete,
+  progressPercent,
   selectedStage,
   onStageSelect,
 }: ScanStageTimelineProps) {
   const activeStage = pipelineStepToStage(currentStep);
   const activeIndex = SCAN_STAGES.findIndex((s) => s.key === activeStage);
+  const safePct = Math.max(0, Math.min(100, Math.round(progressPercent ?? 0)));
 
   return (
     <nav className="fl-stage-rail" role="navigation" aria-label="Scan pipeline stages">
+      <div className="fl-stage-progress" aria-live="polite">
+        <div className="fl-stage-progress__label">live</div>
+        <div className="fl-stage-progress__value">{safePct}%</div>
+      </div>
       {SCAN_STAGES.map((stage, i) => {
         const isDone = complete || i < activeIndex;
         const isActive = !complete && stage.key === activeStage;
@@ -88,11 +96,11 @@ export default function ScanStageTimeline({
             ? 'fl-stage-dot fl-stage-dot--active'
             : 'fl-stage-dot fl-stage-dot--pending';
 
-        const labelColor = isActive
-          ? 'rgba(79,195,247,0.9)'
+        const labelClass = isActive
+          ? 'fl-stage-label fl-stage-label--active'
           : isDone
-            ? 'rgba(0,214,122,0.65)'
-            : 'rgba(136,136,136,0.35)';
+            ? 'fl-stage-label fl-stage-label--done'
+            : 'fl-stage-label fl-stage-label--pending';
 
         return (
           <button
@@ -101,12 +109,9 @@ export default function ScanStageTimeline({
             onClick={() => onStageSelect(stage.key)}
             aria-label={`Stage: ${stage.label}${isActive ? ' (active)' : isDone ? ' (done)' : ''}`}
             aria-current={isActive ? 'step' : undefined}
-            aria-pressed={isSelected}
           >
             <span className={dotClass} aria-hidden="true" />
-            <span className="fl-stage-label" style={{ color: labelColor }}>
-              {stage.label}
-            </span>
+            <span className={labelClass}>{stage.label}</span>
           </button>
         );
       })}

@@ -1,6 +1,6 @@
 # Security Logging Implementation
 
-Enterprise-Grade Threat Detection for SMB/Agencies/SEO Operators
+Premium-Grade Threat Detection for SMB/Agencies/SEO Operators
 
 Last Updated: March 12, 2026
 Version: 1.0
@@ -15,10 +15,11 @@ All logging is **automatically redacted** - secrets, API keys, tokens, and sensi
 
 This logging layer materially reduces accidental secret leakage risk, but it is not a legal/compliance guarantee by itself.
 
-* Redaction applies to known patterns and structured logging paths; custom serializers or external sinks can still introduce risk if misconfigured.
-* Security logging does not replace access control, key rotation, penetration testing, or data retention policies.
-* Development fallbacks (for example console email fallback without provider credentials) are operational aids and must not be represented as production-grade delivery evidence.
-- For incident response evidence, retain immutable downstream logs (SIEM/vendor retention) in addition to app-console output.
+- Redaction applies to known patterns and structured logging paths; custom serializers or external sinks can still introduce risk if misconfigured.
+- Security logging does not replace access control, key rotation, penetration testing, or data retention policies.
+- Development fallbacks (for example console email fallback without provider credentials) are operational aids and must not be represented as production-grade delivery evidence.
+
+* For incident response evidence, retain immutable downstream logs (SIEM/vendor retention) in addition to app-console output.
 
 ---
 
@@ -34,18 +35,18 @@ This logging layer materially reduces accidental secret leakage risk, but it is 
 ✅ **Passwords** - URLs with password parameter  
 ✅ **Environment variables** - `OPENROUTER_API_KEY=***`, etc.  
 ✅ **Basic auth** - `Basic [REDACTED]`  
-✅ **Custom patterns** - User, workspace, and internal identifiers  
+✅ **Custom patterns** - User, workspace, and internal identifiers
 
 ### Coverage by Route
 
-| Route | Incidents Logged | Level | Use Case |
-|---|---|---|---|
-| `/api/analyze` | Invalid URL, client key rejection, tier insufficient, usage exceeded | warn, alert | Detect audit abuse, understand tier limits |
-| `/api/auth/*` | Failed login, invalid token, email unverified, account locked | warn, alert | Investigate account attacks, onboarding failures |
-| `/api/upload/*` | Malformed payload, size exceeded, invalid MIME | warn | Debug upload issues, quota violations |
-| `/api/payment/*` | Webhook signature failures, transaction errors | warn, critical | Debug billing integration, dispute resolution |
-| `/api/v1/*` (API keys) | Invalid key, scope insufficient, rate limits | warn, alert | Monitor API client behavior, quota exhaustion |
-| Webhooks | Delivery failures, signature mismatches | warn, critical | Diagnose webhook infrastructure issues |
+| Route                  | Incidents Logged                                                     | Level          | Use Case                                         |
+| ---------------------- | -------------------------------------------------------------------- | -------------- | ------------------------------------------------ |
+| `/api/analyze`         | Invalid URL, client key rejection, tier insufficient, usage exceeded | warn, alert    | Detect audit abuse, understand tier limits       |
+| `/api/auth/*`          | Failed login, invalid token, email unverified, account locked        | warn, alert    | Investigate account attacks, onboarding failures |
+| `/api/upload/*`        | Malformed payload, size exceeded, invalid MIME                       | warn           | Debug upload issues, quota violations            |
+| `/api/payment/*`       | Webhook signature failures, transaction errors                       | warn, critical | Debug billing integration, dispute resolution    |
+| `/api/v1/*` (API keys) | Invalid key, scope insufficient, rate limits                         | warn, alert    | Monitor API client behavior, quota exhaustion    |
+| Webhooks               | Delivery failures, signature mismatches                              | warn, critical | Diagnose webhook infrastructure issues           |
 
 ---
 
@@ -54,6 +55,7 @@ This logging layer materially reduces accidental secret leakage risk, but it is 
 ### 1. Enhanced Redaction Layer (`lib/safeLogging.ts`)
 
 **New patterns added:**
+
 - Email masking: `user@domain.com` → `u***r@domain.com`
 - Environment variable exposure: `API_KEY=secret123` → `API_KEY=[REDACTED]`
 - AWS keys: `AKIA...` → `[AWS_KEY_REDACTED]`
@@ -65,7 +67,10 @@ All `console.*()` calls are wrapped automatically. No special logging syntax nee
 
 ```ts
 // ✅ Safe - all args redacted automatically
-console.log('User login:', { email: 'user@example.com', token: req.headers.authorization });
+console.log("User login:", {
+  email: "user@example.com",
+  token: req.headers.authorization,
+});
 // Outputs: User login: { email: 'u***r@example.com', token: 'Bearer [REDACTED]' }
 ```
 
@@ -75,51 +80,61 @@ console.log('User login:', { email: 'user@example.com', token: req.headers.autho
 
 ```ts
 export interface SecurityEvent {
-  level: 'info' | 'warn' | 'alert' | 'critical';
-  type: SecurityEventType;  // Enum: 'auth.failed', 'url.private_host_attempted', etc.
-  timestamp: string;         // ISO 8601
-  requestId?: string;        // Tracing across distributed logs
-  userId?: string;           // User ID (not email)
-  email?: string;            // Masked email if relevant
-  ip?: string;               // Requester IP
-  path?: string;             // Route path
-  method?: string;           // HTTP method
-  message: string;           // Human-readable summary
-  details?: Record<string, any>;  // Redacted details object
-  userAgent?: string;        // Client info
+  level: "info" | "warn" | "alert" | "critical";
+  type: SecurityEventType; // Enum: 'auth.failed', 'url.private_host_attempted', etc.
+  timestamp: string; // ISO 8601
+  requestId?: string; // Tracing across distributed logs
+  userId?: string; // User ID (not email)
+  email?: string; // Masked email if relevant
+  ip?: string; // Requester IP
+  path?: string; // Route path
+  method?: string; // HTTP method
+  message: string; // Human-readable summary
+  details?: Record<string, any>; // Redacted details object
+  userAgent?: string; // Client info
 }
 ```
 
 **Usage:**
+
 ```ts
-import { logInsufficientTier, logPrivateHostAttempt, logMalformedPayload } from '../lib/securityEventLogger.js';
+import {
+  logInsufficientTier,
+  logPrivateHostAttempt,
+  logMalformedPayload,
+} from "../lib/securityEventLogger.js";
 
 // Tier insufficient
-logInsufficientTier(req, userId, 'signal', 'observer');
+logInsufficientTier(req, userId, "signal", "observer");
 
 // Attempted audit of private host
 logPrivateHostAttempt(req, userId, targetUrl);
 
 // Malformed request
-logMalformedPayload(req, userId, 'Invalid JSON body', { received: typeof body });
+logMalformedPayload(req, userId, "Invalid JSON body", {
+  received: typeof body,
+});
 ```
 
 ### 3. Error Handler Hardening (`middleware/errorHandler.ts`)
 
 **Before:**
+
 ```ts
-console.error(err.stack);  // ⚠️ Might leak secrets in stack trace
+console.error(err.stack); // ⚠️ Might leak secrets in stack trace
 ```
 
 **After:**
+
 ```ts
 const safeError = sanitizeError(err);
-console.error('[ErrorHandler]', safeError);  // ✅ Secrets removed
+console.error("[ErrorHandler]", safeError); // ✅ Secrets removed
 ```
 
 ### 4. Auth Middleware Integration (`middleware/authRequired.ts`)
 
 **Now logs security events with context:**
+
 - Missing token → `logMissingToken(req)`
 - Invalid token → `logInvalidToken(req, userId)`
 - Email unverified → `logEmailUnverified(req, userId, email)`
@@ -149,7 +164,7 @@ Track competitor tracking access:
 
 ```ts
 // Logs show attempts to access competitor data by tier
-logInsufficientTier(req, userId, 'alignment', 'observer');
+logInsufficientTier(req, userId, "alignment", "observer");
 // → Tells you free users attempting paid features
 ```
 
@@ -163,14 +178,17 @@ logUsageExceeded(req, userId, monthlyLimit, currentUsage);
 ### 4. **Abuse Pattern Detection**
 
 ```ts
-logAbusePattern(req, userId, 'repeated_auth_failures', { attempts: 7 });
+logAbusePattern(req, userId, "repeated_auth_failures", { attempts: 7 });
 // → Alert on brute force, account lockout triggers
 ```
 
 ### 5. **Upload & Batch Analysis Logging**
 
 ```ts
-logInvalidUpload(req, userId, 'File size exceeded', { received: '15MB', max: '10MB' });
+logInvalidUpload(req, userId, "File size exceeded", {
+  received: "15MB",
+  max: "10MB",
+});
 // → Monitor batch upload usage and quota enforcement
 ```
 
@@ -215,8 +233,8 @@ Wire security events to your SIEM/logging service:
 const originalLog = console.warn;
 console.warn = (...args) => {
   originalLog(...args);
-  if (args[0]?.level === 'alert' || args[0]?.level === 'critical') {
-    sendToDatadog(args[0]);  // Your integration
+  if (args[0]?.level === "alert" || args[0]?.level === "critical") {
+    sendToDatadog(args[0]); // Your integration
   }
 };
 ```
@@ -228,6 +246,7 @@ console.warn = (...args) => {
 ### Observer [Free]
 
 Events logged:
+
 - ✅ Invalid URL attempts
 - ✅ Missing auth token
 - ✅ Email verification required
@@ -237,6 +256,7 @@ Events logged:
 ### Alignment [Core]
 
 Events logged:
+
 - ✅ All Observer events
 - ✅ Competitor tracking access denied (tier insufficient)
 - ✅ API scope insufficient
@@ -245,6 +265,7 @@ Events logged:
 ### Signal [Premium]
 
 Events logged:
+
 - ✅ All Alignment events
 - ✅ Citation testing access attempts from lower tiers
 - ✅ Triple-check override requests
@@ -253,6 +274,7 @@ Events logged:
 ### scorefix (Legacy)
 
 Events logged:
+
 - ✅ All Signal events
 - ✅ Legacy endpoint usage audit trail
 - ✅ Advanced model chain selection
@@ -264,6 +286,7 @@ Events logged:
 ### 1. **Monitor Critical Events**
 
 Set up alerts for:
+
 - `auth.account_locked` → Someone attacking an account
 - `url.private_host_attempted` in production → Security policy violation
 - `abuse.pattern_detected` → Potential bot or organized attack
@@ -272,11 +295,13 @@ Set up alerts for:
 ### 2. **Regular Audit Trail Review**
 
 Weekly:
+
 - Download logs from Sentry (if configured)
 - Search for failed auth attempts by user tier
 - Verify no unauthorized API key usage
 
 Monthly:
+
 - Identify power users and upsell candidates
 - Review rate limit triggers, understand genuine usage spikes
 - Audit privilege escalation attempts (tier bypass).
@@ -284,6 +309,7 @@ Monthly:
 ### 3. **Incident Response**
 
 When an issue occurs:
+
 1. Search logs by `requestId` for end-to-end trace
 2. Identify user by `userId` + `email`
 3. Check IP for geo anomalies
@@ -298,7 +324,7 @@ When an issue occurs:
 ❌ Any environment variable values  
 ❌ Customer API keys (they're rejected server-side)  
 ❌ Stripe webhook payloads  
-❌ GDPR personal data (only IDs, masked emails)  
+❌ GDPR personal data (only IDs, masked emails)
 
 **Principle:** Log threat signals, not sensitive business data.
 
@@ -318,15 +344,15 @@ grep "@gmail\.com" logs.txt    # OK (emails are partially masked)
 ### Test Security Event Logger
 
 ```ts
-import { logPrivateHostAttempt } from '../lib/securityEventLogger.js';
+import { logPrivateHostAttempt } from "../lib/securityEventLogger.js";
 
 const mockReq = {
-  headers: { 'user-agent': 'test' },
-  path: '/api/analyze',
-  method: 'POST',
+  headers: { "user-agent": "test" },
+  path: "/api/analyze",
+  method: "POST",
 };
 
-logPrivateHostAttempt(mockReq as any, 'user_123', 'http://localhost:3000');
+logPrivateHostAttempt(mockReq as any, "user_123", "http://localhost:3000");
 // ✅ Outputs redacted event with requestId, timestamp, etc.
 ```
 
@@ -348,6 +374,7 @@ logPrivateHostAttempt(mockReq as any, 'user_123', 'http://localhost:3000');
 ## Support & Escalation
 
 For security questions:
+
 - Do NOT include full logs in emails (even though they're redacted, principle of least privilege)
 - Include only the `requestId`, `timestamp`, and event `type`
 - Include description of what you were trying to do
@@ -360,4 +387,3 @@ For security questions:
 - [OWASP: Secure Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
 - [CWE-532: Incorrect Data Retention](https://cwe.mitre.org/data/definitions/532.html)
 - [GDPR Article 32: Security of Processing](https://gdpr-info.eu/art-32-gdpr/)
-

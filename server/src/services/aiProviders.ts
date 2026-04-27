@@ -203,7 +203,9 @@ interface CallAIProviderArgs {
     temperature?: number;
     max_tokens?: number;
     systemPrompt?: string;
-    responseFormat?: 'json_object' | 'text';
+    responseFormat?: 'json_object' | 'text' | 'json_schema';
+    responseSchema?: unknown;
+    plugins?: Array<Record<string, unknown>>;
     /**
      * Hard wall-clock timeout for this AI call (ms).
      * Defaults are chosen to keep the overall /api/analyze request under proxy limits.
@@ -225,7 +227,7 @@ function withTimeout<T>(p: Promise<T>, timeoutMs: number, label: string, ac?: Ab
   const timeout = new Promise<never>((_, reject) => {
     t = setTimeout(() => {
       // Abort the HTTP request so the connection is actually freed
-      if (ac) try { ac.abort(); } catch {}
+      if (ac) try { ac.abort(); } catch { }
       reject(new Error(`${label} timed out after ${timeoutMs}ms`));
     }, timeoutMs);
   });
@@ -331,7 +333,9 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
           args.opts?.temperature,
           args.opts?.responseFormat,
           timeoutMs,
-          ac.signal
+          ac.signal,
+          args.opts?.responseSchema,
+          args.opts?.plugins
         ),
         timeoutMs,
         `OpenRouter(${args.model})`,
@@ -345,6 +349,8 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
       if (!process.env.DEEPSEEK_API_KEY) {
         throw new Error('DeepSeek provider not configured (DEEPSEEK_API_KEY not set)');
       }
+      const deepseekResponseFormat =
+        args.opts?.responseFormat === 'json_schema' ? 'json_object' : args.opts?.responseFormat;
       console.log(
         `[AI Provider] DeepSeek native model=${args.model}, max_tokens=${maxTokens}, timeoutMs=${timeoutMs}`
       );
@@ -358,7 +364,7 @@ export async function callAIProvider(args: CallAIProviderArgs): Promise<string> 
           maxTokens,
           enforcedSystemPrompt,
           args.opts?.temperature,
-          args.opts?.responseFormat,
+          deepseekResponseFormat,
           timeoutMs,
           ac.signal
         ),

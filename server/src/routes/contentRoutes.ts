@@ -375,4 +375,251 @@ Rules:
   }
 });
 
+/**
+ * POST /api/content/prompt-intelligence-report
+ *
+ * Produces a two-pass extraction report for prompt intelligence:
+ * - fast: quick extraction and citation-risk diagnosis
+ * - deep: deeper causality, rewrite, and blueprint optimization
+ */
+router.post('/prompt-intelligence-report', async (req: Request, res: Response) => {
+  const { url, prompt, answer, mode } = (req.body || {}) as {
+    url?: string;
+    prompt?: string;
+    answer?: string;
+    mode?: 'fast' | 'deep';
+  };
+
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ success: false, error: 'url is required' });
+  }
+
+  const safePrompt = typeof prompt === 'string' ? sanitizeInput(prompt, 1200) : '';
+  const safeAnswer = typeof answer === 'string' ? sanitizeInput(answer, MAX_INPUT_CHARS) : '';
+  const normalizedMode = mode === 'deep' ? 'deep' : 'fast';
+
+  if (!safePrompt && !safeAnswer) {
+    return res.status(400).json({ success: false, error: 'prompt or answer is required' });
+  }
+
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return res.status(500).json({ success: false, error: 'AI provider key not configured' });
+  }
+
+  const safeUrl = sanitizeInput(url, 400);
+  const brand = inferBrandFromUrl(safeUrl);
+
+  const extractionPrompt = `You are the AiVIS Prompt Intelligence Engine.
+
+System constraints (non-negotiable):
+- This is a citation visibility engine, not a dashboard.
+- Every insight must map to citation state and/or a corrective action path.
+- No generic advice, no marketing language, no unverifiable claims.
+
+Input:
+- URL: ${safeUrl}
+- Brand: ${brand}
+- Prompt: ${safePrompt || 'Not provided'}
+- Answer sample: ${safeAnswer || 'Not provided'}
+- Pass mode: ${normalizedMode}
+
+Task:
+Generate a structured extraction report with 7 stages:
+1) intent decomposition
+2) output structure analysis
+3) citation likelihood signals
+4) pattern signature extraction
+5) prompt->output causality
+6) optimized prompt rewrite
+7) content blueprint generation
+
+For fast mode:
+- prioritize speed
+- concise arrays (max 4 items each)
+
+For deep mode:
+- include stronger causality and remediation detail
+- arrays can include up to 8 items each
+
+Return strict JSON only with this exact shape:
+{
+  "mode": "fast|deep",
+  "summary": "string",
+  "intent_decomposition": ["string"],
+  "output_structure_analysis": ["string"],
+  "citation_likelihood_signals": {
+    "score": 0,
+    "positives": ["string"],
+    "risks": ["string"]
+  },
+  "pattern_signature_extraction": ["string"],
+  "prompt_output_causality": ["string"],
+  "optimized_prompt_rewrite": "string",
+  "content_blueprint_generation": {
+    "opening_block": "string",
+    "sections": ["string"],
+    "faq": [{"question": "string", "answer": "string"}],
+    "schema_targets": ["string"],
+    "evidence_requirements": ["string"]
+  },
+  "action_graph": [{"action": "string", "owner": "content|schema|technical", "impact": "high|medium|low"}],
+  "confidence": 0
+}`;
+
+  try {
+    type PromptIntelligenceReport = {
+      mode?: 'fast' | 'deep';
+      summary?: string;
+      intent_decomposition?: string[];
+      output_structure_analysis?: string[];
+      citation_likelihood_signals?: {
+        score?: number;
+        positives?: string[];
+        risks?: string[];
+      };
+      pattern_signature_extraction?: string[];
+      prompt_output_causality?: string[];
+      optimized_prompt_rewrite?: string;
+      content_blueprint_generation?: {
+        opening_block?: string;
+        sections?: string[];
+        faq?: Array<{ question?: string; answer?: string }>;
+        schema_targets?: string[];
+        evidence_requirements?: string[];
+      };
+      action_graph?: Array<{
+        action?: string;
+        owner?: 'content' | 'schema' | 'technical' | string;
+        impact?: 'high' | 'medium' | 'low' | string;
+      }>;
+      confidence?: number;
+    };
+
+    const raw = await withDeadline(
+      callAIProvider({
+        provider: PROVIDERS[0].provider,
+        model: PROVIDERS[0].model,
+        prompt: extractionPrompt,
+        apiKey,
+        opts: { max_tokens: normalizedMode === 'deep' ? 2200 : 1300 },
+      }),
+      'Prompt intelligence report generation',
+      normalizedMode === 'deep' ? 45_000 : CONTENT_DEADLINE_MS,
+    );
+
+    let parsed: PromptIntelligenceReport | null = null;
+    try {
+      parsed = parseJsonResponse<PromptIntelligenceReport>(raw);
+    } catch {
+      parsed = null;
+    }
+
+    const report = {
+      mode: normalizedMode,
+      summary:
+        String(parsed?.summary || '').trim() ||
+        `Prompt extraction completed in ${normalizedMode} mode for ${brand}.`,
+      intent_decomposition: Array.isArray(parsed?.intent_decomposition)
+        ? parsed!.intent_decomposition!.map((x) => String(x).trim()).filter(Boolean).slice(0, normalizedMode === 'deep' ? 8 : 4)
+        : [],
+      output_structure_analysis: Array.isArray(parsed?.output_structure_analysis)
+        ? parsed!.output_structure_analysis!.map((x) => String(x).trim()).filter(Boolean).slice(0, normalizedMode === 'deep' ? 8 : 4)
+        : [],
+      citation_likelihood_signals: {
+        score: Math.max(
+          0,
+          Math.min(100, Math.round(Number(parsed?.citation_likelihood_signals?.score ?? 50))),
+        ),
+        positives: Array.isArray(parsed?.citation_likelihood_signals?.positives)
+          ? parsed!.citation_likelihood_signals!.positives!
+            .map((x) => String(x).trim())
+            .filter(Boolean)
+            .slice(0, normalizedMode === 'deep' ? 8 : 4)
+          : [],
+        risks: Array.isArray(parsed?.citation_likelihood_signals?.risks)
+          ? parsed!.citation_likelihood_signals!.risks!
+            .map((x) => String(x).trim())
+            .filter(Boolean)
+            .slice(0, normalizedMode === 'deep' ? 8 : 4)
+          : [],
+      },
+      pattern_signature_extraction: Array.isArray(parsed?.pattern_signature_extraction)
+        ? parsed!.pattern_signature_extraction!
+          .map((x) => String(x).trim())
+          .filter(Boolean)
+          .slice(0, normalizedMode === 'deep' ? 8 : 4)
+        : [],
+      prompt_output_causality: Array.isArray(parsed?.prompt_output_causality)
+        ? parsed!.prompt_output_causality!
+          .map((x) => String(x).trim())
+          .filter(Boolean)
+          .slice(0, normalizedMode === 'deep' ? 8 : 4)
+        : [],
+      optimized_prompt_rewrite:
+        String(parsed?.optimized_prompt_rewrite || '').trim() || safePrompt || 'No rewrite available.',
+      content_blueprint_generation: {
+        opening_block:
+          String(parsed?.content_blueprint_generation?.opening_block || '').trim() ||
+          `${brand} should publish an explicit answer-first opening block aligned to the target prompt.`,
+        sections: Array.isArray(parsed?.content_blueprint_generation?.sections)
+          ? parsed!.content_blueprint_generation!.sections!
+            .map((x) => String(x).trim())
+            .filter(Boolean)
+            .slice(0, normalizedMode === 'deep' ? 10 : 5)
+          : [],
+        faq: Array.isArray(parsed?.content_blueprint_generation?.faq)
+          ? parsed!.content_blueprint_generation!.faq!
+            .map((row) => ({
+              question: String(row?.question || '').trim(),
+              answer: String(row?.answer || '').trim(),
+            }))
+            .filter((row) => row.question && row.answer)
+            .slice(0, normalizedMode === 'deep' ? 6 : 3)
+          : [],
+        schema_targets: Array.isArray(parsed?.content_blueprint_generation?.schema_targets)
+          ? parsed!.content_blueprint_generation!.schema_targets!
+            .map((x) => String(x).trim())
+            .filter(Boolean)
+            .slice(0, normalizedMode === 'deep' ? 8 : 4)
+          : [],
+        evidence_requirements: Array.isArray(
+          parsed?.content_blueprint_generation?.evidence_requirements,
+        )
+          ? parsed!.content_blueprint_generation!.evidence_requirements!
+            .map((x) => String(x).trim())
+            .filter(Boolean)
+            .slice(0, normalizedMode === 'deep' ? 8 : 4)
+          : [],
+      },
+      action_graph: Array.isArray(parsed?.action_graph)
+        ? parsed!.action_graph!
+          .map((row) => ({
+            action: String(row?.action || '').trim(),
+            owner:
+              row?.owner === 'schema' || row?.owner === 'technical' || row?.owner === 'content'
+                ? row.owner
+                : 'content',
+            impact:
+              row?.impact === 'high' || row?.impact === 'low' || row?.impact === 'medium'
+                ? row.impact
+                : 'medium',
+          }))
+          .filter((row) => row.action)
+          .slice(0, normalizedMode === 'deep' ? 10 : 5)
+        : [],
+      confidence: Math.max(0, Math.min(100, Math.round(Number(parsed?.confidence || 68)))),
+    };
+
+    return res.json({
+      success: true,
+      report,
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    console.error('[ContentRoutes] prompt-intelligence-report error:', err?.message);
+    return res.status(500).json({ success: false, error: 'Failed to generate prompt intelligence report.' });
+  }
+});
+
 export default router;

@@ -99,19 +99,28 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     emptyOutDir: true,
     sourcemap: mode !== "production",
-    modulePreload: false,
+    modulePreload: true,
     chunkSizeWarningLimit: 550,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes("/src/views/PromptIntelligencePage")) return "route-prompt-intelligence";
+          if (id.includes("/src/views/ReverseEngineerPage")) return "route-reverse-engineer";
+          if (id.includes("/src/views/AnalyzePage") || id.includes("/src/views/AnalyzeCognitionView")) {
+            return "route-analyze";
+          }
+          if (id.includes("/src/components/cognition/")) return "feature-cognition";
+
           if (!id.includes("node_modules")) return;
 
+          if (id.includes("/react/") || id.includes("/scheduler/")) return "react-core";
           if (id.includes("/react-dom")) return "react-dom";
           if (id.includes("/react-router")) return "router";
           if (id.includes("framer-motion")) return "motion";
           if (id.includes("recharts")) return "recharts";
           if (id.includes("zustand") || id.includes("@tanstack")) return "state";
           if (id.includes("lucide-react")) return "icons";
+          if (id.includes("react-hot-toast")) return "feedback";
 
 
           return "vendor";

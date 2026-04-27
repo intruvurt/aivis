@@ -239,9 +239,11 @@ export const openrouterPrompt = async (
   maxTokens = 1500,
   systemPrompt?: string,
   temperature?: number,
-  responseFormat: 'json_object' | 'text' = 'json_object',
+  responseFormat: 'json_object' | 'text' | 'json_schema' = 'json_object',
   timeoutMs?: number,
   abortSignal?: AbortSignal,
+  responseSchema?: unknown,
+  plugins?: Array<Record<string, unknown>>,
 ): Promise<any> => {
   if (!OPEN_ROUTER_API_KEY) {
     throw new Error(
@@ -277,6 +279,18 @@ export const openrouterPrompt = async (
 
     if (responseFormat === 'json_object') {
       requestBody.response_format = { type: 'json_object' };
+    }
+    if (responseFormat === 'json_schema') {
+      if (!responseSchema || typeof responseSchema !== 'object') {
+        throw new Error('json_schema response_format requires a schema object');
+      }
+      requestBody.response_format = {
+        type: 'json_schema',
+        json_schema: responseSchema,
+      };
+    }
+    if (Array.isArray(plugins) && plugins.length > 0) {
+      requestBody.plugins = plugins;
     }
 
     const effectiveTimeout = timeoutMs && timeoutMs > 0 ? timeoutMs : DEFAULT_TIMEOUT_MS;

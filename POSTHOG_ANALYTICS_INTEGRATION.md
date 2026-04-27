@@ -597,7 +597,7 @@ async function loadEngagementMetrics(days = 7) {
    - Purpose: Trial extension qualification
    - Action: Feature access expansion, upgrade prompts
 
-4. **Enterprise Customers**
+4. **Premium Customers**
    - Definition: plan = "agency"
    - Purpose: Dedicated support, feature requests
    - Action: Premium features, white-label options

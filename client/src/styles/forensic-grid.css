@@ -27,8 +27,8 @@
   --fl-bg: #000000;
   --fl-panel: #0a0a0a;
   --fl-border: #1a1a1a;
-  --fl-text-primary: #eaeaea;
-  --fl-text-secondary: #888888;
+  --fl-text-primary: #f8fafc;
+  --fl-text-secondary: #b8c2cc;
   --fl-truth: #00ff9c; /* success / verified entity */
   --fl-warning: #ffc857;
   --fl-conflict: #ff4d4d;
@@ -437,7 +437,7 @@
 .fl-stage-rail {
   display: none;
   flex-shrink: 0;
-  width: 80px;
+  width: 96px;
   background-color: var(--fl-panel);
   border-right: 1px solid var(--fl-border);
   flex-direction: column;
@@ -509,7 +509,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 10px 0;
+  padding: 11px 0;
   width: 100%;
   position: relative;
   cursor: pointer;
@@ -570,11 +570,11 @@
 
 /* Stage labels */
 .fl-stage-label {
-  font-size: 9px;
-  line-height: 12px;
+  font-size: 11px;
+  line-height: 14px;
   font-family: monospace;
   text-align: center;
-  max-width: 68px;
+  max-width: 86px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -582,9 +582,47 @@
   transition: color 80ms ease;
 }
 
+.fl-stage-label--active {
+  color: rgba(125, 211, 252, 0.95);
+}
+
+.fl-stage-label--done {
+  color: rgba(134, 239, 172, 0.85);
+}
+
+.fl-stage-label--pending {
+  color: rgba(184, 194, 204, 0.45);
+}
+
+.fl-stage-progress {
+  width: 100%;
+  padding: 0 8px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  text-align: center;
+}
+
+.fl-stage-progress__label {
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(186, 230, 253, 0.85);
+  font-family: monospace;
+}
+
+.fl-stage-progress__value {
+  margin-top: 2px;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 700;
+  color: #e2e8f0;
+  font-family: monospace;
+}
+
 /* Deepview internals */
 .fl-deepview__section-label {
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--fl-text-secondary);
@@ -603,13 +641,13 @@
 .fl-deepview__key {
   flex-shrink: 0;
   min-width: 90px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
   color: var(--fl-text-secondary);
 }
 
 .fl-deepview__val {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 16px;
   color: var(--fl-text-primary);
   overflow: hidden;
@@ -722,7 +760,7 @@
 
 .fl-deepview__candidate-title {
   margin-top: 6px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.45;
   color: var(--fl-text-primary);
   white-space: nowrap;
@@ -733,7 +771,7 @@
 .fl-deepview__candidate-meta,
 .fl-deepview__timeline-seq,
 .fl-deepview__timeline-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--fl-text-secondary);
 }
 

@@ -141,7 +141,7 @@ function IdleScreen({ onSubmit, error, showBack }: IdleProps) {
         <div className="absolute top-4 right-5 z-10">
           <Link
             to="/app/overview"
-            className="text-[9px] font-mono text-white/20 hover:text-white/50 transition-colors"
+            className="text-[10px] font-mono text-white/55 hover:text-white/85 transition-colors"
           >
             ← dashboard
           </Link>
@@ -161,7 +161,7 @@ function IdleScreen({ onSubmit, error, showBack }: IdleProps) {
 
       <div className="relative z-10 flex flex-col items-center gap-8 w-full max-w-lg px-6">
         {/* Micro-logo / system label */}
-        <div className="text-[10px] font-mono tracking-[0.25em] text-white/20 uppercase">
+        <div className="text-[11px] font-mono tracking-[0.22em] text-white/60 uppercase">
           cognition map · v2
         </div>
 
@@ -180,7 +180,7 @@ function IdleScreen({ onSubmit, error, showBack }: IdleProps) {
               placeholder="paste url"
               autoComplete="off"
               spellCheck={false}
-              className="w-full bg-transparent border-0 border-b text-white text-xl font-mono text-center py-3 px-2 outline-none placeholder-white/15 transition-colors"
+              className="w-full bg-transparent border-0 border-b text-white text-2xl font-mono text-center py-3 px-2 outline-none placeholder-white/40 transition-colors"
               style={{ borderBottomColor: 'rgba(255,255,255,0.12)' }}
               onFocus={(e) => (e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.35)')}
               onBlur={(e) => (e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.12)')}
@@ -190,7 +190,7 @@ function IdleScreen({ onSubmit, error, showBack }: IdleProps) {
           <button
             type="submit"
             disabled={!value.trim() || !isValidUrl(value)}
-            className="mt-2 text-[11px] font-mono text-white/25 hover:text-white/50 disabled:text-white/10 disabled:cursor-not-allowed border border-white/10 hover:border-white/25 disabled:border-white/5 px-5 py-1.5 transition-all duration-150"
+            className="mt-2 text-[12px] font-mono text-white/70 hover:text-white disabled:text-white/25 disabled:cursor-not-allowed border border-white/25 hover:border-white/45 disabled:border-white/10 px-5 py-1.5 transition-all duration-150"
           >
             [ analyze ]
           </button>
@@ -210,7 +210,7 @@ function IdleScreen({ onSubmit, error, showBack }: IdleProps) {
           ].map(({ color, label }) => (
             <div key={label} className="flex items-center gap-1.5">
               <span className="block w-1.5 h-1.5 rounded-full" style={{ background: color }} />
-              <span className="text-[9px] font-mono text-white/20">{label}</span>
+              <span className="text-[10px] font-mono text-white/65">{label}</span>
             </div>
           ))}
         </div>
@@ -224,6 +224,7 @@ function IdleScreen({ onSubmit, error, showBack }: IdleProps) {
 interface CognitionOverlayProps {
   scanning: boolean;
   scanStep: string;
+  progressPercent: number;
   result: AnalysisResponse | null;
   onReset: () => void;
   onExitReplay?: () => void;
@@ -236,6 +237,7 @@ type ActionMode = 'all' | 'content' | 'citation' | 'extractability';
 function CognitionOverlay({
   scanning,
   scanStep,
+  progressPercent,
   result,
   onReset,
   onExitReplay,
@@ -1109,6 +1111,7 @@ function CognitionOverlay({
           <ScanStageTimeline
             currentStep={scanStep}
             complete={!!result}
+            progressPercent={progressPercent}
             selectedStage={selectedStage}
             onStageSelect={handleStageSelect}
           />
@@ -1138,6 +1141,8 @@ export interface AnalyzeCognitionViewProps {
   loading: boolean;
   /** Current pipeline step key (e.g. "dns", "ai1") */
   step: string;
+  /** Animated progress percent from SSE stream */
+  progressPercent?: number;
   /** AnalysisResponse — undefined/null until scan completes */
   result: AnalysisResponse | null;
   /** Error message if scan failed */
@@ -1155,6 +1160,7 @@ export interface AnalyzeCognitionViewProps {
 export default function AnalyzeCognitionView({
   loading,
   step,
+  progressPercent,
   result,
   error,
   onSubmit,
@@ -1187,6 +1193,7 @@ export default function AnalyzeCognitionView({
           key="overlay"
           scanning={loading}
           scanStep={step}
+          progressPercent={Math.max(0, Math.min(100, Math.round(progressPercent ?? 0)))}
           result={result}
           onReset={handleReset}
           onExitReplay={onExitReplay}

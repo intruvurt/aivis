@@ -6,12 +6,16 @@ import {
   Brain,
   CheckCircle2,
   Eye,
+  FileSearch,
+  Gauge,
   Globe,
+  Link2,
   ListChecks,
   Loader2,
   Search,
   Sparkles,
   WandSparkles,
+  Workflow,
   XCircle,
 } from 'lucide-react';
 import { meetsMinimumTier } from '@shared/types';
@@ -47,6 +51,34 @@ interface PromptAnswerPack {
   faq: Array<{ question: string; answer: string }>;
   schema: Record<string, unknown>;
   implementation_notes: string[];
+  confidence: number;
+}
+
+interface PromptIntelligenceReport {
+  mode: 'fast' | 'deep';
+  summary: string;
+  intent_decomposition: string[];
+  output_structure_analysis: string[];
+  citation_likelihood_signals: {
+    score: number;
+    positives: string[];
+    risks: string[];
+  };
+  pattern_signature_extraction: string[];
+  prompt_output_causality: string[];
+  optimized_prompt_rewrite: string;
+  content_blueprint_generation: {
+    opening_block: string;
+    sections: string[];
+    faq: Array<{ question: string; answer: string }>;
+    schema_targets: string[];
+    evidence_requirements: string[];
+  };
+  action_graph: Array<{
+    action: string;
+    owner: 'content' | 'schema' | 'technical';
+    impact: 'high' | 'medium' | 'low';
+  }>;
   confidence: number;
 }
 
@@ -123,6 +155,10 @@ export default function PromptIntelligencePage() {
   const [selectedPrompt, setSelectedPrompt] = useState('');
   const [generatingPack, setGeneratingPack] = useState(false);
   const [answerPack, setAnswerPack] = useState<PromptAnswerPack | null>(null);
+  const [answerSample, setAnswerSample] = useState('');
+  const [runningFastPass, setRunningFastPass] = useState(false);
+  const [runningDeepPass, setRunningDeepPass] = useState(false);
+  const [promptReport, setPromptReport] = useState<PromptIntelligenceReport | null>(null);
 
   const handleAnalyze = useCallback(
     async (event?: React.FormEvent) => {
@@ -133,6 +169,7 @@ export default function PromptIntelligencePage() {
       setLoading(true);
       setError(null);
       setAnswerPack(null);
+      setPromptReport(null);
       try {
         const response = await apiFetch(`${API_URL}/api/citations/generate-queries`, {
           method: 'POST',
@@ -264,6 +301,69 @@ export default function PromptIntelligencePage() {
       setGeneratingPack(false);
     }
   }, [urlInput, token, selectedPrompt, promptMapping, identity]);
+
+  const handleRunPromptExtraction = useCallback(
+    async (mode: 'fast' | 'deep') => {
+      const normalized = normalizePublicUrlInput(urlInput.trim());
+      if (!normalized || !token) return;
+
+      const activePrompt =
+        selectedPrompt ||
+        promptMapping[0]?.prompt ||
+        visiblePrompts[0] ||
+        (typeof queryResults?.[0] === 'string' ? queryResults[0] : '');
+
+      if (!activePrompt) {
+        setError('Run prompt analysis first so the extraction engine has a prompt target.');
+        return;
+      }
+
+      if (mode === 'deep' && !promptReport) {
+        setError('Run fast pass first before deep optimization.');
+        return;
+      }
+
+      if (mode === 'fast') setRunningFastPass(true);
+      else setRunningDeepPass(true);
+
+      setError(null);
+
+      try {
+        const response = await apiFetch(`${API_URL}/api/content/prompt-intelligence-report`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            url: normalized,
+            prompt: activePrompt,
+            answer: answerSample.trim() || undefined,
+            mode,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to run ${mode} pass extraction`);
+        }
+
+        const payload = await response.json();
+        setPromptReport(payload?.report || null);
+      } catch (err: any) {
+        setError(err?.message || `Failed to run ${mode} pass extraction`);
+      } finally {
+        if (mode === 'fast') setRunningFastPass(false);
+        else setRunningDeepPass(false);
+      }
+    },
+    [
+      urlInput,
+      token,
+      selectedPrompt,
+      promptMapping,
+      visiblePrompts,
+      queryResults,
+      answerSample,
+      promptReport,
+    ]
+  );
 
   if (!hasAccess) {
     return (
@@ -422,8 +522,141 @@ export default function PromptIntelligencePage() {
 
             <section className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <FileSearch className="w-5 h-5 text-amber-400" />
+                4. Prompt Intelligence Extraction Engine (Fast + Deep)
+              </h2>
+              <p className="text-sm text-white/60 mb-4">
+                Run a fast extraction pass for immediate diagnosis, then a deep optimization pass to
+                produce a prompt rewrite and content blueprint connected to citation outcomes.
+              </p>
+
+              <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 mb-4">
+                <p className="text-xs uppercase tracking-wider text-white/60 mb-2">Optional AI answer sample</p>
+                <textarea
+                  value={answerSample}
+                  onChange={(e) => setAnswerSample(e.target.value)}
+                  rows={4}
+                  placeholder="Paste an AI-generated answer sample to improve causality analysis..."
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950 text-white text-sm px-3 py-2.5 focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-3 mb-4">
+                <button
+                  type="button"
+                  onClick={() => handleRunPromptExtraction('fast')}
+                  disabled={runningFastPass || runningDeepPass || !visiblePrompts.length}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-600/90 text-white font-semibold hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition inline-flex items-center justify-center gap-2"
+                >
+                  {runningFastPass ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Workflow className="w-4 h-4" />
+                  )}
+                  Run Fast Pass
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRunPromptExtraction('deep')}
+                  disabled={runningFastPass || runningDeepPass || !promptReport}
+                  className="px-4 py-2.5 rounded-xl bg-amber-600/90 text-white font-semibold hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed transition inline-flex items-center justify-center gap-2"
+                >
+                  {runningDeepPass ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-4 h-4" />
+                  )}
+                  Run Deep Pass
+                </button>
+              </div>
+
+              {promptReport && (
+                <div className="space-y-3">
+                  <div className="rounded-xl border border-emerald-400/25 bg-emerald-500/5 p-3">
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <p className="text-xs uppercase tracking-wider text-emerald-300">
+                        {promptReport.mode.toUpperCase()} PASS REPORT
+                      </p>
+                      <span className="text-xs text-white/70">Confidence {promptReport.confidence}%</span>
+                    </div>
+                    <p className="text-sm text-white/90">{promptReport.summary}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">1. Intent decomposition</p>
+                      {promptReport.intent_decomposition.map((item, idx) => (
+                        <p key={`intent-${idx}`} className="text-sm text-white/85">• {item}</p>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">2. Output structure analysis</p>
+                      {promptReport.output_structure_analysis.map((item, idx) => (
+                        <p key={`structure-${idx}`} className="text-sm text-white/85">• {item}</p>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2 inline-flex items-center gap-1">
+                        <Gauge className="w-3.5 h-3.5" /> 3. Citation likelihood signals
+                      </p>
+                      <p className="text-xl font-bold text-amber-300 mb-2">
+                        {promptReport.citation_likelihood_signals.score}/100
+                      </p>
+                      {promptReport.citation_likelihood_signals.positives.map((item, idx) => (
+                        <p key={`positive-${idx}`} className="text-xs text-emerald-300">+ {item}</p>
+                      ))}
+                      {promptReport.citation_likelihood_signals.risks.map((item, idx) => (
+                        <p key={`risk-${idx}`} className="text-xs text-rose-300">- {item}</p>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">4. Pattern signature extraction</p>
+                      {promptReport.pattern_signature_extraction.map((item, idx) => (
+                        <p key={`pattern-${idx}`} className="text-sm text-white/85">• {item}</p>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 md:col-span-2">
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">5. Prompt -> output causality</p>
+                      {promptReport.prompt_output_causality.map((item, idx) => (
+                        <p key={`causality-${idx}`} className="text-sm text-white/85">• {item}</p>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-3 md:col-span-2">
+                      <p className="text-xs uppercase tracking-wider text-amber-300 mb-2">6. Optimized prompt rewrite</p>
+                      <p className="text-sm text-white/90">{promptReport.optimized_prompt_rewrite}</p>
+                    </div>
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 md:col-span-2">
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">7. Content blueprint generation</p>
+                      <p className="text-sm text-white/90 mb-2">{promptReport.content_blueprint_generation.opening_block}</p>
+                      {promptReport.content_blueprint_generation.sections.map((item, idx) => (
+                        <p key={`section-${idx}`} className="text-sm text-white/80">• {item}</p>
+                      ))}
+                      {!!promptReport.content_blueprint_generation.evidence_requirements.length && (
+                        <div className="mt-2">
+                          <p className="text-xs text-white/60 mb-1">Evidence requirements</p>
+                          {promptReport.content_blueprint_generation.evidence_requirements.map((item, idx) => (
+                            <p key={`ev-${idx}`} className="text-xs text-amber-200">• {item}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 md:col-span-2">
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">Corrective action graph</p>
+                      {promptReport.action_graph.map((row, idx) => (
+                        <p key={`action-${idx}`} className="text-sm text-white/85">
+                          • [{row.owner} / {row.impact}] {row.action}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            <section className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <WandSparkles className="w-5 h-5 text-amber-400" />
-                4. Generate Answer-Ready Content
+                5. Generate Answer-Ready Content
               </h2>
               <div className="flex flex-col md:flex-row gap-3 mb-4">
                 <select
@@ -506,7 +739,7 @@ export default function PromptIntelligencePage() {
             <section className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Brain className="w-5 h-5 text-amber-400" />
-                5. Prompt Coverage Score
+                6. Prompt Coverage Score
               </h2>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -539,6 +772,35 @@ export default function PromptIntelligencePage() {
                   ))}
                 </div>
               )}
+            </section>
+
+            <section className="rounded-2xl border border-slate-700 bg-slate-900 p-5">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Link2 className="w-5 h-5 text-amber-400" />
+                7. Execution Wiring: Reverse Engineer + CITE LEDGER
+              </h2>
+              <p className="text-sm text-white/60 mb-4">
+                Use the extraction outputs as deterministic next actions. Move optimized prompts into
+                Reverse Engineer and validate outcomes in citation ledger traces.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to={`/app/reverse-engineer?tool=model-diff&input=${encodeURIComponent(
+                    promptReport?.optimized_prompt_rewrite || selectedPrompt || ''
+                  )}&secondary=${encodeURIComponent(identity?.business_name || '')}`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-400/20 bg-emerald-500/10 text-emerald-300 text-sm font-medium hover:bg-emerald-500/20 transition"
+                >
+                  <Workflow className="w-4 h-4" /> Send To Reverse Engineer
+                </Link>
+                <Link
+                  to={`/app/citations?section=prompt-ledger&url=${encodeURIComponent(
+                    normalizePublicUrlInput(urlInput.trim()) || ''
+                  )}`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-amber-400/20 bg-amber-500/10 text-amber-300 text-sm font-medium hover:bg-amber-500/20 transition"
+                >
+                  <Eye className="w-4 h-4" /> Open CITE LEDGER Context
+                </Link>
+              </div>
             </section>
           </div>
         )}

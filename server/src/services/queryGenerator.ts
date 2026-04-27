@@ -1,5 +1,6 @@
 import { callAIProvider, ALIGNMENT_PRIMARY, FREE_PROVIDERS } from './aiProviders.js';
 import { renderPrompt } from './promptRegistry.js';
+import { enrichPromptIntelligenceWithWebSearch } from './webSearchEnrichment.js';
 
 export interface GeneratedQueries {
   queries: string[];
@@ -85,8 +86,23 @@ export async function generateQueries(
 
       if (!Array.isArray(parsed.queries) || parsed.queries.length === 0) continue;
 
+      // Optional enrichment layer only. This never replaces deterministic audit scoring.
+      const enrichment = await enrichPromptIntelligenceWithWebSearch({
+        brandName,
+        url,
+        topics,
+        count: Math.min(count, 20),
+      }).catch(() => null);
+
+      const mergedQueries = Array.from(
+        new Set([
+          ...parsed.queries.map((q: unknown) => String(q || '').trim()),
+          ...(enrichment?.discoveredQueries || []),
+        ].filter(Boolean))
+      );
+
       return {
-        queries: parsed.queries.slice(0, count),
+        queries: mergedQueries.slice(0, count),
         industry: parsed.industry || 'Unknown',
         topics: parsed.topics || topics,
         fallback: false,

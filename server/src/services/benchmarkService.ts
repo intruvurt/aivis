@@ -6,6 +6,59 @@ function hashUrl(url: string): string {
   return createHash('sha256').update(url.toLowerCase().trim()).digest('hex');
 }
 
+// ── Lazy schema init (self-healing for score_improvements) ──────────────────
+let benchmarkSchemaInitPromise: Promise<void> | null = null;
+
+async function ensureBenchmarkSchema(): Promise<void> {
+  const pool = getPool();
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS score_improvements (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      url_hash VARCHAR(64) NOT NULL,
+      first_audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+      latest_audit_id UUID NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
+      score_before INTEGER NOT NULL,
+      score_after INTEGER NOT NULL,
+      delta INTEGER NOT NULL,
+      audit_count INTEGER NOT NULL DEFAULT 2,
+      domain_category VARCHAR(100),
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+  await pool.query(
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_score_improvements_user_url ON score_improvements(user_id, url_hash)`,
+  );
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS idx_score_improvements_delta ON score_improvements(delta DESC)`,
+  );
+}
+
+function isMissingScoreImprovementsError(err: unknown): boolean {
+  const code = String((err as any)?.code || '');
+  if (code === '42P01' || code === '42703') return true;
+  return String((err as any)?.message || '').toLowerCase().includes('score_improvements');
+}
+
+async function withBenchmarkSchema<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (err: unknown) {
+    if (isMissingScoreImprovementsError(err)) {
+      if (!benchmarkSchemaInitPromise) {
+        benchmarkSchemaInitPromise = ensureBenchmarkSchema().catch((e) => {
+          benchmarkSchemaInitPromise = null;
+          throw e;
+        });
+      }
+      await benchmarkSchemaInitPromise;
+      return await fn();
+    }
+    throw err;
+  }
+}
+
 /**
  * Called after every audit persistence. Checks whether this URL now qualifies
  * as a ≥ 10-point improvement benchmark for the user.
@@ -19,52 +72,54 @@ export async function trackScoreImprovement(
   const pool = getPool();
   const urlHash = hashUrl(url);
 
-  // Get the first audit and total count for this user + url combo
-  const history = await pool.query(
-    `SELECT id, visibility_score, created_at
-     FROM audits
-     WHERE user_id = $1 AND url = $2
-     ORDER BY created_at ASC`,
-    [userId, url],
-  );
-
-  if (history.rows.length < 2) return;
-
-  const firstAudit = history.rows[0];
-  const scoreBefore = Number(firstAudit.visibility_score);
-  const delta = latestScore - scoreBefore;
-
-  if (delta < 10) {
-    // Improvement doesn't meet threshold — remove existing row if regression
-    await pool.query(
-      `DELETE FROM score_improvements WHERE user_id = $1 AND url_hash = $2`,
-      [userId, urlHash],
+  await withBenchmarkSchema(async () => {
+    // Get the first audit and total count for this user + url combo
+    const history = await pool.query(
+      `SELECT id, visibility_score, created_at
+       FROM audits
+       WHERE user_id = $1 AND url = $2
+       ORDER BY created_at ASC`,
+      [userId, url],
     );
-    return;
-  }
 
-  // Upsert — one row per user+URL
-  await pool.query(
-    `INSERT INTO score_improvements
-       (user_id, url_hash, first_audit_id, latest_audit_id, score_before, score_after, delta, audit_count, updated_at)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
-     ON CONFLICT (user_id, url_hash) DO UPDATE SET
-       latest_audit_id = EXCLUDED.latest_audit_id,
-       score_after = EXCLUDED.score_after,
-       delta = EXCLUDED.delta,
-       audit_count = EXCLUDED.audit_count,
-       updated_at = NOW()`,
-    [
-      userId,
-      urlHash,
-      firstAudit.id,
-      latestAuditId,
-      scoreBefore,
-      latestScore,
-      delta,
-      history.rows.length,
-    ],
-  );
+    if (history.rows.length < 2) return;
+
+    const firstAudit = history.rows[0];
+    const scoreBefore = Number(firstAudit.visibility_score);
+    const delta = latestScore - scoreBefore;
+
+    if (delta < 10) {
+      // Improvement doesn't meet threshold — remove existing row if regression
+      await pool.query(
+        `DELETE FROM score_improvements WHERE user_id = $1 AND url_hash = $2`,
+        [userId, urlHash],
+      );
+      return;
+    }
+
+    // Upsert — one row per user+URL
+    await pool.query(
+      `INSERT INTO score_improvements
+         (user_id, url_hash, first_audit_id, latest_audit_id, score_before, score_after, delta, audit_count, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+       ON CONFLICT (user_id, url_hash) DO UPDATE SET
+         latest_audit_id = EXCLUDED.latest_audit_id,
+         score_after = EXCLUDED.score_after,
+         delta = EXCLUDED.delta,
+         audit_count = EXCLUDED.audit_count,
+         updated_at = NOW()`,
+      [
+        userId,
+        urlHash,
+        firstAudit.id,
+        latestAuditId,
+        scoreBefore,
+        latestScore,
+        delta,
+        history.rows.length,
+      ],
+    );
+  });
 }
 
 /** Aggregated, anonymised proof data for the public /proof page */

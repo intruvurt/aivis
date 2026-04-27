@@ -13,6 +13,7 @@
  */
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   CheckCircle2,
   XCircle,
@@ -38,6 +39,8 @@ import {
 import { Link } from 'react-router-dom';
 import type { AnalysisResponse, CitationDivergenceSignal } from '@shared/types';
 import { getScoreBand } from '../utils/scoreUtils';
+
+const MotionLink = motion(Link);
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -235,6 +238,14 @@ function getDomain(url: string): string {
   } catch {
     return url;
   }
+}
+
+function getBandTextClass(score: number): string {
+  if (score >= 80) return 'text-emerald-300';
+  if (score >= 60) return 'text-[#b3ff61]';
+  if (score >= 40) return 'text-[#ffb830]';
+  if (score >= 20) return 'text-orange-300';
+  return 'text-red-300';
 }
 
 // ─── Engine citation chip ─────────────────────────────────────────────────────
@@ -873,6 +884,10 @@ function PlainSummary({
   hardBlockers,
   fixes,
   engines,
+  dimensions,
+  competitorGaps,
+  canSeeCompetitorInsights,
+  onOpenTechnical,
 }: {
   score: number;
   band: ReturnType<typeof getScoreBand>;
@@ -880,7 +895,40 @@ function PlainSummary({
   hardBlockers: string[];
   fixes: AnalysisResponse['recommendations'];
   engines: Record<string, number>;
+  dimensions: Array<{ label: string; score: number }>;
+  competitorGaps: Array<{
+    type: string;
+    description: string;
+    query?: string;
+    dominant_sources?: string[];
+    action: string;
+  }>;
+  canSeeCompetitorInsights: boolean;
+  onOpenTechnical: () => void;
 }) {
+  const summaryStagger = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.06,
+        delayChildren: 0.04,
+      },
+    },
+  };
+
+  const summaryItem = {
+    hidden: { opacity: 0, y: 10 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.28,
+        ease: 'easeOut',
+      },
+    },
+  };
+
   const verdict =
     score >= 80
       ? `${domain} is consistently citation-ready. AI answer engines like ChatGPT, Perplexity, Claude, and Google AI can read, trust, and quote this site in their answers.`
@@ -894,31 +942,199 @@ function PlainSummary({
 
   const topFixes = (fixes ?? [])
     .filter((r) => r.priority === 'high' || r.priority === 'medium')
-    .slice(0, 3);
+    .slice(0, 5);
 
   const engineEntries = Object.entries(engines) as [string, number][];
 
-  return (
-    <div className="space-y-4">
-      {/* Verdict */}
-      <div className="rounded-xl border border-white/15 bg-white/[0.04] p-5">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-white/35 mb-3">
-          Plain English — What This Score Means
-        </p>
-        <p className="text-base text-white/90 leading-relaxed">{verdict}</p>
-        <div className="mt-3 flex items-center gap-2">
-          <span className="text-2xl font-extrabold" style={{ color: band.hex }}>
-            {score}/100
-          </span>
-          <span className="text-sm font-semibold" style={{ color: band.hex }}>
-            {band.grade} — {band.label}
-          </span>
-        </div>
-      </div>
+  const moduleMap = {
+    citation: 0,
+    entity: 0,
+    content: 0,
+    schema: 0,
+    technical: 0,
+  };
 
-      {/* What each AI can/can't see */}
+  dimensions.forEach((d) => {
+    const l = d.label.toLowerCase();
+    if (l.includes('schema')) moduleMap.schema = Math.max(moduleMap.schema, d.score);
+    if (l.includes('content') || l.includes('readability'))
+      moduleMap.content = Math.max(moduleMap.content, d.score);
+    if (l.includes('technical') || l.includes('security') || l.includes('meta'))
+      moduleMap.technical = Math.max(moduleMap.technical, d.score);
+    if (l.includes('ai') || l.includes('citation'))
+      moduleMap.citation = Math.max(moduleMap.citation, d.score);
+    if (l.includes('heading') || l.includes('entity'))
+      moduleMap.entity = Math.max(moduleMap.entity, d.score);
+  });
+
+  if (moduleMap.citation === 0 && engineEntries.length > 0) {
+    moduleMap.citation = Math.round(
+      engineEntries.reduce((acc, [, val]) => acc + val, 0) / engineEntries.length
+    );
+  }
+
+  if (moduleMap.content === 0) moduleMap.content = score;
+  if (moduleMap.entity === 0) moduleMap.entity = Math.max(0, score - 4);
+  if (moduleMap.schema === 0) moduleMap.schema = Math.max(0, score - 6);
+  if (moduleMap.technical === 0) moduleMap.technical = Math.max(0, score - 2);
+
+  const moduleScores = [
+    { key: 'citation', label: 'Citation', value: moduleMap.citation },
+    { key: 'entity', label: 'Entity', value: moduleMap.entity },
+    { key: 'content', label: 'Content', value: moduleMap.content },
+    { key: 'schema', label: 'Schema', value: moduleMap.schema },
+    { key: 'technical', label: 'Technical', value: moduleMap.technical },
+  ];
+
+  const topCompetitors = Array.from(
+    new Set(competitorGaps.flatMap((g) => g.dominant_sources ?? []))
+  ).slice(0, 3);
+
+  return (
+    <motion.div className="space-y-6" variants={summaryStagger} initial="hidden" animate="show">
+      <motion.div className="grid gap-4 md:grid-cols-3" variants={summaryItem}>
+        <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5 md:col-span-1">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-white/35">
+            AI Visibility Score
+          </p>
+          <div className="mt-2 flex items-end gap-2">
+            <span className="text-5xl font-extrabold text-white leading-none">{score}</span>
+            <span className={`text-sm font-semibold mb-1 ${getBandTextClass(score)}`}>
+              {band.label}
+            </span>
+          </div>
+          <p className="mt-3 text-xs text-white/55">
+            Citation probability outcome based on extraction, trust, and evidence consistency.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-white/12 bg-white/[0.02] p-5 md:col-span-2">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-white/35 mb-2">
+            Verdict
+          </p>
+          <p className="text-sm text-white/80 leading-relaxed">{verdict}</p>
+        </div>
+      </motion.div>
+
+      <motion.div
+        className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
+        variants={summaryItem}
+      >
+        <p className="text-[10px] font-bold uppercase tracking-widest text-white/35 mb-3">
+          Module Scores
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {moduleScores.map((item) => (
+            <div
+              key={item.key}
+              className="rounded-lg border border-white/10 bg-white/[0.02] p-3 text-center"
+            >
+              <p className="text-[11px] text-white/45">{item.label}</p>
+              <p className="text-2xl font-extrabold text-white mt-1">{item.value}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* What's blocking citation */}
+      {hardBlockers.length > 0 && (
+        <motion.div
+          className="rounded-xl border border-red-500/20 bg-red-500/[0.04] p-5"
+          variants={summaryItem}
+        >
+          <p className="text-[10px] font-bold uppercase tracking-widest text-red-400/60 mb-3">
+            What's Blocking AI Citation Right Now
+          </p>
+          <div className="space-y-2.5">
+            {hardBlockers.map((b, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <XCircle className="h-4 w-4 text-red-400/70 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-200/80 leading-relaxed">{b}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Top actions in plain English */}
+      {topFixes.length > 0 && (
+        <motion.div
+          className="rounded-xl border border-[#22ff6e]/15 bg-[#22ff6e]/[0.03] p-5"
+          variants={summaryItem}
+        >
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#22ff6e]/60 mb-3">
+            What To Do First — Highest Impact Actions
+          </p>
+          <div className="space-y-3">
+            {topFixes.map((fix, i) => (
+              <div
+                key={i}
+                className="rounded-lg border border-white/10 bg-black/20 px-3 py-3 flex items-start justify-between gap-3"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white/90 truncate">{`Fix #${i + 1}: ${fix.title}`}</p>
+                  <p className="text-xs text-white/55 mt-1 leading-relaxed">{fix.description}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenTechnical}
+                  className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-md border border-white/15 text-white/80 hover:text-white hover:border-white/25 transition-colors"
+                >
+                  Fix
+                </button>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      <motion.div
+        className="rounded-xl border border-orange-500/20 bg-orange-500/[0.04] p-5"
+        variants={summaryItem}
+      >
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-orange-400/70">
+            Competitor AI Citations
+          </p>
+          {!canSeeCompetitorInsights && (
+            <Link
+              to="/pricing"
+              className="text-[10px] font-semibold px-2 py-1 rounded border border-orange-400/25 text-orange-200/80 hover:text-orange-100"
+            >
+              Unlock full competitor insights
+            </Link>
+          )}
+        </div>
+
+        {topCompetitors.length === 0 ? (
+          <p className="text-sm text-white/60">
+            No competitor citation displacement detected on the tested queries.
+          </p>
+        ) : (
+          <div className="grid gap-3 md:grid-cols-3">
+            {topCompetitors.map((c) => (
+              <div
+                key={c}
+                className={`rounded-lg border border-orange-500/20 bg-black/20 p-3 ${
+                  canSeeCompetitorInsights ? '' : 'blur-[2px] select-none pointer-events-none'
+                }`}
+              >
+                <p className="text-[11px] text-white/45">Domain</p>
+                <p className="text-sm font-bold text-white/90 mt-1 break-all">{c}</p>
+                <p className="text-xs text-white/55 mt-2 leading-relaxed">
+                  Cited for clearer extractable structure and stronger entity confidence.
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+
       {engineEntries.length > 0 && (
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+        <motion.div
+          className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
+          variants={summaryItem}
+        >
           <p className="text-[10px] font-bold uppercase tracking-widest text-white/35 mb-3">
             What Each AI System Sees
           </p>
@@ -944,57 +1160,21 @@ function PlainSummary({
               );
             })}
           </div>
-        </div>
-      )}
-
-      {/* What's blocking citation */}
-      {hardBlockers.length > 0 && (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/[0.04] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-red-400/60 mb-3">
-            What's Blocking AI Citation Right Now
-          </p>
-          <div className="space-y-2.5">
-            {hardBlockers.map((b, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <XCircle className="h-4 w-4 text-red-400/70 shrink-0 mt-0.5" />
-                <p className="text-sm text-red-200/80 leading-relaxed">{b}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Top actions in plain English */}
-      {topFixes.length > 0 && (
-        <div className="rounded-xl border border-[#22ff6e]/15 bg-[#22ff6e]/[0.03] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#22ff6e]/60 mb-3">
-            What To Do First — Highest Impact Actions
-          </p>
-          <div className="space-y-4">
-            {topFixes.map((fix, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="shrink-0 w-6 h-6 rounded-full bg-[#22ff6e]/15 border border-[#22ff6e]/25 flex items-center justify-center text-xs font-bold text-[#22ff6e]">
-                  {i + 1}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white/85">{fix.title}</p>
-                  <p className="text-sm text-white/55 mt-0.5 leading-relaxed">{fix.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        </motion.div>
       )}
 
       {topFixes.length === 0 && hardBlockers.length === 0 && (
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5">
+        <motion.div
+          className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5"
+          variants={summaryItem}
+        >
           <p className="text-sm text-emerald-200/80">
             No critical blockers found. This site is well-positioned for AI citation. Minor
             improvements may still raise the score.
           </p>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -1380,23 +1560,13 @@ export default function ScanResultScreen({
             hardBlockers={hardBlockers}
             fixes={fixes}
             engines={engines}
+            dimensions={dims}
+            competitorGaps={result.answer_presence?.gaps ?? []}
+            canSeeCompetitorInsights={canSeeBrag}
+            onOpenTechnical={() => setViewMode('technical')}
           />
           {divergence && divergence.direction !== 'aligned' && (
             <CitationDivergenceCard divergence={divergence} />
-          )}
-          {/* Competitor citation theft — shown in summary so every tier sees it */}
-          {result.answer_presence?.gaps?.some(
-            (g) => g.dominant_sources && g.dominant_sources.length > 0
-          ) && (
-            <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.04] p-4 space-y-3">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-orange-400 shrink-0" />
-                <p className="text-sm font-semibold text-white/85">
-                  Competitors are winning your citations
-                </p>
-              </div>
-              <CompetitorCitationTheft gaps={result.answer_presence.gaps} />
-            </div>
           )}
         </>
       )}
@@ -1724,15 +1894,17 @@ export default function ScanResultScreen({
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[color:var(--border)] bg-[rgba(8,12,10,0.96)] backdrop-blur-md px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center gap-3 flex-wrap">
           {/* Primary: Re-scan */}
-          <button
+          <motion.button
             type="button"
             onClick={onRerunAudit}
             disabled={!onRerunAudit}
+            whileHover={onRerunAudit ? { scale: 1.02, y: -1 } : undefined}
+            whileTap={onRerunAudit ? { scale: 0.985 } : undefined}
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm bg-[linear-gradient(135deg,#22ff6e,#b3ff61)] text-[#08110c] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#22ff6e]/20"
           >
             <RefreshCcw className="h-4 w-4" />
             Re-scan
-          </button>
+          </motion.button>
 
           {/* Share */}
           <button
@@ -1761,14 +1933,16 @@ export default function ScanResultScreen({
 
           {/* Upgrade CTA — shown when below alignment */}
           {!atLeast(tier, 'alignment') && (
-            <Link
+            <MotionLink
               to="/pricing"
+              whileHover={{ scale: 1.02, y: -1 }}
+              whileTap={{ scale: 0.985 }}
               className="ml-auto flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border border-[#ffb830]/35 text-[#ffe0a3] bg-[#ffb830]/10 hover:bg-[#ffb830]/18 hover:border-[#ffb830]/50 transition-all"
             >
               <Zap className="h-4 w-4" />
               Unlock full analysis
               <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
+            </MotionLink>
           )}
 
           {/* Score baseline label */}

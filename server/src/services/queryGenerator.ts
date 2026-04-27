@@ -1,10 +1,11 @@
-import { callAIProvider } from './aiProviders.js';
+import { callAIProvider, ALIGNMENT_PRIMARY, FREE_PROVIDERS } from './aiProviders.js';
 import { renderPrompt } from './promptRegistry.js';
 
 export interface GeneratedQueries {
   queries: string[];
   industry: string;
   topics: string[];
+  fallback?: boolean;
 }
 
 /**
@@ -58,35 +59,45 @@ export async function generateQueries(
     faqCount: content.faqCount || 0,
   });
 
-  try {
-    const response = await callAIProvider({
-      provider: 'openrouter',
-      model: 'google/gemma-3-27b-it',  // Cost-effective for query generation
-      prompt: promptConfig.prompt,
-      apiKey,
-      endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-      opts: { max_tokens: 1200 },
-    });
+  // Primary: use ALIGNMENT_PRIMARY (GPT-5 Nano) — reliable JSON output
+  // Secondary: fallback to first free provider (Gemma 4 31B)
+  const modelsToTry = [
+    { model: ALIGNMENT_PRIMARY.model, endpoint: ALIGNMENT_PRIMARY.endpoint },
+    { model: FREE_PROVIDERS[0].model, endpoint: FREE_PROVIDERS[0].endpoint },
+  ];
 
-    if (!response) {
-      throw new Error('Empty response from query generator');
+  for (const { model, endpoint } of modelsToTry) {
+    try {
+      const response = await callAIProvider({
+        provider: 'openrouter',
+        model,
+        prompt: promptConfig.prompt,
+        apiKey,
+        endpoint,
+        opts: { max_tokens: 1200 },
+      });
+
+      if (!response) continue;
+
+      // Clean and parse JSON
+      const cleaned = response.trim().replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+      const parsed = JSON.parse(cleaned);
+
+      if (!Array.isArray(parsed.queries) || parsed.queries.length === 0) continue;
+
+      return {
+        queries: parsed.queries.slice(0, count),
+        industry: parsed.industry || 'Unknown',
+        topics: parsed.topics || topics,
+        fallback: false,
+      };
+    } catch (err: any) {
+      console.error(`[QueryGenerator] Model ${model} failed:`, err?.message || err);
     }
-
-    // Clean and parse JSON
-    const cleaned = response.trim().replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
-    const parsed = JSON.parse(cleaned);
-
-    return {
-      queries: parsed.queries.slice(0, count),
-      industry: parsed.industry || 'Unknown',
-      topics: parsed.topics || topics,
-    };
-  } catch (err: any) {
-    console.error('[QueryGenerator] Error:', err);
-
-    // Fallback: Generate basic queries programmatically
-    return generateFallbackQueries(brandName, url, topics, count);
   }
+
+  console.warn('[QueryGenerator] All models failed — using template fallback');
+  return { ...generateFallbackQueries(brandName, url, topics, count), fallback: true };
 }
 
 /**

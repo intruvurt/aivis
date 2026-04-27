@@ -1492,6 +1492,7 @@ export async function generateTestQueries(req: Request, res: Response) {
       queries: prioritized,
       industry: generated.industry,
       topics: generated.topics,
+      fallback: generated.fallback === true,
     });
   } catch (err: any) {
     console.error('[Citations] Generate queries error:', err);

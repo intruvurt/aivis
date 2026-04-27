@@ -84,7 +84,18 @@ export interface PublicBenchmarkData {
 export async function getPublicBenchmarkData(): Promise<PublicBenchmarkData> {
   const pool = getPool();
 
-  const stats = await pool.query(`
+  const empty: PublicBenchmarkData = {
+    total_improved: 0,
+    avg_improvement: 0,
+    max_improvement: 0,
+    median_improvement: 0,
+    distribution: [],
+    top_deltas: [],
+    generated_at: new Date().toISOString(),
+  };
+
+  try {
+    const stats = await pool.query(`
     SELECT
       COUNT(*)::int AS total,
       COALESCE(AVG(delta), 0)::int AS avg_delta,
@@ -94,7 +105,7 @@ export async function getPublicBenchmarkData(): Promise<PublicBenchmarkData> {
     WHERE delta >= 10
   `);
 
-  const dist = await pool.query(`
+    const dist = await pool.query(`
     SELECT
       CASE
         WHEN delta BETWEEN 10 AND 19 THEN '10-19'
@@ -110,7 +121,7 @@ export async function getPublicBenchmarkData(): Promise<PublicBenchmarkData> {
     ORDER BY MIN(delta)
   `);
 
-  const topDeltas = await pool.query(`
+    const topDeltas = await pool.query(`
     SELECT score_before, score_after, delta, audit_count
     FROM score_improvements
     WHERE delta >= 10
@@ -118,19 +129,24 @@ export async function getPublicBenchmarkData(): Promise<PublicBenchmarkData> {
     LIMIT 12
   `);
 
-  const row = stats.rows[0] || {};
-  return {
-    total_improved: Number(row.total || 0),
-    avg_improvement: Number(row.avg_delta || 0),
-    max_improvement: Number(row.max_delta || 0),
-    median_improvement: Number(row.median_delta || 0),
-    distribution: dist.rows.map((r) => ({ range: String(r.range), count: Number(r.count) })),
-    top_deltas: topDeltas.rows.map((r) => ({
-      score_before: Number(r.score_before),
-      score_after: Number(r.score_after),
-      delta: Number(r.delta),
-      audit_count: Number(r.audit_count),
-    })),
-    generated_at: new Date().toISOString(),
-  };
+    const row = stats.rows[0] || {};
+    return {
+      total_improved: Number(row.total || 0),
+      avg_improvement: Number(row.avg_delta || 0),
+      max_improvement: Number(row.max_delta || 0),
+      median_improvement: Number(row.median_delta || 0),
+      distribution: dist.rows.map((r) => ({ range: String(r.range), count: Number(r.count) })),
+      top_deltas: topDeltas.rows.map((r) => ({
+        score_before: Number(r.score_before),
+        score_after: Number(r.score_after),
+        delta: Number(r.delta),
+        audit_count: Number(r.audit_count),
+      })),
+      generated_at: new Date().toISOString(),
+    };
+  } catch (err: any) {
+    // Table may not yet exist in this deployment — return empty rather than 500
+    console.warn('[benchmarkService] getPublicBenchmarkData failed:', err?.message);
+    return { ...empty, generated_at: new Date().toISOString() };
+  }
 }

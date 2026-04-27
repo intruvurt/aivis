@@ -193,6 +193,7 @@ export default function PromptIntelligencePage() {
   const [urlInput, setUrlInput] = useState(defaultUrl);
   const [loading, setLoading] = useState(false);
   const [queryResults, setQueryResults] = useState<any[] | null>(null);
+  const [isFallback, setIsFallback] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = useCallback(
@@ -211,6 +212,7 @@ export default function PromptIntelligencePage() {
         if (!res.ok) throw new Error('Failed to generate prompt variants');
         const data = await res.json();
         setQueryResults(data.queries || data.results || []);
+        setIsFallback(data.fallback === true);
       } catch (err: any) {
         setError(err.message || 'Something went wrong');
       } finally {
@@ -350,6 +352,13 @@ export default function PromptIntelligencePage() {
                 ({queryResults.length} queries)
               </span>
             </h2>
+            {isFallback && (
+              <div className="mb-4 p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-300 text-sm flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                AI query generation is temporarily unavailable — showing template queries. Results
+                will be generic until the AI provider recovers.
+              </div>
+            )}
             <div className="space-y-3">
               {queryResults.map((q: any, i: number) => (
                 <div

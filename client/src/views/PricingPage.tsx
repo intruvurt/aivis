@@ -1069,16 +1069,16 @@ export default function PricingPage() {
         <div id="overview" className="section-anchor text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal-light border border-white/10 rounded-full text-sm text-white/80 mb-6">
             <Sparkles className="w-4 h-4" />
-            AiVIS Pricing
+            AiVIS - AI Visibility Intelligence Platform
           </div>
 
           <div className="lonely-text">
-            <h1 className="text-4xl md:text-5xl brand-title-lg mb-4">
-              AiVIS Pricing: Canonical System View
+            <h1 className="text-4xl md:text-6xl brand-title-lg mb-4 leading-tight">
+              Know if AI will cite you
             </h1>
             <p className="text-lg text-white/75 max-w-2xl mx-auto">
-              AiVIS pricing is a feature-licensed visibility system. All limits, permissions, and
-              feature eligibility are enforced server-side at /api/payment/pricing.
+              Stop guessing. See exactly why AI systems use your content, skip it, or cite a
+              competitor instead.
             </p>
 
             <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] text-white/65">
@@ -1091,7 +1091,7 @@ export default function PricingPage() {
                 </span>
               )}
               <span className="px-2.5 py-1 rounded-full border border-amber-400/25 bg-amber-500/10 text-amber-300/90">
-                Top 200 · TechCrunch Startup Battlefield 2026
+                Evidence-backed by CITE LEDGER
               </span>
             </div>
           </div>
@@ -1124,12 +1124,10 @@ export default function PricingPage() {
         </div>
 
         <div className="text-center mb-8 rounded-2xl border border-white/10 bg-charcoal-light/60 p-5">
-          <h2 className="text-2xl font-bold text-white mb-3">
-            Tier access is runtime-validated, not UI-guessed
-          </h2>
-          <p className="text-white/65">
-            Subscription tiers control audit capacity and feature access. Score Fix is a separate
-            remediation credit model operating on existing snapshots.
+          <h2 className="text-2xl font-bold text-white mb-3">This is not SEO</h2>
+          <p className="text-white/65 max-w-3xl mx-auto">
+            AiVIS tells you whether AI systems will actually quote your page - not just where it
+            ranks in traditional search.
           </p>
         </div>
 
@@ -1435,6 +1433,17 @@ export default function PricingPage() {
               <span className="font-semibold text-white">Score Fix</span> — Fix it now.
             </li>
           </ul>
+        </div>
+
+        <div className="mt-8 text-center">
+          <button
+            onClick={() => navigate('/auth?mode=signup&redirect=/pricing')}
+            className="inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-3 rounded-xl text-base font-semibold hover:bg-white/90 transition"
+            type="button"
+          >
+            Run Free Audit
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
 
         <div

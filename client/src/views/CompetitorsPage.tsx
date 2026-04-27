@@ -266,6 +266,8 @@ export default function CompetitorsPage() {
                       value=""
                       onChange={(e) => useRecentAuditUrl(e.target.value)}
                       disabled={recentAuditLoading || recentAuditUrls.length === 0}
+                      aria-label="Pick a recent audited URL"
+                      title="Pick a recent audited URL"
                       className="w-full appearance-none rounded-lg border border-white/10 bg-charcoal-deep px-3 py-2 pr-10 text-sm text-white/75 disabled:opacity-40"
                     >
                       <option value="">

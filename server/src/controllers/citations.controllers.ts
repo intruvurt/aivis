@@ -272,6 +272,150 @@ function normalizeQueries(input: unknown, maxQueries: number): string[] {
   return Array.from(unique);
 }
 
+interface PromptCoverageDiagnostics {
+  coverage_score: number;
+  reasons: string[];
+  strengths: string[];
+  content_gaps: string[];
+}
+
+interface PromptMappingHint {
+  prompt: string;
+  intent: string;
+  recommended_block: 'definition' | 'steps' | 'faq' | 'comparison' | 'proof';
+  recommended_schema: 'FAQPage' | 'HowTo' | 'QAPage' | 'Article';
+  reason: string;
+}
+
+function inferPromptIntent(prompt: string): string {
+  const lower = prompt.toLowerCase();
+  if (lower.includes(' vs ') || lower.includes('compare') || lower.includes('alternative')) return 'comparison';
+  if (lower.includes('how to') || lower.startsWith('how ') || lower.includes('steps')) return 'procedural';
+  if (lower.includes('best') || lower.includes('top') || lower.includes('tool')) return 'commercial';
+  if (lower.includes('what is') || lower.includes('define') || lower.includes('meaning')) return 'informational';
+  if (lower.includes('proof') || lower.includes('review') || lower.includes('trust')) return 'trust';
+  return 'informational';
+}
+
+function buildPromptMappingHints(rawQueries: any[]): PromptMappingHint[] {
+  const toPromptText = (item: any) => {
+    if (typeof item === 'string') return item;
+    if (typeof item?.query === 'string') return item.query;
+    if (typeof item?.text === 'string') return item.text;
+    return '';
+  };
+
+  return rawQueries
+    .map((item) => toPromptText(item).trim())
+    .filter(Boolean)
+    .slice(0, 16)
+    .map((prompt) => {
+      const intent = inferPromptIntent(prompt);
+
+      if (intent === 'procedural') {
+        return {
+          prompt,
+          intent,
+          recommended_block: 'steps' as const,
+          recommended_schema: 'HowTo' as const,
+          reason: 'Procedural prompts convert when the page contains explicit numbered actions AI can extract.',
+        };
+      }
+      if (intent === 'comparison') {
+        return {
+          prompt,
+          intent,
+          recommended_block: 'comparison' as const,
+          recommended_schema: 'FAQPage' as const,
+          reason: 'Comparison prompts need side-by-side distinctions and citation-ready criteria.',
+        };
+      }
+      if (intent === 'trust') {
+        return {
+          prompt,
+          intent,
+          recommended_block: 'proof' as const,
+          recommended_schema: 'Article' as const,
+          reason: 'Trust prompts require evidence claims, sourceable statements, and verification context.',
+        };
+      }
+      if (intent === 'commercial') {
+        return {
+          prompt,
+          intent,
+          recommended_block: 'faq' as const,
+          recommended_schema: 'FAQPage' as const,
+          reason: 'Commercial prompts are favored when objections and fit criteria are answered directly in FAQ form.',
+        };
+      }
+
+      return {
+        prompt,
+        intent,
+        recommended_block: 'definition' as const,
+        recommended_schema: 'QAPage' as const,
+        reason: 'Informational prompts require a crisp entity definition and explicit topical scope.',
+      };
+    });
+}
+
+function buildPromptCoverageDiagnostics(params: {
+  faqCount: number;
+  entityCount: number;
+  topicCount: number;
+  recommendationCount: number;
+}): PromptCoverageDiagnostics {
+  const reasons: string[] = [];
+  const strengths: string[] = [];
+  const contentGaps: string[] = [];
+  let score = 34;
+
+  if (params.faqCount >= 4) {
+    score += 16;
+    strengths.push('Your page already contains multiple FAQ-style answers that AI systems can parse quickly.');
+  } else {
+    reasons.push('Low FAQ density weakens extraction for direct question prompts.');
+    contentGaps.push('Add 5-8 high-intent FAQ pairs aligned to prompt variants.');
+  }
+
+  if (params.entityCount >= 3) {
+    score += 18;
+    strengths.push('Entity signals are present, helping AI disambiguate your brand from lookalikes.');
+  } else {
+    reasons.push('Entity definitions are too thin for consistent citation selection.');
+    contentGaps.push('Publish a canonical entity block: who you are, what you do, and what makes you distinct.');
+  }
+
+  if (params.topicCount >= 5) {
+    score += 14;
+    strengths.push('Topic breadth is sufficient for varied AI prompt phrasing.');
+  } else {
+    reasons.push('Topic coverage is narrow, so many prompt phrasings have no matching section.');
+    contentGaps.push('Expand topical clusters to cover adjacent user intent language.');
+  }
+
+  if (params.recommendationCount > 0) {
+    score -= Math.min(18, params.recommendationCount * 3);
+    reasons.push('Open recommendations indicate unresolved extraction or trust issues that suppress mentions.');
+  } else {
+    score += 8;
+    strengths.push('No unresolved recommendation backlog was detected in the latest audit context.');
+  }
+
+  if (contentGaps.length === 0) {
+    contentGaps.push('Run prompt coverage tests weekly and keep schema + FAQ blocks aligned with top prompt shifts.');
+  }
+
+  score = Math.max(8, Math.min(95, score));
+
+  return {
+    coverage_score: score,
+    reasons,
+    strengths,
+    content_gaps: contentGaps,
+  };
+}
+
 const PLATFORM_DOMAINS: Record<AuthorityPlatform, string> = {
   reddit: 'reddit.com',
   linkedin: 'linkedin.com',
@@ -1492,10 +1636,18 @@ export async function generateTestQueries(req: Request, res: Response) {
       recommendations: Array.isArray(audit?.recommendations) ? audit.recommendations : [],
       keywordIntelligence: Array.isArray(audit?.keyword_intelligence) ? audit.keyword_intelligence : [],
       faqCount: Number(audit?.faq_count || audit?.content_analysis?.faq_count || 0),
+      seoDiagnostics: audit?.seo_diagnostics || null,
     };
 
     const generated = await generateQueries(identity.normalized_url, content, count, apiKey);
     const prioritized = prioritizeQueries(generated.queries, content.brandName || extractDomainLabel(identity.normalized_url));
+    const coverageDiagnostics = buildPromptCoverageDiagnostics({
+      faqCount: content.faqCount,
+      entityCount: Array.isArray(content.entities) ? content.entities.length : 0,
+      topicCount: Array.isArray(content.topics) ? content.topics.length : 0,
+      recommendationCount: Array.isArray(content.recommendations) ? content.recommendations.length : 0,
+    });
+    const promptMapping = buildPromptMappingHints(prioritized);
 
     return res.json({
       success: true,
@@ -1504,6 +1656,8 @@ export async function generateTestQueries(req: Request, res: Response) {
       industry: generated.industry,
       topics: generated.topics,
       fallback: generated.fallback === true,
+      coverage_diagnostics: coverageDiagnostics,
+      prompt_mapping: promptMapping,
     });
   } catch (err: any) {
     console.error('[Citations] Generate queries error:', err);

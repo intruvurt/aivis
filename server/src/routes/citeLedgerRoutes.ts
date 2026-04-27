@@ -55,7 +55,11 @@ citeLedgerRoutes.get(
 
       const projection = await getEvidenceLedgerProjectionForAudit(auditId);
       if (!projection) {
-        return res.status(404).json({ error: "No ledger projection available for audit" });
+        return res.json({
+          success: true,
+          projection: null,
+          message: "No ledger projection available for audit yet",
+        });
       }
 
       return res.json({ success: true, projection });
@@ -149,7 +153,7 @@ citeLedgerRoutes.post(
       }
 
       // Fire-and-forget — pipeline logs internally
-      runCiteLedgerPipeline({ userId, domain, url, auditRunId, score, evidenceCount, scoreSource: scoreSource || "manual", brandName }).catch(() => {});
+      runCiteLedgerPipeline({ userId, domain, url, auditRunId, score, evidenceCount, scoreSource: scoreSource || "manual", brandName }).catch(() => { });
 
       return res.json({ queued: true, auditRunId });
     } catch (err) {

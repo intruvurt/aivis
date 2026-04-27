@@ -35,6 +35,16 @@ function parseJsonResponse<T>(raw: string): T {
   return JSON.parse(stripped) as T;
 }
 
+function inferBrandFromUrl(rawUrl: string): string {
+  try {
+    const parsed = new URL(/^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`);
+    const root = (parsed.hostname || '').replace(/^www\./i, '').split('.')[0] || '';
+    return root ? root.charAt(0).toUpperCase() + root.slice(1) : 'The page';
+  } catch {
+    return 'The page';
+  }
+}
+
 // All routes require auth + usage gate
 router.use(authRequired);
 router.use(usageGate);
@@ -195,6 +205,173 @@ Return ONLY the implementation and the Explanation paragraph. No other commentar
     if (!res.headersSent) {
       return res.status(500).json({ success: false, error: 'Fix generation failed. Please try again.' });
     }
+  }
+});
+
+/**
+ * POST /api/content/prompt-answer-pack
+ *
+ * Generates structured, answer-ready content mapped to a specific AI prompt.
+ */
+router.post('/prompt-answer-pack', async (req: Request, res: Response) => {
+  const {
+    url,
+    prompt,
+    intent,
+    recommended_block,
+    recommended_schema,
+    brand_name,
+  } = (req.body || {}) as {
+    url?: string;
+    prompt?: string;
+    intent?: string;
+    recommended_block?: string;
+    recommended_schema?: string;
+    brand_name?: string;
+  };
+
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ success: false, error: 'url is required' });
+  }
+  if (!prompt || typeof prompt !== 'string') {
+    return res.status(400).json({ success: false, error: 'prompt is required' });
+  }
+
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return res.status(500).json({ success: false, error: 'AI provider key not configured' });
+  }
+
+  const safeUrl = sanitizeInput(url, 400);
+  const safePrompt = sanitizeInput(prompt, 600);
+  const safeIntent = sanitizeInput(intent || 'informational', 100);
+  const safeBlock = sanitizeInput(recommended_block || 'definition', 60);
+  const safeSchema = sanitizeInput(recommended_schema || 'FAQPage', 60);
+  const brand = sanitizeInput((brand_name || inferBrandFromUrl(url)).trim(), 180);
+
+  const generationPrompt = `You are an AI visibility remediation engine.
+
+Generate a structured answer-ready content pack for this target prompt and URL.
+
+Target URL: ${safeUrl}
+Brand: ${brand}
+Prompt: ${safePrompt}
+Intent: ${safeIntent}
+Preferred block: ${safeBlock}
+Preferred schema: ${safeSchema}
+
+Return strict JSON with this exact shape:
+{
+  "definition_block": "string",
+  "steps": ["string", "string", "string"],
+  "faq": [{"question": "string", "answer": "string"}],
+  "schema": {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": []},
+  "implementation_notes": ["string", "string"],
+  "confidence": 0
+}
+
+Rules:
+- Produce implementation-ready, publishable content only.
+- Make all claims concrete and citation-oriented; avoid fluff.
+- Keep entity naming consistent with the provided brand.
+- Ensure schema aligns with FAQ content and is valid JSON-LD.
+- Set confidence to an integer 0-100.
+- Return JSON only.`;
+
+  try {
+    const raw = await withDeadline(
+      callAIProvider({
+        provider: PROVIDERS[0].provider,
+        model: PROVIDERS[0].model,
+        prompt: generationPrompt,
+        apiKey,
+        opts: { max_tokens: 1600 },
+      }),
+      'Prompt answer pack generation',
+    );
+
+    type PromptPack = {
+      definition_block?: string;
+      steps?: string[];
+      faq?: Array<{ question?: string; answer?: string }>;
+      schema?: Record<string, unknown>;
+      implementation_notes?: string[];
+      confidence?: number;
+    };
+
+    let parsed: PromptPack | null = null;
+    try {
+      parsed = parseJsonResponse<PromptPack>(raw);
+    } catch {
+      parsed = null;
+    }
+
+    const fallbackFaq = [
+      {
+        question: `What does ${brand} provide for this prompt intent?`,
+        answer: `${brand} addresses this prompt by providing a focused, evidence-backed answer path that can be validated and cited.`,
+      },
+      {
+        question: `Why should AI systems cite ${brand} for this topic?`,
+        answer: `${brand} presents explicit definitions, actionable steps, and verifiable claims aligned to the query language users actually ask.`,
+      },
+    ];
+
+    const pack = {
+      definition_block:
+        (parsed?.definition_block || '').trim() ||
+        `${brand} is a specialized solution for "${safePrompt}" that provides clear, verifiable guidance optimized for AI answer extraction.`,
+      steps:
+        Array.isArray(parsed?.steps) && parsed.steps.length > 0
+          ? parsed.steps.slice(0, 6).map((s) => String(s).trim()).filter(Boolean)
+          : [
+            'Define the answer scope using the exact prompt language.',
+            'Add explicit, sourceable claims that support the answer.',
+            'Attach structured FAQ/HowTo schema aligned to the claims.',
+          ],
+      faq:
+        Array.isArray(parsed?.faq) && parsed.faq.length > 0
+          ? parsed.faq
+            .map((item) => ({
+              question: String(item?.question || '').trim(),
+              answer: String(item?.answer || '').trim(),
+            }))
+            .filter((item) => item.question && item.answer)
+            .slice(0, 8)
+          : fallbackFaq,
+      schema:
+        parsed?.schema && typeof parsed.schema === 'object'
+          ? parsed.schema
+          : {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: fallbackFaq.map((item) => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+              },
+            })),
+          },
+      implementation_notes:
+        Array.isArray(parsed?.implementation_notes) && parsed.implementation_notes.length > 0
+          ? parsed.implementation_notes.slice(0, 6).map((n) => String(n).trim()).filter(Boolean)
+          : [
+            'Place definition block in the first viewport section of the target page.',
+            'Mirror prompt phrasing in at least one heading and one FAQ question.',
+          ],
+      confidence: Math.max(0, Math.min(100, Math.round(Number(parsed?.confidence || 66)))),
+    };
+
+    return res.json({
+      success: true,
+      pack,
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    console.error('[ContentRoutes] prompt-answer-pack error:', err?.message);
+    return res.status(500).json({ success: false, error: 'Failed to generate prompt answer pack.' });
   }
 });
 

@@ -531,7 +531,9 @@ export default function PromptIntelligencePage() {
               </p>
 
               <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 mb-4">
-                <p className="text-xs uppercase tracking-wider text-white/60 mb-2">Optional AI answer sample</p>
+                <p className="text-xs uppercase tracking-wider text-white/60 mb-2">
+                  Optional AI answer sample
+                </p>
                 <textarea
                   value={answerSample}
                   onChange={(e) => setAnswerSample(e.target.value)}
@@ -577,22 +579,32 @@ export default function PromptIntelligencePage() {
                       <p className="text-xs uppercase tracking-wider text-emerald-300">
                         {promptReport.mode.toUpperCase()} PASS REPORT
                       </p>
-                      <span className="text-xs text-white/70">Confidence {promptReport.confidence}%</span>
+                      <span className="text-xs text-white/70">
+                        Confidence {promptReport.confidence}%
+                      </span>
                     </div>
                     <p className="text-sm text-white/90">{promptReport.summary}</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
-                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">1. Intent decomposition</p>
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">
+                        1. Intent decomposition
+                      </p>
                       {promptReport.intent_decomposition.map((item, idx) => (
-                        <p key={`intent-${idx}`} className="text-sm text-white/85">• {item}</p>
+                        <p key={`intent-${idx}`} className="text-sm text-white/85">
+                          • {item}
+                        </p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
-                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">2. Output structure analysis</p>
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">
+                        2. Output structure analysis
+                      </p>
                       {promptReport.output_structure_analysis.map((item, idx) => (
-                        <p key={`structure-${idx}`} className="text-sm text-white/85">• {item}</p>
+                        <p key={`structure-${idx}`} className="text-sm text-white/85">
+                          • {item}
+                        </p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
@@ -603,45 +615,73 @@ export default function PromptIntelligencePage() {
                         {promptReport.citation_likelihood_signals.score}/100
                       </p>
                       {promptReport.citation_likelihood_signals.positives.map((item, idx) => (
-                        <p key={`positive-${idx}`} className="text-xs text-emerald-300">+ {item}</p>
+                        <p key={`positive-${idx}`} className="text-xs text-emerald-300">
+                          + {item}
+                        </p>
                       ))}
                       {promptReport.citation_likelihood_signals.risks.map((item, idx) => (
-                        <p key={`risk-${idx}`} className="text-xs text-rose-300">- {item}</p>
+                        <p key={`risk-${idx}`} className="text-xs text-rose-300">
+                          - {item}
+                        </p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3">
-                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">4. Pattern signature extraction</p>
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">
+                        4. Pattern signature extraction
+                      </p>
                       {promptReport.pattern_signature_extraction.map((item, idx) => (
-                        <p key={`pattern-${idx}`} className="text-sm text-white/85">• {item}</p>
+                        <p key={`pattern-${idx}`} className="text-sm text-white/85">
+                          • {item}
+                        </p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 md:col-span-2">
-                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">5. Prompt -> output causality</p>
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">
+                        5. Prompt to output causality
+                      </p>
                       {promptReport.prompt_output_causality.map((item, idx) => (
-                        <p key={`causality-${idx}`} className="text-sm text-white/85">• {item}</p>
+                        <p key={`causality-${idx}`} className="text-sm text-white/85">
+                          • {item}
+                        </p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-3 md:col-span-2">
-                      <p className="text-xs uppercase tracking-wider text-amber-300 mb-2">6. Optimized prompt rewrite</p>
-                      <p className="text-sm text-white/90">{promptReport.optimized_prompt_rewrite}</p>
+                      <p className="text-xs uppercase tracking-wider text-amber-300 mb-2">
+                        6. Optimized prompt rewrite
+                      </p>
+                      <p className="text-sm text-white/90">
+                        {promptReport.optimized_prompt_rewrite}
+                      </p>
                     </div>
                     <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 md:col-span-2">
-                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">7. Content blueprint generation</p>
-                      <p className="text-sm text-white/90 mb-2">{promptReport.content_blueprint_generation.opening_block}</p>
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">
+                        7. Content blueprint generation
+                      </p>
+                      <p className="text-sm text-white/90 mb-2">
+                        {promptReport.content_blueprint_generation.opening_block}
+                      </p>
                       {promptReport.content_blueprint_generation.sections.map((item, idx) => (
-                        <p key={`section-${idx}`} className="text-sm text-white/80">• {item}</p>
+                        <p key={`section-${idx}`} className="text-sm text-white/80">
+                          • {item}
+                        </p>
                       ))}
                       {!!promptReport.content_blueprint_generation.evidence_requirements.length && (
                         <div className="mt-2">
                           <p className="text-xs text-white/60 mb-1">Evidence requirements</p>
-                          {promptReport.content_blueprint_generation.evidence_requirements.map((item, idx) => (
-                            <p key={`ev-${idx}`} className="text-xs text-amber-200">• {item}</p>
-                          ))}
+                          {promptReport.content_blueprint_generation.evidence_requirements.map(
+                            (item, idx) => (
+                              <p key={`ev-${idx}`} className="text-xs text-amber-200">
+                                • {item}
+                              </p>
+                            )
+                          )}
                         </div>
                       )}
                     </div>
                     <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-3 md:col-span-2">
-                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">Corrective action graph</p>
+                      <p className="text-xs uppercase tracking-wider text-white/60 mb-2">
+                        Corrective action graph
+                      </p>
                       {promptReport.action_graph.map((row, idx) => (
                         <p key={`action-${idx}`} className="text-sm text-white/85">
                           • [{row.owner} / {row.impact}] {row.action}
@@ -780,8 +820,8 @@ export default function PromptIntelligencePage() {
                 7. Execution Wiring: Reverse Engineer + CITE LEDGER
               </h2>
               <p className="text-sm text-white/60 mb-4">
-                Use the extraction outputs as deterministic next actions. Move optimized prompts into
-                Reverse Engineer and validate outcomes in citation ledger traces.
+                Use the extraction outputs as deterministic next actions. Move optimized prompts
+                into Reverse Engineer and validate outcomes in citation ledger traces.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link

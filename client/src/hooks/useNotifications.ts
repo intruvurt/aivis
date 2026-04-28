@@ -6,6 +6,22 @@ import { useSettingsStore } from "../stores/settingsStore";
 import { apiFetch } from "../utils/api";
 import usePageVisible from "./usePageVisible";
 
+const NOTIFICATIONS_SSE_ENABLED =
+  (import.meta.env.VITE_NOTIFICATIONS_SSE_ENABLED as string | undefined) !== "false";
+const NOTIFICATIONS_SSE_CROSS_ORIGIN =
+  (import.meta.env.VITE_NOTIFICATIONS_SSE_CROSS_ORIGIN as string | undefined) === "true";
+
+function isSyntheticBrowserRun(): boolean {
+  if (typeof navigator === "undefined") return false;
+
+  const ua = String(navigator.userAgent || "");
+  if (!ua) return false;
+
+  if ((navigator as Navigator & { webdriver?: boolean }).webdriver) return true;
+
+  return /HeadlessChrome|Lighthouse|GTmetrix|Pingdom|UptimeRobot|crawler|spider|bot/i.test(ua);
+}
+
 export type NotificationItem = {
   id: string;
   scope: "user" | "platform";
@@ -270,13 +286,8 @@ export default function useNotifications() {
       return;
     }
 
-    if (sseSuppressedRef.current) {
-      closeStream();
-      return;
-    }
-
-    const token = useAuthStore.getState().token;
-    if (!token) {
+    if (!NOTIFICATIONS_SSE_ENABLED || isSyntheticBrowserRun()) {
+      sseSuppressedRef.current = true;
       closeStream();
       return;
     }
@@ -290,6 +301,26 @@ export default function useNotifications() {
         return false;
       }
     })();
+
+    if (isCrossOriginApi && !NOTIFICATIONS_SSE_CROSS_ORIGIN) {
+      sseSuppressedRef.current = true;
+      closeStream();
+      return;
+    }
+
+    sseSuppressedRef.current = false;
+
+    if (sseSuppressedRef.current) {
+      closeStream();
+      return;
+    }
+
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      closeStream();
+      return;
+    }
+
     let disposed = false;
 
     const connect = () => {

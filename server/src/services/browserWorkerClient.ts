@@ -21,9 +21,13 @@ export type BrowserWorkerExtractResult = {
 };
 
 function getWorkerBaseUrl(): string {
-  const raw = String(process.env.BROWSER_WORKER_URL || '').trim();
+  const raw = String(process.env.CF_BIX_WORKER_URL || process.env.BROWSER_WORKER_URL || '').trim();
   if (!raw) return '';
   return raw.replace(/\/+$/, '');
+}
+
+function getWorkerSecret(): string {
+  return String(process.env.CF_BIX_WORKER_SECRET || process.env.BROWSER_WORKER_SECRET || '').trim();
 }
 
 export async function fetchBrowserWorkerCitableSignals(params: {
@@ -36,12 +40,16 @@ export async function fetchBrowserWorkerCitableSignals(params: {
   if (!baseUrl) return null;
 
   const endpoint = `${baseUrl}/api/citable-extract`;
+  const workerSecret = getWorkerSecret();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12_000);
 
   const fetchPromise = fetch(endpoint, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      ...(workerSecret ? { 'x-aivis-worker-secret': workerSecret } : {}),
+    },
     signal: controller.signal,
     body: JSON.stringify({
       url: params.url,

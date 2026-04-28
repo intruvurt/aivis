@@ -11,6 +11,25 @@ type CitableBlock = {
   source: 'body';
 };
 
+function readWorkerSecret(env: unknown): string {
+  return String((env as { BROWSER_WORKER_SECRET?: string } | undefined)?.BROWSER_WORKER_SECRET || '').trim();
+}
+
+function isWorkerAuthorized(request: Request, env: unknown): boolean {
+  const expected = readWorkerSecret(env);
+  if (!expected) return true;
+
+  const headerSecret = String(request.headers.get('x-aivis-worker-secret') || '').trim();
+  if (headerSecret && headerSecret === expected) return true;
+
+  const authHeader = String(request.headers.get('authorization') || '').trim();
+  if (authHeader.toLowerCase().startsWith('bearer ')) {
+    return authHeader.slice(7).trim() === expected;
+  }
+
+  return false;
+}
+
 function isPrivateOrLocalHost(hostname: string): boolean {
   const host = hostname.toLowerCase();
   if (host === 'localhost' || host.endsWith('.local')) return true;
@@ -255,10 +274,13 @@ async function handleCitableExtract(request: Request): Promise<Response> {
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
 
     if (request.method === 'POST' && url.pathname === '/api/citable-extract') {
+      if (!isWorkerAuthorized(request, env)) {
+        return Response.json({ error: 'unauthorized' }, { status: 401 });
+      }
       return handleCitableExtract(request);
     }
 

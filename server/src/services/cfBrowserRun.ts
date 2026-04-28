@@ -8,15 +8,26 @@
  * Docs: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/
  */
 
-const CF_ACCOUNT_ID = process.env.CF_ACCOUNT_ID || '';
-const CF_API_TOKEN = process.env.CF_API_TOKEN || process.env.CF_API_KEY || '';
-const CF_CONTENT_URL = CF_ACCOUNT_ID
-    ? `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/browser-rendering/content`
+const CF_BROWSER_RUN_ACCOUNT_ID =
+    process.env.CF_BROWSER_RUN_ACCOUNT_ID
+    || process.env.CF_ACCOUNT_ID
+    || '';
+
+const CF_BROWSER_RUN_API_TOKEN =
+    process.env.CF_BROWSER_RUN_API_TOKEN
+    || process.env.CF_BROWSER_RUN_TOKEN
+    || process.env.BROWSER_RUN_KEY
+    || process.env.CF_API_TOKEN
+    || process.env.CF_API_KEY
+    || '';
+
+const CF_CONTENT_URL = CF_BROWSER_RUN_ACCOUNT_ID
+    ? `https://api.cloudflare.com/client/v4/accounts/${CF_BROWSER_RUN_ACCOUNT_ID}/browser-rendering/content`
     : '';
 
 /** Whether CF Browser Run credentials are configured */
 export function isCfBrowserRunAvailable(): boolean {
-    return CF_CONTENT_URL.length > 0 && CF_API_TOKEN.length > 0;
+    return CF_CONTENT_URL.length > 0 && CF_BROWSER_RUN_API_TOKEN.length > 0;
 }
 
 export interface CfContentResult {
@@ -33,7 +44,7 @@ export async function cfFetchContent(
     timeoutMs = 10_000,
 ): Promise<CfContentResult> {
     if (!isCfBrowserRunAvailable()) {
-        throw new Error('[CfBrowserRun] Not configured (missing CF_ACCOUNT_ID or CF_API_TOKEN)');
+        throw new Error('[CfBrowserRun] Not configured (missing CF_BROWSER_RUN_ACCOUNT_ID/CF_ACCOUNT_ID or CF_BROWSER_RUN_API_TOKEN)');
     }
 
     const controller = new AbortController();
@@ -45,7 +56,7 @@ export async function cfFetchContent(
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${CF_API_TOKEN}`,
+                Authorization: `Bearer ${CF_BROWSER_RUN_API_TOKEN}`,
             },
             body: JSON.stringify({
                 url,

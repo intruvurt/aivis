@@ -1,13 +1,43 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) - config deferred to body -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B4WM53183L"></script>
+    <!-- Google tag (gtag.js) - loaded conditionally to avoid noisy auth/synthetic sessions -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
+      (function () {
+        try {
+          var path = window.location.pathname || '';
+          var gaEnabled = '%VITE_GA_ENABLED%' !== 'false';
+          var isAppRoute =
+            path === '/auth' ||
+            path.startsWith('/auth/') ||
+            path === '/app' ||
+            path.startsWith('/app/');
+
+          var ua = (window.navigator && window.navigator.userAgent) || '';
+          var isSyntheticRun =
+            !!(window.navigator && window.navigator.webdriver) ||
+            /HeadlessChrome|Lighthouse|GTmetrix|Pingdom|UptimeRobot|crawler|spider|bot/i.test(ua);
+
+          window.dataLayer = window.dataLayer || [];
+          window.gtag =
+            window.gtag ||
+            function () {
+              window.dataLayer.push(arguments);
+            };
+
+          if (!gaEnabled || isAppRoute || isSyntheticRun) {
+            window.__AIVIS_GA_DISABLED = true;
+            return;
+          }
+
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-B4WM53183L';
+          document.head.appendChild(script);
+        } catch {
+          window.__AIVIS_GA_DISABLED = true;
+        }
+      })();
     </script>
     <script type="text/javascript">
       (function () {
@@ -1062,7 +1092,7 @@
     </div>
 
     <script>
-      if (window.gtag) {
+      if (window.gtag && !window.__AIVIS_GA_DISABLED) {
         gtag('js', new Date());
         gtag('config', 'G-B4WM53183L');
       }

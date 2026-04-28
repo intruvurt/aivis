@@ -18,6 +18,11 @@ import type {
   CitationDivergenceSignal,
   AnswerPresenceResult,
 } from '../../../shared/types.js';
+import {
+  getCitationGuideReferences,
+  mapEvidenceKeyToCitationReason,
+  type CitationReasonCode,
+} from '../constants/citationGuideRegistry.js';
 
 // ─── Category weights (sum = 1.0) ──────────────────────────────────────────
 
@@ -130,6 +135,19 @@ const BLOCKER_DEDUCTIONS: Array<{ key: string; deduction: number; reason: string
   },
 ];
 
+const GUIDE_REASON_DEDUCTIONS: Record<CitationReasonCode, number> = {
+  CRAWLER_BLOCKED: 15,
+  NO_STRUCTURED_DATA: 12,
+  MISSING_ENTITY_IDENTITY: 10,
+  NO_TITLE_OR_WEAK_TITLE: 8,
+  NO_META_DESCRIPTION: 7,
+  THIN_OR_NON_ANSWER_CONTENT: 10,
+  WEAK_HEADING_STRUCTURE: 6,
+  MISSING_LLM_GUIDANCE: 7,
+  LOW_TRUST_LINK_SIGNALS: 5,
+  SLOW_OR_UNSTABLE_TECHNICAL_SURFACE: 5,
+};
+
 // ─── Score helpers ──────────────────────────────────────────────────────────
 
 function statusScore(status: SSFREvidenceStatus): number {
@@ -157,6 +175,7 @@ function buildEvidenceMap(evidence: SSFREvidenceItem[]): Map<string, SSFREvidenc
 export function scoreEvidence(evidence: SSFREvidenceItem[]): ScoringResult {
   const evidenceMap = buildEvidenceMap(evidence);
   const categories: CategoryScore[] = [];
+  const citationReasonCodes = new Set<CitationReasonCode>();
 
   for (const [category, weight] of Object.entries(CATEGORY_WEIGHTS) as Array<[ScoringCategory, number]>) {
     const keys = CATEGORY_EVIDENCE_KEYS[category];
@@ -167,14 +186,21 @@ export function scoreEvidence(evidence: SSFREvidenceItem[]): ScoringResult {
 
     for (const key of keys) {
       const item = evidenceMap.get(key);
+      const mappedReason = mapEvidenceKeyToCitationReason(key);
       if (item) {
         // Weight by confidence
         totalScore += statusScore(item.status) * item.confidence;
         evidenceKeys.push(key);
+        if ((item.status === 'missing' || item.status === 'invalid') && mappedReason) {
+          citationReasonCodes.add(mappedReason);
+        }
       } else {
         // Missing evidence = 0 score
         totalScore += 0;
         evidenceKeys.push(key);
+        if (mappedReason) {
+          citationReasonCodes.add(mappedReason);
+        }
       }
       itemCount++;
 
@@ -222,6 +248,23 @@ export function scoreEvidence(evidence: SSFREvidenceItem[]): ScoringResult {
     overallScore = Math.max(5, overallScore - totalDeduction);
   }
 
+  // Guide-weighted reason penalties are bounded so they inform scoring but do not dominate it.
+  let reasonPenalty = 0;
+  for (const code of citationReasonCodes) {
+    reasonPenalty += GUIDE_REASON_DEDUCTIONS[code] || 0;
+  }
+  if (reasonPenalty > 0) {
+    overallScore = Math.max(5, overallScore - Math.min(18, reasonPenalty));
+  }
+
+  const guideReferences = getCitationGuideReferences().map((guide) => ({
+    id: guide.id,
+    title: guide.title,
+    version: guide.version,
+    sha256: guide.sha256,
+    repo_path: guide.repoPath,
+  }));
+
   return {
     overall_score: overallScore,
     categories,
@@ -229,6 +272,8 @@ export function scoreEvidence(evidence: SSFREvidenceItem[]): ScoringResult {
     // score_cap repurposed: total deduction applied (null if none)
     score_cap: totalDeduction > 0 ? totalDeduction : null,
     score_cap_reason: hardBlockers.length > 0 ? `${hardBlockers.length} blocker${hardBlockers.length > 1 ? 's' : ''} detected` : null,
+    citation_reason_codes: Array.from(citationReasonCodes),
+    guidance_references: guideReferences,
   };
 }
 

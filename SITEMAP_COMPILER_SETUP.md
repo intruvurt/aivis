@@ -136,10 +136,10 @@ For each page in `/public/`:
 ```html
 <html>
   <head>
-    <title>Why AI Skips SaaS Websites</title>
+    <title>Why AI Skips SaaS Websites?</title>
     <meta
       name="description"
-      content="AI visibility, entity resolution, and citation behavior in generative answer engines"
+      content="AI may skip SaaS websites due to lack of structured schema, poor entity resolution, and citation drift. Learn how AiVIS improves AI visibility and citation behavior in answer engines."
     />
     <link rel="canonical" href="https://aivis.biz/why-ai-skips-saas" />
     <script type="application/ld+json">
@@ -149,8 +149,8 @@ For each page in `/public/`:
           {
             "@type": "Organization",
             "@id": "https://aivis.biz#org",
-            "name": "AiVIS",
-            "description": "AI visibility, entity resolution, and citation behavior in generative answer engines",
+            "name": "AiVIS - Cite Ledger",
+            "description": "AI may skip SaaS websites due to lack of structured schema, poor entity resolution, and citation drift. Learn how AiVIS improves AI visibility and citation behavior in answer engines.",
             "knowsAbout": [
               "AI visibility",
               "entity resolution",
@@ -163,7 +163,7 @@ For each page in `/public/`:
             "@type": "BlogPosting",
             "url": "https://aivis.biz/why-ai-skips-saas",
             "headline": "AI Visibility Insights",
-            "about": "AI visibility, entity resolution, and citation behavior in generative answer engines"
+            "about": "AI may skip SaaS websites due to lack of structured schema, poor entity resolution, and citation drift. Learn how AiVIS improves AI visibility and citation behavior in answer engines."
           }
         ]
       }

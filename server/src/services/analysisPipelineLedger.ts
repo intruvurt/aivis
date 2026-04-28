@@ -35,6 +35,7 @@ import {
     type AuditEventType,
 } from './ledgerService.js';
 import { replayAndSnapshot } from './replayEngine.js';
+import { getCitationGuideReferenceIds } from '../constants/citationGuideRegistry.js';
 
 type Noop = () => void;
 const noop: Noop = () => undefined;
@@ -44,7 +45,7 @@ export interface AnalysisLedgerContext {
     traceId: string;
 
     /** Stage 1: audit.started */
-    started(payload: { url: string; tier?: string; userId?: string }): Promise<void>;
+    started(payload: { url: string; tier?: string; userId?: string; referenceGuides?: string[] }): Promise<void>;
 
     /** Stage 2: crawl.complete */
     crawlComplete(payload: {
@@ -83,6 +84,7 @@ export interface AnalysisLedgerContext {
     scoreComputed(payload: {
         score: number;
         visibilityIndex?: number;
+        referenceGuides?: string[];
         actionGraph?: Array<{ id: string; type: string; priority: string; description: string; evidence_ref?: string }>;
     }): Promise<void>;
 
@@ -132,11 +134,23 @@ export function createAnalysisLedgerContext(
     return {
         traceId,
 
-        started({ url, tier, userId }) {
+        started({ url, tier, userId, referenceGuides }) {
+            const guideRefs = referenceGuides && referenceGuides.length > 0
+                ? referenceGuides
+                : getCitationGuideReferenceIds();
             return schedule(
                 'audit.started',
-                { url, tier: tier ?? null, user_id: userId ?? null },
-                { url, tier: tier ?? null },
+                {
+                    url,
+                    tier: tier ?? null,
+                    user_id: userId ?? null,
+                    guidance_references: guideRefs,
+                },
+                {
+                    url,
+                    tier: tier ?? null,
+                    guidance_references: guideRefs,
+                },
             );
         },
 
@@ -193,13 +207,17 @@ export function createAnalysisLedgerContext(
             );
         },
 
-        scoreComputed({ score, visibilityIndex, actionGraph }) {
+        scoreComputed({ score, visibilityIndex, actionGraph, referenceGuides }) {
+            const guideRefs = referenceGuides && referenceGuides.length > 0
+                ? referenceGuides
+                : getCitationGuideReferenceIds();
             return schedule(
                 'score.computed',
                 { score },
                 {
                     score,
                     visibility_index: visibilityIndex ?? null,
+                    guidance_references: guideRefs,
                     action_graph: actionGraph ?? [],
                 },
             );

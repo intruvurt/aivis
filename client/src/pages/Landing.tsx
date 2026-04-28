@@ -1263,6 +1263,24 @@ const Landing = () => {
             {/* Use cases — always shown post-idle or post-result */}
             <section className="py-16 bg-[#060607] border-t border-white/8">
               <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="mb-8 rounded-xl border border-white/10 bg-[#0f172a]/45 p-5 sm:p-6">
+                  <h2 className="text-lg sm:text-xl font-bold text-white mb-2">Purpose of AiVIS</h2>
+                  <p className="text-sm text-white/70 leading-relaxed">
+                    AiVIS is an evidence-backed AI visibility and citation engine. It determines
+                    whether your pages are being cited in AI-generated answers, explains why
+                    citations are missing, and returns corrective action paths tied to verifiable
+                    evidence.
+                  </p>
+                  <p className="text-xs text-white/55 mt-3">
+                    Legal and data handling details:{' '}
+                    <Link
+                      to="/privacy"
+                      className="text-cyan-300 hover:text-cyan-200 underline underline-offset-2"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </p>
+                </div>
                 <div className="grid sm:grid-cols-3 gap-4">
                   {[
                     {

@@ -2,6 +2,7 @@
 export const PROMPT_SCHEMAS = {
   analysis: `Analysis Response Schema (Prose Only):
 - Structured sections: score breakdown (each category-crawlability, indexability, schema, content clarity, entity trust, technical hygiene, ai readability), recommendations (what to do next) referencing evidence IDs, validation (explicitly mark unknown/missing data), evidence list (each with id, type, source_url, source_kind, observed_at, extract, hash, confidence, notes)`,
+  citation_reasoning_registry: `Citation reasoning must reference persisted guide registry entries and deterministic reason codes (not generic best-practice guesses).`,
 };
 
 export const PROMPT_STAGES = {

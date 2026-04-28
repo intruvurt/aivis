@@ -253,6 +253,16 @@ Rule: Content must stand alone as an AI answer. Every block must be citation-saf
 - 40-59 -> structural citation blockers
 - 0-39 -> invisible to AI — citation probability near zero
 
+## CITATION REASONS REGISTRY
+
+Use the persisted citation reasons guide as the canonical remediation reference:
+
+- id: guide.ai-citation-reasons.v1
+- path: server/registry/citation-guides/ai_citation_reasons_guide.pdf
+- sha256: 8D7621907E1119C89342F6B6903AFE9C7A95CB4FFB164BCB9CB2F8EA0F571961
+
+Do not output generic guidance when a deterministic reason code can be mapped from evidence.
+
 ## HARD CONSTRAINTS
 
 You are NOT:

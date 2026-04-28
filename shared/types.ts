@@ -2584,6 +2584,14 @@ export interface ScoringResult {
   hard_blockers: string[];
   score_cap: number | null;
   score_cap_reason: string | null;
+  citation_reason_codes?: string[];
+  guidance_references?: Array<{
+    id: string;
+    title: string;
+    version: string;
+    sha256: string;
+    repo_path: string;
+  }>;
 }
 
 /** A classified finding mapping to exactly one fix class. */

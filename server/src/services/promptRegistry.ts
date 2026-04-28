@@ -1,4 +1,8 @@
 import { AIVIS_MASTER_SYSTEM_PROFILE } from '../constants/masterSystemProfile.js';
+import {
+    getCitationGuideReferences,
+    mapEvidenceKeyToCitationReason,
+} from '../constants/citationGuideRegistry.js';
 
 type PromptVersion = '2026-04-13.1';
 
@@ -76,6 +80,26 @@ function serializeJson(value: unknown): string {
 }
 
 function buildAuditPrimaryPrompt(args: AuditPrimaryArgs): string {
+    const guideRefs = getCitationGuideReferences()
+        .map((guide) => `- ${guide.id} (${guide.version}) sha256=${guide.sha256} path=${guide.repoPath}`)
+        .join("\n");
+    const reasonMapping = [
+        'ai_crawler_access',
+        'robots_txt',
+        'json_ld_schemas',
+        'organization_schema',
+        'same_as_links',
+        'author_entity',
+        'title_tag',
+        'meta_description',
+        'word_count',
+        'heading_hierarchy',
+        'llms_txt',
+        'performance',
+    ]
+        .map((key) => `- ${key} -> ${mapEvidenceKeyToCitationReason(key) || 'UNMAPPED'}`)
+        .join("\n");
+
     return `${args.tierPromptPrefix}Evidence-backed site analysis for AI answers Platform audit for ${args.targetUrl} (${args.hostname}).
 Base ALL findings on the evidence below. Be honest - most sites score C/D. Cite [ev_*] IDs.
 
@@ -84,6 +108,12 @@ MASTER SYSTEM CONTRACT (mandatory):
 - This is not rank tracking. Evaluate citation probability and corrective action readiness.
 - Weighted modules: AI Citation Readiness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.ai_citation_readiness}%), Entity Authority (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.entity_authority}%), Content Completeness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.content_completeness}%), Schema Readiness (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.schema_readiness}%), Technical Health (${AIVIS_MASTER_SYSTEM_PROFILE.scoring_weights.technical_health}%)
 - Confidence discipline: if fewer than ${AIVIS_MASTER_SYSTEM_PROFILE.source_requirements.minimum_sources_required} independent signal classes are present, cap confidence and explain coverage gaps clearly.
+
+CITATION REASONS REFERENCE REGISTRY (must use for remediation reasoning):
+${guideRefs}
+
+Reason code mapping (use these labels in recommendation logic and explanation text):
+${reasonMapping}
 
 WRITING STYLE (mandatory for all text fields):
 - Write in a direct, technical, human-edited voice. No filler. No marketing fluff.

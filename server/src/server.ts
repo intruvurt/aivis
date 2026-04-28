@@ -136,6 +136,10 @@ import {
   createAnalysisLedgerContext,
   fireLedgerEvent,
 } from "./services/analysisPipelineLedger.js";
+import {
+  getCitationGuideReferenceIds,
+  getCitationGuideReferences,
+} from "./constants/citationGuideRegistry.js";
 import { getPublicBenchmarkData } from "./services/benchmarkService.js";
 import { extractContactsFromHtml } from "./lib/contactUtils.js";
 import featureRoutes from "./routes/featureRoutes.js";
@@ -7221,6 +7225,71 @@ function computeEvidenceScores(
   return b;
 }
 
+function deriveCitationReasoningSignals(sd: any, schema: any): {
+  codes: string[];
+  penalty: number;
+} {
+  const codes = new Set<string>();
+  const schemaTypes = Array.isArray(schema?.schema_types)
+    ? schema.schema_types.map((type: unknown) => String(type).toLowerCase())
+    : [];
+  const metaDescription = String(sd?.meta?.description || '').trim();
+  const title = String(sd?.title || '').trim();
+  const wordCount = Number(sd?.wordCount || 0);
+  const headingCount =
+    Number(sd?.headings?.h1?.length || 0) + Number(sd?.headings?.h2?.length || 0);
+  const pageLoad = Number(sd?.pageLoadMs || sd?.lcpMs || 0);
+  const externalLinks = Number(sd?.links?.external || 0);
+  const llmsFetched = Boolean((sd as any)?.llmsTxt?.fetched);
+  const llmsPresent = Boolean((sd as any)?.llmsTxt?.present);
+
+  const aiBlocked =
+    sd?.robots?.fetched === true &&
+    (sd?.robots?.allows?.gptbot === false ||
+      (sd?.robots?.allows as any)?.GPTBot === false ||
+      (sd?.robots?.allows as any)?.openai === false);
+
+  if (aiBlocked) codes.add('CRAWLER_BLOCKED');
+  if ((schema?.json_ld_count || 0) === 0) codes.add('NO_STRUCTURED_DATA');
+  if (
+    !schemaTypes.includes('organization') &&
+    !schemaTypes.includes('person') &&
+    !schemaTypes.includes('website')
+  ) {
+    codes.add('MISSING_ENTITY_IDENTITY');
+  }
+  if (!title || title.length < 20) codes.add('NO_TITLE_OR_WEAK_TITLE');
+  if (!metaDescription || metaDescription.length < 70) codes.add('NO_META_DESCRIPTION');
+  if (wordCount < 500) codes.add('THIN_OR_NON_ANSWER_CONTENT');
+  if (headingCount < 3) codes.add('WEAK_HEADING_STRUCTURE');
+  if (llmsFetched && !llmsPresent) codes.add('MISSING_LLM_GUIDANCE');
+  if (externalLinks < 1) codes.add('LOW_TRUST_LINK_SIGNALS');
+  if (pageLoad > 3000) codes.add('SLOW_OR_UNSTABLE_TECHNICAL_SURFACE');
+
+  const reasonPenaltyWeights: Record<string, number> = {
+    CRAWLER_BLOCKED: 12,
+    NO_STRUCTURED_DATA: 10,
+    MISSING_ENTITY_IDENTITY: 8,
+    NO_TITLE_OR_WEAK_TITLE: 6,
+    NO_META_DESCRIPTION: 5,
+    THIN_OR_NON_ANSWER_CONTENT: 8,
+    WEAK_HEADING_STRUCTURE: 4,
+    MISSING_LLM_GUIDANCE: 4,
+    LOW_TRUST_LINK_SIGNALS: 3,
+    SLOW_OR_UNSTABLE_TECHNICAL_SURFACE: 3,
+  };
+
+  let penalty = 0;
+  for (const code of codes) {
+    penalty += reasonPenaltyWeights[code] || 0;
+  }
+
+  return {
+    codes: Array.from(codes),
+    penalty: Math.min(18, penalty),
+  };
+}
+
 function buildDeterministicAnalysis(
   sd: any,
   schema: any,
@@ -9960,6 +10029,14 @@ app.post(
       // Deterministic ledger context — serialises all writes for this trace.
       // requestId is the trace_id; all writes are fire-and-forget after res.json().
       const ledger = createAnalysisLedgerContext(requestId);
+      const citationGuideReferenceIds = getCitationGuideReferenceIds();
+      const citationGuideReferences = getCitationGuideReferences().map((guide) => ({
+        id: guide.id,
+        title: guide.title,
+        version: guide.version,
+        sha256: guide.sha256,
+        repo_path: guide.repoPath,
+      }));
 
       const {
         url: rawUrl,
@@ -10269,6 +10346,7 @@ app.post(
         url: targetUrl,
         tier: normalizedRequestTier,
         userId: ownerUserId,
+        referenceGuides: citationGuideReferenceIds,
       }));
 
       let scraped: Awaited<ReturnType<typeof scrapeWebsite>>;
@@ -12153,6 +12231,13 @@ For each recommendation:
         finalVisibilityScore = ruleSnapshot.scoreCap;
       }
 
+      const citationReasoningSignals = deriveCitationReasoningSignals(sd, schemaMarkup);
+      if (citationReasoningSignals.penalty > 0) {
+        finalVisibilityScore = clampScore(
+          finalVisibilityScore - citationReasoningSignals.penalty,
+        );
+      }
+
       // Keep AI3 raw recommendation for diagnostics/transparency, but do not let it override
       // the evidence-weighted final score directly.
       if (tripleCheckResult.enabled) {
@@ -12802,6 +12887,10 @@ For each recommendation:
         },
         mock_data_scan: mockDataScan,
         evidence_manifest: evidenceManifest,
+        citation_reason_codes: citationReasoningSignals.codes,
+        citation_reasoning_registry: {
+          guides: citationGuideReferences,
+        },
         rule_engine: {
           score: ruleSnapshot.finalScore,
           hard_blocker_count: ruleSnapshot.hardBlockerCount,
@@ -13212,6 +13301,7 @@ For each recommendation:
         visibilityIndex: typeof (result as any).visibility_index === 'number'
           ? (result as any).visibility_index
           : undefined,
+        referenceGuides: citationGuideReferenceIds,
       }));
       fireLedgerEvent(ledger.completed({ score: result.visibility_score }));
       // Prime the snapshot cache in background

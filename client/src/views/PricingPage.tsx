@@ -1277,6 +1277,16 @@ export default function PricingPage() {
               </span>
             </div>
           </div>
+
+          <div className="mt-8 max-w-3xl mx-auto rounded-2xl border border-cyan-400/20 bg-cyan-500/[0.08] p-5 text-left">
+            <h2 className="text-lg font-semibold text-white mb-2">Quick answer</h2>
+            <p className="text-sm text-white/75 leading-relaxed">
+              If you need proof of whether AI can cite your pages, start with Observer. If you need
+              structured remediation and repeatable improvement loops, use Starter or Alignment. If
+              you need multi-model validation, automation, and continuous repair operations, use
+              Signal or Score Fix.
+            </p>
+          </div>
         </div>
 
         {/* ── Social proof strip ──────────────────────────── */}

@@ -222,6 +222,18 @@ export default function InsightsPage() {
             Implementation Guide
           </Link>
           <Link
+            to="/research/ai-citation-patterns-2026"
+            className="inline-flex items-center rounded-full border border-cyan-400/30 px-4 py-2 text-sm font-semibold text-cyan-200 hover:bg-cyan-500/10 transition-colors"
+          >
+            Original research
+          </Link>
+          <Link
+            to="/compare/ai-visibility-platform-benchmark-2026"
+            className="inline-flex items-center rounded-full border border-cyan-400/30 px-4 py-2 text-sm font-semibold text-cyan-200 hover:bg-cyan-500/10 transition-colors"
+          >
+            Platform benchmark
+          </Link>
+          <Link
             to="/blogs"
             className="inline-flex items-center rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-white/85 hover:bg-charcoal-light transition-colors"
           >

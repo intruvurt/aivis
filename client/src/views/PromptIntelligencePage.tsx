@@ -29,6 +29,7 @@ import { normalizePublicUrlInput } from '../utils/targetKey';
 import apiFetch from '../utils/api';
 import { API_URL } from '../config';
 import { buildFaqSchema, buildWebPageSchema } from '../lib/seoSchema';
+import { COMPETITOR_PROMPT_MAP } from '../content/competitorPromptMap';
 
 interface PromptMappingHint {
   prompt: string;
@@ -395,6 +396,39 @@ export default function PromptIntelligencePage() {
           What people ask AI and why you do not show up. Map gaps, generate fixes, and improve
           citation probability.
         </p>
+
+        <section className="mb-8 rounded-2xl border border-slate-700 bg-slate-900 p-5">
+          <h2 className="text-base font-bold text-white mb-3 flex items-center gap-2">
+            <Globe className="w-4 h-4 text-emerald-300" />
+            Competitor and prompt map
+          </h2>
+          <p className="text-sm text-white/55 mb-4">
+            Run targeted prompt families against direct competitors to expose displacement patterns
+            and recover citation share with answer-first content changes.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs sm:text-sm text-white/75">
+              <thead className="text-left text-white/55 border-b border-slate-700">
+                <tr>
+                  <th className="py-2 pr-4">Competitor</th>
+                  <th className="py-2 pr-4">Strongest on</th>
+                  <th className="py-2 pr-4">Weakest on</th>
+                  <th className="py-2">Prompt families</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPETITOR_PROMPT_MAP.map((row) => (
+                  <tr key={row.competitor} className="border-b border-slate-800">
+                    <td className="py-2 pr-4 font-semibold text-white">{row.competitor}</td>
+                    <td className="py-2 pr-4">{row.strongestOn.join(', ')}</td>
+                    <td className="py-2 pr-4">{row.weakerOn.join(', ')}</td>
+                    <td className="py-2 text-cyan-200">{row.suggestedPromptFamilies.join(', ')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <form onSubmit={handleAnalyze} className="mb-8">
           <div className="flex gap-3">

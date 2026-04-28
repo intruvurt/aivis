@@ -77,6 +77,12 @@ const CompareProfoundPage = React.lazy(() => import('./pages/CompareProfoundPage
 const CompareSemrushPage = React.lazy(() => import('./pages/CompareSemrushPage'));
 const CompareAhrefsPage = React.lazy(() => import('./pages/CompareAhrefsPage'));
 const CompareRankScalePage = React.lazy(() => import('./pages/CompareRankScalePage'));
+const AiVisibilityPlatformBenchmark2026Page = React.lazy(
+  () => import('./pages/AiVisibilityPlatformBenchmark2026Page')
+);
+const OriginalResearchCitationPatterns2026Page = React.lazy(
+  () => import('./pages/OriginalResearchCitationPatterns2026Page')
+);
 const GlossaryPage = React.lazy(() => import('./pages/GlossaryPage'));
 const AiVisibilityBenchmark = React.lazy(() => import('./pages/AiVisibilityBenchmark'));
 const NotificationsPage = React.lazy(() => import('./pages/NotificationsPage'));
@@ -319,7 +325,15 @@ export default function App() {
             <Route path="/compare/aivis-vs-semrush" element={<CompareSemrushPage />} />
             <Route path="/compare/aivis-vs-ahrefs" element={<CompareAhrefsPage />} />
             <Route path="/compare/aivis-vs-rankscale" element={<CompareRankScalePage />} />
+            <Route
+              path="/compare/ai-visibility-platform-benchmark-2026"
+              element={<AiVisibilityPlatformBenchmark2026Page />}
+            />
             <Route path="/competitive-landscape" element={<CompetitiveLandscapePage />} />
+            <Route
+              path="/research/ai-citation-patterns-2026"
+              element={<OriginalResearchCitationPatterns2026Page />}
+            />
             <Route path="/glossary" element={<GlossaryPage />} />
             <Route path="/integrations" element={<IntegrationsHubPage />} />
             <Route path="/why-ai-visibility" element={<WhyAIVisibility />} />

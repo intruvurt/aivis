@@ -153,8 +153,9 @@
 
     <!-- performance hints -->
 
-    <!-- Preload the above-fold hero banner so it is discovered early (improves LCP) -->
-
+    <!-- Preload the boot-shell logo: first LCP-visible image before React mounts -->
+    <link rel="preload" as="image" href="/aivis-logo.png" fetchpriority="high" />
+    <!-- Preconnect to font/analytics origins before parser reaches them -->
     <link rel="preconnect" href="https://www.google.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.google.com" />
     <!-- Google Fonts (non-render-blocking, reduced weight subset) -->
@@ -1365,6 +1366,7 @@
     <script>
       (function () {
         var RETRY_KEY = 'aivis_boot_retry';
+        var RUNTIME_RETRY_KEY = 'aivis_runtime_retry';
         var BOOT_TIMEOUT_MS = 9000;
 
         function setLoadingMessage(message) {
@@ -1372,6 +1374,38 @@
           if (label) {
             label.textContent = message;
           }
+        }
+
+        function buildReloadUrl() {
+          return window.location.origin + window.location.pathname + '?boot=' + Date.now();
+        }
+
+        function extractErrorMessage(errorLike) {
+          if (!errorLike) return '';
+          if (typeof errorLike === 'string') return errorLike;
+          if (errorLike.message) return String(errorLike.message);
+          if (errorLike.reason && errorLike.reason.message) return String(errorLike.reason.message);
+          return String(errorLike);
+        }
+
+        function isRecoverableRuntimeError(message) {
+          return (
+            message.indexOf("Cannot read properties of undefined (reading 'createContext')") !== -1 ||
+            message.indexOf('Cannot read properties of undefined (reading "createContext")') !== -1 ||
+            message.indexOf('ChunkLoadError') !== -1 ||
+            message.indexOf('Failed to fetch dynamically imported module') !== -1 ||
+            message.indexOf('Loading chunk') !== -1 ||
+            message.indexOf('Failed to load module script') !== -1
+          );
+        }
+
+        function reloadOnceForRuntimeError(message) {
+          if (!isRecoverableRuntimeError(message)) return;
+          if (sessionStorage.getItem(RUNTIME_RETRY_KEY)) return;
+
+          sessionStorage.setItem(RUNTIME_RETRY_KEY, '1');
+          setLoadingMessage('Refreshing app after update...');
+          window.location.href = buildReloadUrl();
         }
 
         function renderRecoveryButton() {
@@ -1391,8 +1425,8 @@
           button.style.cursor = 'pointer';
           button.onclick = function () {
             sessionStorage.removeItem(RETRY_KEY);
-            window.location.href =
-              window.location.origin + window.location.pathname + '?boot=' + Date.now();
+            sessionStorage.removeItem(RUNTIME_RETRY_KEY);
+            window.location.href = buildReloadUrl();
           };
 
           var shell = root.querySelector("div[style*='text-align:center']");
@@ -1411,14 +1445,29 @@
           });
         }
 
+        window.addEventListener(
+          'error',
+          function (event) {
+            reloadOnceForRuntimeError(extractErrorMessage(event && (event.error || event.message)));
+          },
+          true
+        );
+
+        window.addEventListener('unhandledrejection', function (event) {
+          reloadOnceForRuntimeError(extractErrorMessage(event && event.reason));
+        });
+
         window.setTimeout(function () {
-          if (window.__AIVIS_BOOTSTRAPPED) return;
+          if (window.__AIVIS_BOOTSTRAPPED) {
+            sessionStorage.removeItem(RETRY_KEY);
+            sessionStorage.removeItem(RUNTIME_RETRY_KEY);
+            return;
+          }
 
           if (!sessionStorage.getItem(RETRY_KEY)) {
             sessionStorage.setItem(RETRY_KEY, '1');
             setLoadingMessage('Loading timed out. Retrying...');
-            window.location.href =
-              window.location.origin + window.location.pathname + '?boot=' + Date.now();
+            window.location.href = buildReloadUrl();
             return;
           }
 

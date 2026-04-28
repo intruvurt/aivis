@@ -1,6 +1,6 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { usePageMeta } from "../hooks/usePageMeta";
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function NotFound() {
   usePageMeta({
@@ -14,13 +14,15 @@ export default function NotFound() {
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-20 text-center">
       <div className="flex flex-col items-center gap-8 max-w-2xl">
         <img
-          src="/404.png"
+          src="/diagnostic-pages/404.jpg"
           alt="404 Page Not Found"
           className="w-full max-w-lg mx-auto drop-shadow-[0_0_40px_rgba(6,182,212,0.3)]"
+          width="512"
+          height="512"
           loading="lazy"
           decoding="async"
           onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
+            (e.target as HTMLImageElement).style.display = 'none';
           }}
         />
 
@@ -38,13 +40,16 @@ export default function NotFound() {
               ← Go Back
             </button>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate('/')}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-white/28 to-white/14 text-white font-semibold text-sm hover:opacity-90 transition-all"
             >
               Back to Dashboard
             </button>
           </div>
-          <Link to="/help" className="mt-4 inline-block text-xs text-white/40 hover:text-white/65 transition-colors">
+          <Link
+            to="/help"
+            className="mt-4 inline-block text-xs text-white/40 hover:text-white/65 transition-colors"
+          >
             Need help? Contact Support
           </Link>
         </div>

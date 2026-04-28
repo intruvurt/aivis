@@ -16072,7 +16072,7 @@ if (existsSync(clientDist)) {
   );
   app.use(
     express.static(clientDist, {
-      maxAge: "1h",
+      maxAge: "24h",
       index: false,
       redirect: false,
       setHeaders: (res, servedPath) => {
@@ -16080,6 +16080,9 @@ if (existsSync(clientDist)) {
           res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
           res.setHeader("Pragma", "no-cache");
           res.setHeader("Expires", "0");
+        } else if (/\.(png|jpe?g|webp|avif|gif|svg|ico)$/i.test(servedPath)) {
+          // Non-hashed public images: 24h fresh + 7d stale-while-revalidate avoids mixed-version churn
+          res.setHeader("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
         }
       },
     }),

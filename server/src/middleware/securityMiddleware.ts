@@ -198,7 +198,9 @@ export async function sendHtmlWithNonce(
   // Matches <script followed by space or > and replaces with <script nonce="..." (preserving the space/bracket)
   html = html.replace(/<script(\s|>)/gi, `<script nonce="${nonce}"$1`);
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
   res.send(html);
 }
 

@@ -8,6 +8,8 @@ const CHUNK_ERROR_PATTERNS = [
   'Loading chunk',
   'Failed to load module script',
   'ChunkLoadError',
+  "Cannot read properties of undefined (reading 'createContext')",
+  'Cannot read properties of undefined (reading "createContext")',
 ];
 
 function canSafelyReloadFromLocation(): boolean {

@@ -15980,7 +15980,20 @@ if (existsSync(clientDist)) {
       redirect: false,
     }),
   );
-  app.use(express.static(clientDist, { maxAge: "1h", index: false, redirect: false }));
+  app.use(
+    express.static(clientDist, {
+      maxAge: "1h",
+      index: false,
+      redirect: false,
+      setHeaders: (res, servedPath) => {
+        if (/\.html?$/i.test(servedPath)) {
+          res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+          res.setHeader("Pragma", "no-cache");
+          res.setHeader("Expires", "0");
+        }
+      },
+    }),
+  );
 }
 
 // SPA fallback - serves HTML with CSP nonce injected into <script> tags

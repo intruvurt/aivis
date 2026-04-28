@@ -112,6 +112,8 @@ const SnapshotPage = React.lazy(() => import('./pages/SnapshotPage'));
 const KeywordPageTemplate = React.lazy(() => import('./pages/KeywordPageTemplate'));
 const KeywordClusterIndex = React.lazy(() => import('./pages/KeywordClusterIndex'));
 const BadgeEmbedPage = React.lazy(() => import('./pages/BadgeEmbedPage'));
+const SecurityPage = React.lazy(() => import('./pages/SecurityPage'));
+const AcknowledgementsPage = React.lazy(() => import('./pages/AcknowledgementsPage'));
 
 /* ── Taxonomy pages (About → Methodology → Evidence) ── */
 const AboutAivisPage = React.lazy(() => import('./pages/taxonomy/AboutAivisPage'));
@@ -275,6 +277,8 @@ export default function App() {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/compliance" element={<CompliancePage />} />
             <Route path="/disclosures" element={<DisclosuresPage />} />
+            <Route path="/security" element={<SecurityPage />} />
+            <Route path="/acknowledgements" element={<AcknowledgementsPage />} />
             <Route path="/methodology" element={<MethodologyPage />} />
             <Route path="/triple-check-methodology" element={<TripleCheckMethodologyPage />} />
 

@@ -96,7 +96,7 @@ export default function CompareAhrefsPage() {
               Explorer shows organic traffic estimates, ranking keywords, and SERP position history.
             </p>
             <p className="text-white/70 leading-relaxed">
-              For traditional SEO competitive intelligence, Ahrefs provides unmatched depth in link
+              For traditional SEO competitive intelligence, Ahrefs provides strong depth in link
               analysis and keyword gap discovery. Its content explorer surfaces pages by topic and
               engagement metrics. These are powerful tools for search engine optimization - but they
               measure search engine signals, not AI answer engine signals.
@@ -107,13 +107,13 @@ export default function CompareAhrefsPage() {
           <section className="mb-10">
             <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS.biz Measures</h2>
             <p className="text-white/70 mb-4 leading-relaxed">
-              AiVIS.biz is not an SEO tool. It is the first platform built specifically to measure
-              and improve whether AI answer engines can read, trust, and cite your website. It
-              audits content extractability (can an AI model parse your page into usable
-              knowledge?), entity clarity (does your brand, author, and organization schema form a
-              coherent graph?), answer block density (is your content structured in citable answer
-              fragments?), and cross-platform citation presence (are you actually showing up in
-              AI-generated answers?).
+              AiVIS.biz is not an SEO tool. It is a purpose-built platform to measure and improve
+              whether AI answer engines can read, trust, and cite your website. It audits content
+              extractability (can an AI model parse your page into usable knowledge?), entity
+              clarity (does your brand, author, and organization schema form a coherent graph?),
+              answer block density (is your content structured in citable answer fragments?), and
+              cross-platform citation presence (are you actually showing up in AI-generated
+              answers?).
             </p>
             <p className="text-white/70 leading-relaxed">
               The output is a quantified visibility score validated across multiple AI models using
@@ -153,7 +153,7 @@ export default function CompareAhrefsPage() {
                     [
                       'Backlink analysis',
                       'Not a focus',
-                      'Industry-leading backlink index with link intersect',
+                      'Extensive backlink index with link intersect',
                       false,
                       true,
                     ],
@@ -320,8 +320,8 @@ export default function CompareAhrefsPage() {
               AI answer engines like ChatGPT, Perplexity, and Claude do not rank pages by backlink
               count. They evaluate whether content can be extracted into structured knowledge,
               whether the entity graph is coherent, whether claims are verifiable, and whether the
-              content answers the question directly. These are structural signals that no backlink
-              tool measures. AiVIS.biz was built to measure exactly this.
+              content answers the question directly. These are structural signals that most backlink
+              tools do not measure directly. AiVIS.biz was built to measure this layer.
             </p>
           </section>
 
@@ -332,7 +332,7 @@ export default function CompareAhrefsPage() {
               {[
                 {
                   q: 'Is AiVIS.biz an Ahrefs alternative?',
-                  a: 'No. Ahrefs is a backlink and keyword research platform. AiVIS.biz is an AiVIS.biz | CITE LEDGER . They measure different things. Use Ahrefs for link intelligence. Use AiVIS.biz for AI citation readiness.',
+                  a: 'No. Ahrefs is a backlink and keyword research platform. AiVIS.biz is a citation-readiness and structural audit platform. They measure different things. Use Ahrefs for link intelligence and AiVIS.biz for AI citation readiness.',
                 },
                 {
                   q: 'Does Ahrefs measure AI visibility?',
@@ -357,7 +357,7 @@ export default function CompareAhrefsPage() {
 
           {/* ── CTA ── */}
           <section className="rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500/[0.08] to-violet-500/[0.08] p-8 text-center">
-            <h3 className="text-2xl font-bold mb-3 text-white">See What Ahrefs Cannot Show You</h3>
+            <h3 className="text-2xl font-bold mb-3 text-white">See What Ahrefs May Not Show You</h3>
             <p className="text-white/65 mb-5 max-w-xl mx-auto">
               Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and
               Gemini evaluate your content - with evidence-linked findings and prioritized fixes.

@@ -49,8 +49,9 @@ export default function CompareOtterlyPage() {
       <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
         Otterly helped popularize the concept of "AI Search Optimization" (AEO) by tracking brand
         mentions using standard RAG models. However, <strong>AiVIS.biz</strong> goes beyond
-        tracking-it gives you the exact architectural fixes, JSON-LD schemas, and content structures
-        required to rank in AI Overviews, Perplexity, and ChatGPT.
+        tracking-it gives you architectural fix guidance, JSON-LD schema recommendations, and
+        content structure changes that can improve inclusion in AI Overviews, Perplexity, and
+        ChatGPT.
       </p>
 
       <section className="mb-8 rounded-xl border border-indigo-200/60 dark:border-white/10 bg-indigo-50 dark:bg-white/[0.03] p-5">
@@ -140,7 +141,7 @@ export default function CompareOtterlyPage() {
           If you want to know <em>how often</em> you appear in conversational search, Otterly is
           fine. But if you want to know{' '}
           <strong>why you aren't appearing, and precisely what code to change to fix it</strong>,
-          you need the AiVIS.biz structural analysis engine.
+          AiVIS.biz provides a structural analysis workflow built for that use case.
         </p>
         <Link
           to="/"

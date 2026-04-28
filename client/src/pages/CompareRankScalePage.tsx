@@ -98,12 +98,11 @@ export default function CompareRankScalePage() {
           <section className="mb-10">
             <h2 className="text-2xl font-bold mb-3 text-white">What AiVIS.biz Does</h2>
             <p className="text-white/70 mb-4 leading-relaxed">
-              AiVIS.biz is not an SEO tool. It is the first platform built specifically to measure
-              and improve whether AI answer engines can read, trust, and cite your website. Rather
-              than using AI to write content that ranks in search engines, AiVIS.biz uses AI to
-              audit content for structural readiness across five dimensions: crawlability,
-              extractability, trust signals, cross-model scoring consistency, and automated
-              remediation.
+              AiVIS.biz is not an SEO tool. It is a purpose-built platform to measure and improve
+              whether AI answer engines can read, trust, and cite your website. Rather than using AI
+              to write content that ranks in search engines, AiVIS.biz uses AI to audit content for
+              structural readiness across five dimensions: crawlability, extractability, trust
+              signals, cross-model scoring consistency, and automated remediation.
             </p>
             <p className="text-white/70 leading-relaxed">
               The distinction matters because the signals AI answer engines evaluate are different

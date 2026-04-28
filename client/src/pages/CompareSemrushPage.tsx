@@ -361,7 +361,9 @@ export default function CompareSemrushPage() {
 
           {/* ── CTA ── */}
           <section className="rounded-2xl border border-cyan-400/20 bg-gradient-to-r from-cyan-500/[0.08] to-violet-500/[0.08] p-8 text-center">
-            <h3 className="text-2xl font-bold mb-3 text-white">See What Semrush Cannot Show You</h3>
+            <h3 className="text-2xl font-bold mb-3 text-white">
+              See What Semrush May Not Show You
+            </h3>
             <p className="text-white/65 mb-5 max-w-xl mx-auto">
               Run a free AI visibility audit. See exactly how ChatGPT, Perplexity, Claude, and
               Gemini read your site - with evidence-linked findings and prioritized fixes.

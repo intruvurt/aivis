@@ -47,9 +47,9 @@ export default function CompareProfoundPage() {
       </h1>
       <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
         Profound is an enterprise solution often focused on heavy, consultative brand analysis.{' '}
-        <strong>AiVIS.biz</strong> is a ruthless, lightweight structural auditing engine designed
-        for developers and technical marketers who want immediate code fixes, not month-long
-        consulting cycles.
+        <strong>AiVIS.biz</strong> is a focused, lightweight structural auditing engine designed for
+        developers and technical marketers who want immediate code fixes, not month-long consulting
+        cycles.
       </p>
 
       <section className="mb-8 rounded-xl border border-indigo-200/60 dark:border-white/10 bg-indigo-50 dark:bg-white/[0.03] p-5">

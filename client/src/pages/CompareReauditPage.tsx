@@ -116,9 +116,9 @@ export default function CompareReauditPage() {
       <section className="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-2xl border border-blue-100 dark:border-blue-800">
         <h3 className="text-2xl font-bold mb-3">Why Developers Choose AiVIS.biz</h3>
         <p className="mb-4 text-gray-700 dark:text-gray-300">
-          We don't just tell you that your site is unreadable. We provide the exact structured data
-          block and ARIA landmarks required to force Perplexity and ChatGPT to parse your site
-          properly.
+          We don't just tell you that your site is unreadable. We provide targeted structured data
+          patterns and ARIA landmark guidance that can improve how Perplexity and ChatGPT parse your
+          site.
         </p>
         <Link
           to="/"

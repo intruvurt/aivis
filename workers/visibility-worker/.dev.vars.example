@@ -1,0 +1,7 @@
+OPEN_ROUTER_API_KEY=replace_me
+UPSTASH_REDIS_REST_URL=https://<your-upstash-endpoint>
+UPSTASH_REDIS_REST_TOKEN=replace_me
+STREAM_KEY=aivis_stream
+OUTPUT_STREAM_KEY=aivis_feedback_stream
+STREAM_BATCH_SIZE=10
+OPEN_ROUTER_MODEL=openai/gpt-4o-mini

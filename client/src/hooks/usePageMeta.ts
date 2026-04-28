@@ -6,7 +6,7 @@
 import { useEffect } from 'react';
 
 interface PageMeta {
-  /** Page title - will be suffixed with " | AiVIS.biz | CITE LEDGER" */
+  /** Page title text (page-specific subject) */
   title: string;
   /** Meta description for search engines and AI crawlers */
   description: string;
@@ -26,7 +26,7 @@ interface PageMeta {
   noIndex?: boolean;
 }
 
-const SITE_NAME = 'AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER';
+const SITE_NAME = 'AiVIS';
 const BASE_URL = 'https://aivis.biz';
 const DEFAULT_SHARE_IMAGE = `${BASE_URL}/og-image2.png`;
 
@@ -34,12 +34,12 @@ function buildDocumentTitle(title: string, fullTitle?: string): string {
   const normalizedFullTitle = fullTitle?.trim();
   if (normalizedFullTitle) return normalizedFullTitle;
 
-  const normalizedTitle = title.trim();
+  const normalizedTitle = title.trim().replace(/\s+/g, ' ');
   const alreadyBranded =
-    normalizedTitle.startsWith(SITE_NAME) ||
-    (/AiVIS(\.biz)?/i.test(normalizedTitle) && normalizedTitle.includes('|'));
+    /^AiVIS(\.biz)?\b/i.test(normalizedTitle) ||
+    /\bAiVIS(\.biz)?\b/i.test(normalizedTitle);
 
-  return alreadyBranded ? normalizedTitle : `${SITE_NAME} | ${normalizedTitle}`;
+  return alreadyBranded ? normalizedTitle : `${normalizedTitle} | ${SITE_NAME}`;
 }
 
 function setMeta(name: string, content: string, property = false): void {

@@ -67,7 +67,7 @@ export const SCORE_RANGE = { min: 0, max: 100 } as const;
 /* ── Meta tags ──────────────────────────────────────────────────────────── */
 
 export const META = {
-    title: 'AiVIS — AI Visibility Audit | Evidence-Backed by CITE LEDGER',
+    title: 'AI Visibility Audit & Citation Tracking | AiVIS',
     description: `${CITE_LEDGER_DEFINITION} ${BRAG.expansion} powers AiVIS audits for ChatGPT, Perplexity, Google AI Overviews, and Claude. Enter a URL and get a real score backed by on-page evidence, not assumptions.`,
     // NOTE: description must include CITE_LEDGER_DEFINITION and diagnostic framing verbatim — enforced at build time.
     keywords: `AI citation diagnostics, why AI ignores you, competitor retrieval analysis, semantic bridge failure, entity decay detection, citation collapse forensics, AI reasoning transparency, ${BRAND.name}, ${BRAG.acronym} evidence scoring, source preference mapping, ChatGPT selection logic, Perplexity retrieval analysis, Claude synthesis debugging, AI answer engine decision making, citation ledger, post-mortem AI visibility, system instrumentation, retrieval failure diagnosis`,

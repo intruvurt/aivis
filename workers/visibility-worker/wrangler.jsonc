@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "visibility-worker",
+  "main": "index.ts",
+  "compatibility_date": "2026-04-27",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+  },
+  "vars": {
+    "STREAM_KEY": "aivis_stream",
+    "OUTPUT_STREAM_KEY": "aivis_feedback_stream",
+    "STREAM_BATCH_SIZE": "10",
+    "OPEN_ROUTER_MODEL": "openai/gpt-4o-mini",
+  },
+  "triggers": {
+    "crons": ["*/1 * * * *"],
+  },
+  "kv_namespaces": [
+    {
+      "binding": "VISIBILITY_STATE",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID",
+    },
+  ],
+}
